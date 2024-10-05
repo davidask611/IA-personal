@@ -26,20 +26,46 @@
         "me ayudas en algo": "si, dime que precisas y vere si puedo ayudarte"
     },
     "presidente": {
-        "Milei": {
-            "periodo": "2024 - presente",
-            "nombre_completo": "Javier Gerardo Milei",
-            "descripcion": "Economista y político argentino, conocido por su postura libertaria y propuestas económicas radicales."
-        },
-        "Peron": {
-            "periodo": "1946 - 1955, 1973 - 1974",
-            "nombre_completo": "Juan Domingo Perón",
-            "descripcion": "Líder del movimiento peronista y tres veces presidente de Argentina, impulsor de políticas de justicia social."
-        },
-        "Nestor": {
-            "periodo": "2003 - 2007",
-            "nombre_completo": "Néstor Carlos Kirchner",
-            "descripcion": "Político argentino y expresidente, conocido por sus políticas económicas que promovieron el crecimiento tras la crisis de 2001."
+
+            "Alfonsin": {
+                "periodo": "1983 - 1989",
+                "nombre_completo": "Raul Alfonsin",
+                "descripcion": "Raul Alfonsin fue el primer presidente democratico de Argentina tras la dictadura militar. Su gobierno se caracterizo por la defensa de los derechos humanos y el establecimiento de un estado democratico. Alfonsin enfrento numerosos desafios, incluyendo una economia en crisis y tensiones sociales. Su administración es recordada por la implementacion de juicios a los lideres de la dictadura, un paso importante hacia la justicia. Sin embargo, su mandato culmino en medio de problemas economicos y presiones sociales, lo que condujo a su renuncia anticipada en 1989."
+            },
+            "Menem": {
+                "periodo": "1989 - 1999",
+                "nombre_completo": "Carlos Menem",
+                "descripcion": "Carlos Menem, presidente durante una de las etapas mas controversiales de Argentina, implemento un modelo economico de liberalizacion que incluyo privatizaciones masivas y apertura comercial. Su gobierno trajo consigo un periodo de crecimiento economico inicial, pero tambien un aumento en la desigualdad y la pobreza. Menem es recordado por su carisma y estilo populista, aunque su administracion se vio marcada por la corrupcion y escandalos. Su mandato se extiende hasta el año 1999, donde dejo un legado mixto en la politica argentina."
+            },
+            "De la Rúa": {
+                "periodo": "1999 - 2001",
+                "nombre_completo": "Fernando de la Rúa",
+                "descripcion": "Fernando de la Rua asumio la presidencia en un contexto de crisis economica y social. Su gobierno enfrento grandes desafios desde el inicio, incluyendo una creciente recesion y aumento del desempleo. Intento implementar politicas de austeridad para controlar el deficit fiscal, pero esto resulto en protestas masivas y descontento popular. La falta de apoyo y la incapacidad para estabilizar la economia llevaron a su renuncia en diciembre de 2001, en un momento de gran convulsion social. Su presidencia es recordada como un periodo de inestabilidad."
+            },
+            "Duhalde": {
+                "periodo": "2002 - 2003",
+                "nombre_completo": "Eduardo Duhalde",
+                "descripcion": "Eduardo Duhalde asumio la presidencia en medio de una crisis economica devastadora que afecto a Argentina. Su gestion se centró en la estabilizacion de la economia y la implementacion de politicas sociales para mitigar el impacto de la crisis en los ciudadanos. Promovio la devaluacion del peso, lo que, aunque controlo la inflacion, genero un impacto en los ahorros de la poblacion. Su periodo fue breve, pero crucial, ya que sento las bases para la recuperacion economica que vendria con la presidencia de Nestor Kirchner."
+            },
+            "Cristina": {
+                "periodo": "2007 - 2015",
+                "nombre_completo": "Cristina Fernandez de Kirchner",
+                "descripcion": "Cristina Fernandez de Kirchner, esposa de Nestor Kirchner, se convirtio en la primera mujer en ser reelegida como presidenta de Argentina. Su gobierno se caracterizo por un enfoque en la expansion del gasto social, la defensa de los derechos humanos y la nacionalizacion de diversas industrias. Enfrento grandes desafios, incluyendo conflictos con el campo y oposicion politica. Su gestion fue marcada por un crecimiento economico sostenido en los primeros años, pero luego enfrentó problemas de inflacion y deudas externas, lo que afecto su popularidad en los ultimos años."
+            },
+            "Macri": {
+                "periodo": "2015 - 2019",
+                "nombre_completo": "Mauricio Macri",
+                "descripcion": "Mauricio Macri asumio la presidencia con la promesa de implementar reformas economicas que trajeran crecimiento y estabilidad. Su gobierno busco reducir el deficit fiscal y abrir la economia al mundo. Sin embargo, su mandato se vio afectado por una alta inflacion y una deuda creciente, lo que llevo a descontento social. Macri intento atraer inversiones extranjeras y fomentar el desarrollo, pero las dificultades economicas y la falta de apoyo politico limitaron su capacidad de implementar cambios significativos, resultando en una administracion con resultados mixtos."
+            },
+            "Alberto": {
+                "periodo": "2019 - 2023",
+                "nombre_completo": "Alberto Fernandez",
+                "descripcion": "Alberto Fernandez asumio la presidencia en un contexto de crisis economica agudizada por la pandemia de COVID-19. Su gobierno enfrento retos significativos, incluyendo la gestion de la emergencia sanitaria y la reestructuracion de la deuda externa. Implemento politicas de apoyo a sectores vulnerables y busco establecer un dialogo con diferentes actores politicos y sociales. Su administracion ha sido criticada por la inflacion y la falta de crecimiento, aunque se ha centrado en recuperar la economia tras la crisis sanitaria, trabajando en medidas para estabilizar el pais."
+            },
+            "Milei": {
+                "periodo": "2023 - presente",
+                "nombre_completo": "Javier Gerardo Milei",
+                "descripcion": "Javier Milei es un economista y político argentino que asumió la presidencia en 2024. Es conocido por su postura libertaria y por proponer reformas económicas radicales en un contexto de crisis económica y alta inflación. Su enfoque se centra en reducir drásticamente el gasto público, eliminar regulaciones y promover la libertad de mercado. Milei ha ganado notoriedad por su estilo provocador y su discurso anti-establishment, apelando a votantes que buscan un cambio en el sistema político tradicional. Es un firme defensor de la propiedad privada y ha manifestado su intención de cerrar el Banco Central."
+            }
         }
-    }
 }

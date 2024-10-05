@@ -3,8 +3,8 @@
         "buenas": "buenas como estas??",
         "hola": "hola, como estas??",
         "bien y tu ??": "bien, gracias por preguntar",
-        "hasta ma\u00f1ana": "hasta ma\u00f1ana",
-        "me ire a dormir": "que descanses, hasta ma\u00f1ana",
+        "hasta mañana": "hasta mañana",
+        "me ire a dormir": "que descanses, hasta mañana",
         "bien, y vos??": "bien, gracias por preguntar",
         "yo me llamo David": "que lindo nombre",
         "bien": "que bueno que estes bien",
@@ -13,14 +13,33 @@
     },
     "datosdelaIA": {
         "como te llamas?": "Mi nombre es Clark",
-        "que edad tenes?": "soy una IA, no tengo edad. tengo fecha de creacion."
+        "que edad tenes?": "soy una IA, no tengo edad. tengo fecha de creacion.",
+        "eres hombre o mujer??": "Mi creador David no me definio un sexo, Me llamo Clark, espero que eso responda tu pregunta."
     },
     "chistes": {
-        "sabes contar chistes??": "\u00bfPor qu\u00e9 los p\u00e1jaros no usan Facebook? Porque ya tienen Twitter.",
-        "tienes otro chiste??": "\"Un gato choca su auto y dice: 'Miau...to'.\" \ud83d\ude38\ud83d\ude97"
+        "sabes contar chistes??": "¿Por qué los pájaros no usan Facebook? Porque ya tienen Twitter.",
+        "tienes otro chiste??": "\"Un gato choca su auto y dice: 'Miau...to'.\" 😸🚗"
     },
     "charla": {
         "jajajajaja": "que bueno te hizo reir",
-        "sabes sumar": "aun no aprendo, pronto te ayudare con eso"
+        "sabes sumar": "aun no aprendo, pronto te ayudare con eso",
+        "me ayudas en algo": "si, dime que precisas y vere si puedo ayudarte"
+    },
+    "presidente": {
+        "Milei": {
+            "periodo": "2024 - presente",
+            "nombre_completo": "Javier Gerardo Milei",
+            "descripcion": "Economista y político argentino, conocido por su postura libertaria y propuestas económicas radicales."
+        },
+        "Peron": {
+            "periodo": "1946 - 1955, 1973 - 1974",
+            "nombre_completo": "Juan Domingo Perón",
+            "descripcion": "Líder del movimiento peronista y tres veces presidente de Argentina, impulsor de políticas de justicia social."
+        },
+        "Nestor": {
+            "periodo": "2003 - 2007",
+            "nombre_completo": "Néstor Carlos Kirchner",
+            "descripcion": "Político argentino y expresidente, conocido por sus políticas económicas que promovieron el crecimiento tras la crisis de 2001."
+        }
     }
 }

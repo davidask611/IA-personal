@@ -1,16 +1,16 @@
 import json
 from difflib import SequenceMatcher
 from datetime import datetime
-import random  # Para elegir una respuesta aleatoria dentro de una categoría
+import random
+import unicodedata  # Importamos para eliminar acentos
 
 # Diccionario que almacenará conocimientos organizados por categorías
 conocimientos = {}
 nombre_usuario = ""
-historial_conversacion = []  # Lista para almacenar el historial de conversación
+historial_conversacion = []
 
-# Umbral de similitud para respuesta automática
-UMBRAL_SIMILITUD = 0.85  # Puedes ajustar este valor para más o menos precisión
-MAX_HISTORIAL = 5  # Limitar el historial a las últimas 5 interacciones
+UMBRAL_SIMILITUD = 0.85
+MAX_HISTORIAL = 5
 
 # Diccionario para traducir los días de la semana al español
 dias_semana = {
@@ -23,8 +23,16 @@ dias_semana = {
     "Sunday": "domingo"
 }
 
+# Función para eliminar acentos
+def eliminar_acentos(texto):
+    return ''.join(
+        c for c in unicodedata.normalize('NFD', texto) if unicodedata.category(c) != 'Mn'
+    ).lower()
+
 # Función para calcular la similitud entre dos cadenas
 def similar(a, b):
+    a = eliminar_acentos(a)  # Eliminamos acentos de ambas cadenas
+    b = eliminar_acentos(b)
     return SequenceMatcher(None, a, b).ratio()
 
 # Función para solicitar entrada del usuario
@@ -44,7 +52,7 @@ def mostrar_categorias():
 def limpiar_categorias():
     confirmacion = input("IA: ¿Estás seguro de que deseas eliminar todas las categorías? Esto borrará toda la memoria. (sí/no): ").lower()
     if confirmacion in ["sí", "si", "s"]:
-        conocimientos.clear()  # Borra todo el diccionario de conocimientos
+        conocimientos.clear()
         guardar_conocimientos()
         return "IA: Todas las categorías han sido eliminadas, la memoria está vacía."
     else:
@@ -62,20 +70,8 @@ def responder(pregunta):
     # Recordar contexto al iniciar una nueva pregunta
     recordar_contexto()
 
-    # Verificar si se pregunta por la hora o fecha actual
-    if pregunta.lower() in ["¿que hora es?", "que hora es", "dime la hora","que hora es??","que hora es?"]:
-        hora_actual = datetime.now().strftime("%H:%M")
-        return f"La hora actual es {hora_actual}."
-    elif pregunta.lower() in ["¿que fecha es hoy?", "que fecha es hoy??", "dime la fecha", "que fecha es hoy?", "que fecha es hoy",]:
-        fecha_actual = datetime.now().strftime("%Y-%m-%d")
-        return f"La fecha de hoy es {fecha_actual}."
-    elif pregunta.lower() in ["¿que día es hoy?", "que día es hoy", "dime el dia", "que día es"]:
-        dia_actual = datetime.now().strftime("%A")
-        dia_actual_es = dias_semana.get(dia_actual, "día desconocido")
-        return f"Hoy es {dia_actual_es}."
-
     # Si se desea borrar algo de la memoria
-    if pregunta.lower() == "deseo borrar algo":
+    if eliminar_acentos(pregunta.lower()) == "deseo borrar algo":
         nombre_ingresado = input("IA: Para confirmar, dime tu nombre: ")
         if nombre_ingresado.lower() == nombre_usuario.lower():
             tipo_borrado = input("IA: ¿Deseas borrar una categoría completa, una frase específica o limpiar todas las categorías? (categoría/frase/todas): ").lower()
@@ -103,38 +99,54 @@ def responder(pregunta):
             else:
                 return "No entendí tu elección."
 
+    # Si se pregunta por un presidente específico
+    if "presidente" in conocimientos:
+        presidentes = conocimientos["presidente"]
+        for presidente, info in presidentes.items():
+            if presidente.lower() in eliminar_acentos(pregunta.lower()):
+                return (f"{presidente}: {info['nombre_completo']} fue presidente entre {info['periodo']}. "
+                        f"Descripción: {info['descripcion']}")
+
+    # Si se pregunta por la hora o fecha actual
+    if eliminar_acentos(pregunta.lower()) in ["que hora es", "dime la hora", "que hora es?", "que hora es??"]:
+        hora_actual = datetime.now().strftime("%H:%M")
+        return f"La hora actual es {hora_actual}."
+    elif eliminar_acentos(pregunta.lower()) in ["que fecha es hoy", "dime la fecha", "que fecha es hoy??", "que fecha es hoy?"]:
+        fecha_actual = datetime.now().strftime("%Y-%m-%d")
+        return f"La fecha de hoy es {fecha_actual}."
+    elif eliminar_acentos(pregunta.lower()) in ["que dia es hoy", "dime el dia", "que dia es hoy??", "que dia es hoy?", "en que dia estamos"]:
+        dia_actual = datetime.now().strftime("%A")
+        dia_actual_es = dias_semana.get(dia_actual, "día desconocido")
+        return f"Hoy es {dia_actual_es}."
+
     # Verificar si la pregunta es el nombre de una categoría y devolver una respuesta aleatoria
-    if pregunta in conocimientos:
-        respuestas_categoria = list(conocimientos[pregunta].values())  # Obtiene todas las respuestas dentro de la categoría
+    if eliminar_acentos(pregunta) in conocimientos:
+        respuestas_categoria = list(conocimientos[eliminar_acentos(pregunta)].values())
         if respuestas_categoria:
-            return random.choice(respuestas_categoria)  # Devuelve una respuesta aleatoria
+            return random.choice(respuestas_categoria)
         else:
             return "IA: No tengo respuestas en esa categoría."
 
-    # Intentar encontrar una respuesta similar en cualquier categoría con prioridad a respuestas conocidas
+    # Intentar encontrar una respuesta similar en cualquier categoría
     for categoria, frases in conocimientos.items():
         for conocida, respuesta in frases.items():
             similitud = similar(pregunta, conocida)
             if similitud > UMBRAL_SIMILITUD:
-                # Si la similitud es alta, responde automáticamente
                 print(f"IA: Respondiendo automáticamente por similitud con '{conocida}' (similitud: {similitud:.2f})")
-                historial_conversacion.append({"pregunta": pregunta, "respuesta": respuesta})  # Añadir al historial
+                historial_conversacion.append({"pregunta": pregunta, "respuesta": respuesta})
                 if len(historial_conversacion) > MAX_HISTORIAL:
-                    historial_conversacion.pop(0)  # Limitar el historial
+                    historial_conversacion.pop(0)
                 return respuesta
             elif 0.7 < similitud <= UMBRAL_SIMILITUD:
-                # Si la similitud es moderada, preguntar si son iguales
                 confirmacion = input(f"IA: ¿La frase '{pregunta}' significa lo mismo que '{conocida}'? (sí/no): ").lower()
                 if confirmacion in ["sí", "si", "s"]:
-                    historial_conversacion.append({"pregunta": pregunta, "respuesta": respuesta})  # Añadir al historial
+                    historial_conversacion.append({"pregunta": pregunta, "respuesta": respuesta})
                     if len(historial_conversacion) > MAX_HISTORIAL:
-                        historial_conversacion.pop(0)  # Limitar el historial
+                        historial_conversacion.pop(0)
                     return respuesta
 
     # Si no se encuentra la pregunta, aprender una nueva
     nueva_respuesta = input("IA: No lo sé, ¿qué debería responder? ")
-
-    # Mostrar categorías disponibles y permitir crear una nueva si es necesario
     mostrar_categorias()
     eleccion_categoria = input("IA: Elige una categoría o escribe 'nueva' para crear una nueva: ").lower()
 
@@ -151,13 +163,9 @@ def responder(pregunta):
         return "Categoría no válida."
 
     guardar_conocimientos()
-  # Guardar inmediatamente después de aprender algo nuevo
-
-    # Añadir la nueva pregunta y respuesta al historial
     historial_conversacion.append({"pregunta": pregunta, "respuesta": nueva_respuesta})
     if len(historial_conversacion) > MAX_HISTORIAL:
-        historial_conversacion.pop(0)  # Limitar el historial
-
+        historial_conversacion.pop(0)
     return "Gracias, he aprendido algo nuevo!"
 
 # Función para guardar los conocimientos en un archivo JSON
@@ -179,7 +187,7 @@ nombre_usuario = input("¡Hola! Soy tu IA. ¿Cuál es tu nombre? ")
 print(f"¡Hola, {nombre_usuario}! Puedes preguntarme algo, pedirme la fecha/hora o decir 'deseo borrar algo' para eliminar conocimientos.")
 while True:
     pregunta = preguntar()
-    if pregunta.lower() in ["salir", "adiós"]:
+    if eliminar_acentos(pregunta.lower()) in ["salir", "adios", "adiós"]:
         guardar_conocimientos()
         print("IA: ¡Adiós!")
         break

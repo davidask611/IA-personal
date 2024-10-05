@@ -12,7 +12,8 @@
         "como estas??": "estoy bien, gracias por preguntar"
     },
     "datosdelaIA": {
-        "como te llamas?": "Mi nombre es Clark"
+        "como te llamas?": "Mi nombre es Clark",
+        "que edad tenes?": "soy una IA, no tengo edad. tengo fecha de creacion."
     },
     "chistes": {
         "sabes contar chistes??": "\u00bfPor qu\u00e9 los p\u00e1jaros no usan Facebook? Porque ya tienen Twitter.",

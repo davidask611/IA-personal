@@ -12,6 +12,17 @@ historial_conversacion = []  # Lista para almacenar el historial de conversació
 UMBRAL_SIMILITUD = 0.85  # Puedes ajustar este valor para más o menos precisión
 MAX_HISTORIAL = 5  # Limitar el historial a las últimas 5 interacciones
 
+# Diccionario para traducir los días de la semana al español
+dias_semana = {
+    "Monday": "lunes",
+    "Tuesday": "martes",
+    "Wednesday": "miércoles",
+    "Thursday": "jueves",
+    "Friday": "viernes",
+    "Saturday": "sábado",
+    "Sunday": "domingo"
+}
+
 # Función para calcular la similitud entre dos cadenas
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
@@ -52,15 +63,16 @@ def responder(pregunta):
     recordar_contexto()
 
     # Verificar si se pregunta por la hora o fecha actual
-    if pregunta.lower() in ["¿qué hora es?", "qué hora es", "dime la hora"]:
+    if pregunta.lower() in ["¿que hora es?", "que hora es", "dime la hora","que hora es??","que hora es?"]:
         hora_actual = datetime.now().strftime("%H:%M")
         return f"La hora actual es {hora_actual}."
-    elif pregunta.lower() in ["¿qué fecha es hoy?", "qué fecha es hoy??", "dime la fecha"]:
+    elif pregunta.lower() in ["¿que fecha es hoy?", "que fecha es hoy??", "dime la fecha", "que fecha es hoy?", "que fecha es hoy",]:
         fecha_actual = datetime.now().strftime("%Y-%m-%d")
         return f"La fecha de hoy es {fecha_actual}."
-    elif pregunta.lower() in ["¿qué día es hoy?", "qué día es hoy", "dime el día"]:
+    elif pregunta.lower() in ["¿que día es hoy?", "que día es hoy", "dime el dia", "que día es"]:
         dia_actual = datetime.now().strftime("%A")
-        return f"Hoy es {dia_actual}."
+        dia_actual_es = dias_semana.get(dia_actual, "día desconocido")
+        return f"Hoy es {dia_actual_es}."
 
     # Si se desea borrar algo de la memoria
     if pregunta.lower() == "deseo borrar algo":

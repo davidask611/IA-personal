@@ -1,5 +1,6 @@
 import json
 from difflib import SequenceMatcher
+from datetime import datetime
 import random  # Para elegir una respuesta aleatoria dentro de una categoría
 
 # Diccionario que almacenará conocimientos organizados por categorías
@@ -49,6 +50,17 @@ def recordar_contexto():
 def responder(pregunta):
     # Recordar contexto al iniciar una nueva pregunta
     recordar_contexto()
+
+    # Verificar si se pregunta por la hora o fecha actual
+    if pregunta.lower() in ["¿qué hora es?", "qué hora es", "dime la hora"]:
+        hora_actual = datetime.now().strftime("%H:%M")
+        return f"La hora actual es {hora_actual}."
+    elif pregunta.lower() in ["¿qué fecha es hoy?", "qué fecha es hoy??", "dime la fecha"]:
+        fecha_actual = datetime.now().strftime("%Y-%m-%d")
+        return f"La fecha de hoy es {fecha_actual}."
+    elif pregunta.lower() in ["¿qué día es hoy?", "qué día es hoy", "dime el día"]:
+        dia_actual = datetime.now().strftime("%A")
+        return f"Hoy es {dia_actual}."
 
     # Si se desea borrar algo de la memoria
     if pregunta.lower() == "deseo borrar algo":
@@ -126,7 +138,8 @@ def responder(pregunta):
     else:
         return "Categoría no válida."
 
-    guardar_conocimientos()  # Guardar inmediatamente después de aprender algo nuevo
+    guardar_conocimientos()
+  # Guardar inmediatamente después de aprender algo nuevo
 
     # Añadir la nueva pregunta y respuesta al historial
     historial_conversacion.append({"pregunta": pregunta, "respuesta": nueva_respuesta})
@@ -151,7 +164,7 @@ except FileNotFoundError:
 # Solicitar el nombre del usuario al inicio de la conversación
 nombre_usuario = input("¡Hola! Soy tu IA. ¿Cuál es tu nombre? ")
 
-print(f"¡Hola, {nombre_usuario}! Puedes preguntarme algo o decir 'deseo borrar algo' para eliminar conocimientos.")
+print(f"¡Hola, {nombre_usuario}! Puedes preguntarme algo, pedirme la fecha/hora o decir 'deseo borrar algo' para eliminar conocimientos.")
 while True:
     pregunta = preguntar()
     if pregunta.lower() in ["salir", "adiós"]:

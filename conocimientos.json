@@ -8,7 +8,8 @@
         "bien, y vos??": "bien, gracias por preguntar",
         "yo me llamo David": "que lindo nombre",
         "bien": "que bueno que estes bien",
-        "lindo nombre": "gracias"
+        "lindo nombre": "gracias",
+        "como estas??": "estoy bien, gracias por preguntar"
     },
     "datosdelaIA": {
         "como te llamas?": "Mi nombre es Clark"

@@ -1,0 +1,24 @@
+{
+    "saludos": {
+        "buenas": "buenas como estas??",
+        "hola": "hola, como estas??",
+        "bien y tu ??": "bien, gracias por preguntar",
+        "hasta ma\u00f1ana": "hasta ma\u00f1ana",
+        "me ire a dormir": "que descanses, hasta ma\u00f1ana",
+        "bien, y vos??": "bien, gracias por preguntar",
+        "yo me llamo David": "que lindo nombre",
+        "bien": "que bueno que estes bien",
+        "lindo nombre": "gracias"
+    },
+    "datosdelaIA": {
+        "como te llamas?": "Mi nombre es Clark"
+    },
+    "chistes": {
+        "sabes contar chistes??": "\u00bfPor qu\u00e9 los p\u00e1jaros no usan Facebook? Porque ya tienen Twitter.",
+        "tienes otro chiste??": "\"Un gato choca su auto y dice: 'Miau...to'.\" \ud83d\ude38\ud83d\ude97"
+    },
+    "charla": {
+        "jajajajaja": "que bueno te hizo reir",
+        "sabes sumar": "aun no aprendo, pronto te ayudare con eso"
+    }
+}

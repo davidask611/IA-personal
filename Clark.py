@@ -121,7 +121,7 @@ def obtener_respuesta_si_no(mensaje):
         respuesta = input(f"Respuesta inválida. {mensaje} (si/no): ").lower()
     return respuesta == "si"
 
-# Función para agregar una nueva categoría o subcategoría
+# Refactorizando la función de agregar categoría
 def agregar_categoria():
     nueva_categoria = input("Nombre de la nueva categoría: ")
     nueva_categoria = validar_campo_obligatorio(nueva_categoria, "Nombre de la nueva categoría")
@@ -134,49 +134,47 @@ def agregar_categoria():
         nueva_subcategoria = input("Nombre de la subcategoría: ")
         nueva_subcategoria = validar_campo_obligatorio(nueva_subcategoria, "Nombre de la subcategoría")
         conocimientos[nueva_categoria][nueva_subcategoria] = {}
-    else:
-        conocimientos[nueva_categoria] = {}
 
-    # Detalles adicionales
-    nombre_completo = input("Nombre completo (opcional): ")
-    if nombre_completo:
-        conocimientos[nueva_categoria][nueva_subcategoria]["nombre_completo"] = nombre_completo
+        # Utilizar la nueva función para pedir detalles opcionales
+        conocimientos[nueva_categoria][nueva_subcategoria]["nombre_completo"] = pedir_detalle_opcional("nombre completo")
+        conocimientos[nueva_categoria][nueva_subcategoria]["fecha"] = pedir_detalle_opcional("fecha", tipo="fecha")
+        conocimientos[nueva_categoria][nueva_subcategoria]["fecha-fecha"] = pedir_detalle_opcional("rango de fechas", tipo="fecha")
+        conocimientos[nueva_categoria][nueva_subcategoria]["periodo"] = pedir_detalle_opcional("periodo", tipo="periodo")
+        conocimientos[nueva_categoria][nueva_subcategoria]["descripcion"] = pedir_detalle_opcional("descripción")
+        conocimientos[nueva_categoria][nueva_subcategoria]["logros"] = pedir_detalle_opcional("logros")
+        conocimientos[nueva_categoria][nueva_subcategoria]["pais"] = pedir_detalle_opcional("país")
+        conocimientos[nueva_categoria][nueva_subcategoria]["provincia"] = pedir_detalle_opcional("provincia")
+        conocimientos[nueva_categoria][nueva_subcategoria]["cargo"] = pedir_detalle_opcional("cargo")
+        conocimientos[nueva_categoria][nueva_subcategoria]["raza"] = pedir_detalle_opcional("raza")
 
-    # Validar formato y añadir fecha
-    if obtener_respuesta_si_no("¿Deseas agregar una fecha?"):
-        formato_fecha = pedir_formato_fecha()
-        fecha = input(f"Introduce la fecha en formato {formato_fecha.replace('%D', '')}: ")
-        while not validar_fecha(fecha, formato_fecha):
-            print("Formato de fecha inválido.")
-            fecha = input(f"Introduce la fecha en formato {formato_fecha.replace('%D', '')}: ")
-        conocimientos[nueva_categoria][nueva_subcategoria]["fecha"] = fecha
+        # Preguntar si quiere agregar un género musical
+        conocimientos[nueva_categoria][nueva_subcategoria]["genero_musical"] = pedir_detalle_opcional("género musical (rock, romántico, pop, cumbia)")
 
-    # Validar formato para fechas dobles (fecha-fecha)
-    if obtener_respuesta_si_no("¿Deseas agregar un rango de fechas (fecha-fecha)?"):
-        fecha_inicio = input("Introduce la fecha de inicio (DD-MM-YYYY): ")
-        fecha_fin = input("Introduce la fecha de fin (DD-MM-YYYY): ")
-        conocimientos[nueva_categoria][nueva_subcategoria]["fecha-fecha"] = f"{fecha_inicio} a {fecha_fin}"
+    # Guardar los conocimientos en un archivo JSON
+    guardar_conocimientos()
 
-    # Periodo
-    if obtener_respuesta_si_no("¿Deseas agregar un periodo (por ejemplo, 2020-2024)?"):
-        periodo = input("Introduce el periodo: ")
-        conocimientos[nueva_categoria][nueva_subcategoria]["periodo"] = periodo
+    # Preguntar si quiere agregar más subcategorías
+    if obtener_respuesta_si_no("¿Deseas agregar más subcategorías dentro de esta subcategoría?"):
+        agregar_subcategoria(nueva_categoria, nueva_subcategoria)
 
-    # Agregar más detalles
-    descripcion = input("Descripción (opcional): ")
-    logros = input("Logros (opcional): ")
-    pais = input("País (opcional): ")
-    provincia = input("Provincia (opcional): ")
-    cargo = input("Cargo (opcional): ")
-    raza = input("Raza (opcional): ")
 
-    # Elegir género musical (rock, romántico, pop, cumbia)
-    if obtener_respuesta_si_no("¿Deseas agregar un género musical?"):
-        genero = input("Elige un género musical (rock, romántico, pop, cumbia): ").lower()
-        while genero not in ["rock", "romantico", "pop", "cumbia"]:
-            print("Género musical no válido. Intenta de nuevo.")
-            genero = input("Elige un género musical (rock, romántico, pop, cumbia): ").lower()
-        conocimientos[nueva_categoria][nueva_subcategoria]["genero_musical"] = genero
+    # Función para pedir un detalle opcional al usuario
+def pedir_detalle_opcional(campo, tipo="texto"):
+    if obtener_respuesta_si_no(f"¿Deseas agregar {campo}?"):
+        if tipo == "fecha":
+            while True:
+                valor = input(f"Introduce {campo} (DD-MM-YYYY): ")
+                if validar_fecha(valor, "%d-%m-%Y"):
+                    return valor
+                else:
+                    print("Formato de fecha inválido. Intenta de nuevo.")
+        elif tipo == "periodo":
+            return input(f"Introduce el {campo} (ejemplo: 2020-2024): ")
+        elif tipo == "texto":
+            return input(f"Introduce {campo}: ")
+    return None  # Si no se desea agregar, no devuelve nada
+
+
 
     # Añadir al diccionario solo los campos con valores
     if descripcion:
@@ -341,9 +339,13 @@ def borrar_subcategoria():
 
 # Función para guardar los conocimientos en un archivo JSON
 def guardar_conocimientos():
-    with open("conocimientos.json", "w") as archivo:
-        json.dump(conocimientos, archivo, indent=4)
-    print("Conocimientos guardados con éxito.")
+    try:
+        with open("conocimientos.json", "w") as archivo:
+            json.dump(conocimientos, archivo, indent=4)
+        print("Conocimientos guardados con éxito.")
+    except IOError:
+        print("Error: No se pudo guardar el archivo conocimientos.json.")
+
 
 # Función para cargar los conocimientos desde un archivo JSON
 def cargar_conocimientos():
@@ -352,6 +354,10 @@ def cargar_conocimientos():
             return json.load(archivo)
     except FileNotFoundError:
         return {}
+    except json.JSONDecodeError:
+        print("Error: El archivo conocimientos.json está corrupto o tiene un formato inválido.")
+        return {}
+
 
 
 # Función para responder a una pregunta
@@ -361,7 +367,7 @@ def preguntar(pregunta):
     # Verificar si se pregunta por el día actual
     if pregunta_limpia in ["que dia es hoy", "que dia estamos", "que dia es hoy?", "dime el dia"]:
         dia_actual = datetime.now().strftime("%A")  # Nombre del día en inglés
-        dia_actual_espanol = dias_semana[dia_actual]  # Traducir al español
+        dia_actual_espanol = dias_semana.get(dia_actual, "un día desconocido")  # Usar 'get' para evitar KeyError # Traducir al español
         return f"Hoy es {dia_actual_espanol}."
 
     # Verificar si se pregunta por la fecha actual

@@ -1,16 +1,12 @@
 import json
 from difflib import SequenceMatcher
 from datetime import datetime
-import random
-import unicodedata  # Importamos para eliminar acentos
+import unicodedata
 
 # Diccionario que almacenará conocimientos organizados por categorías
 conocimientos = {}
-nombre_usuario = ""
-historial_conversacion = []
 
-UMBRAL_SIMILITUD = 0.85
-MAX_HISTORIAL = 5
+UMBRAL_SIMILITUD = 0.75
 
 # Diccionario para traducir los días de la semana al español
 dias_semana = {
@@ -35,161 +31,242 @@ def similar(a, b):
     b = eliminar_acentos(b)
     return SequenceMatcher(None, a, b).ratio()
 
-# Función para solicitar entrada del usuario
-def preguntar():
-    return input("Tú: ")
+# Validar que una categoría exista
+def validar_categoria(categoria):
+    return categoria in conocimientos
 
-# Función para mostrar categorías disponibles
-def mostrar_categorias():
-    if conocimientos:
-        print("IA: Categorías disponibles:")
-        for idx, categoria in enumerate(conocimientos, 1):
-            print(f"{idx}. {categoria}")
+# Validar campos obligatorios
+def validar_campo_obligatorio(campo, mensaje):
+    while not campo:
+        campo = input(f"{mensaje} (Este campo es obligatorio): ")
+    return campo
+
+# Validar formato de fecha
+def validar_fecha(fecha, formato):
+    try:
+        datetime.strptime(fecha, formato)
+        return True
+    except ValueError:
+        return False
+
+# Solicitar el nombre del usuario al inicio de la conversación
+def solicitar_nombre_usuario():
+    nombre = ""
+    while not nombre.strip():  # Mientras el nombre esté vacío o solo contenga espacios
+        nombre = input("¡Hola! Soy tu Asistente Personal. ¿Cuál es tu nombre? (No puedes dejarlo en blanco): ")
+        if not nombre.strip():
+            print("Por favor, ingresa un nombre válido.")
+    return nombre
+
+nombre_usuario = solicitar_nombre_usuario()
+print(f"¡Hola, {nombre_usuario}! Puedes preguntarme algo, agregar una categoría/subcategoría o borrar conocimiento.")
+
+
+# Función para pedir un formato de fecha al usuario
+def pedir_formato_fecha():
+    print("IA: ¿En qué formato te gustaría agregar la fecha?")
+    print("1. Día-Mes-Año")
+    print("2. Solo año")
+    
+    eleccion = input("Elige una opción (1 o 2): ")
+    
+    if eleccion == "1":
+        return "%d-%m-%Y"
+    elif eleccion == "2":
+        return "%Y"
     else:
-        print("IA: No hay categorías disponibles actualmente.")
+        print("Opción inválida. Se usará el formato 'Día-Mes-Año'.")
+        return "%d-%m-%Y"
 
-# Función para eliminar todas las categorías
-def limpiar_categorias():
-    confirmacion = input("IA: ¿Estás seguro de que deseas eliminar todas las categorías? Esto borrará toda la memoria. (sí/no): ").lower()
-    if confirmacion in ["sí", "si", "s"]:
-        conocimientos.clear()
-        guardar_conocimientos()
-        return "IA: Todas las categorías han sido eliminadas, la memoria está vacía."
-    else:
-        return "IA: La memoria no ha sido modificada."
+# Controlar respuestas de sí/no
+def obtener_respuesta_si_no(mensaje):
+    respuesta = input(f"{mensaje} (si/no): ").lower()
+    while respuesta not in ["si", "no"]:
+        respuesta = input(f"Respuesta inválida. {mensaje} (si/no): ").lower()
+    return respuesta == "si"
 
-# Función para recordar el contexto de la conversación
-def recordar_contexto():
-    if historial_conversacion:
-        print("IA: Recordando el contexto de la conversación...")
-        for idx, item in enumerate(historial_conversacion[-MAX_HISTORIAL:], 1):
-            print(f"{idx}. Tú dijiste: '{item['pregunta']}' -> IA respondió: '{item['respuesta']}'")
+# Función para agregar una nueva categoría o subcategoría
+def agregar_categoria():
+    nueva_categoria = input("Nombre de la nueva categoría: ")
+    nueva_categoria = validar_campo_obligatorio(nueva_categoria, "Nombre de la nueva categoría")
 
-# Función para responder preguntas y gestionar las categorías
-def responder(pregunta):
-    # Recordar contexto al iniciar una nueva pregunta
-    recordar_contexto()
-
-    # Si se desea borrar algo de la memoria
-    if eliminar_acentos(pregunta.lower()) == "deseo borrar algo":
-        nombre_ingresado = input("IA: Para confirmar, dime tu nombre: ")
-        if nombre_ingresado.lower() == nombre_usuario.lower():
-            tipo_borrado = input("IA: ¿Deseas borrar una categoría completa, una frase específica o limpiar todas las categorías? (categoría/frase/todas): ").lower()
-            if tipo_borrado == "categoría":
-                mostrar_categorias()
-                categoria_a_borrar = input("IA: ¿Qué categoría deseas que olvide? ")
-                if categoria_a_borrar.isdigit():
-                    categoria_a_borrar = list(conocimientos.keys())[int(categoria_a_borrar) - 1]
-                if categoria_a_borrar in conocimientos:
-                    del conocimientos[categoria_a_borrar]
-                    guardar_conocimientos()
-                    return f"He olvidado todo lo que me enseñaste sobre la categoría: '{categoria_a_borrar}'"
-                else:
-                    return "No encuentro esa categoría en mi memoria."
-            elif tipo_borrado == "frase":
-                item_a_borrar = input("IA: ¿Qué frase deseas que olvide? ")
-                for categoria in conocimientos:
-                    if item_a_borrar in conocimientos[categoria]:
-                        conocimientos[categoria].remove(item_a_borrar)
-                        guardar_conocimientos()
-                        return f"He olvidado la frase: '{item_a_borrar}' en la categoría '{categoria}'"
-                return "No encuentro esa frase en mi memoria."
-            elif tipo_borrado == "todas":
-                return limpiar_categorias()
-            else:
-                return "No entendí tu elección."
-
-    # Si se pregunta por un presidente específico
-    if "presidente" in conocimientos:
-        presidentes = conocimientos["presidente"]
-        for presidente, info in presidentes.items():
-            if presidente.lower() in eliminar_acentos(pregunta.lower()):
-                return (f"{presidente}: {info['nombre_completo']} fue presidente entre {info['periodo']}. "
-                        f"Descripción: {info['descripcion']}")
-
-    # Si se pregunta por la hora o fecha actual
-    if eliminar_acentos(pregunta.lower()) in ["que hora es", "dime la hora", "que hora es?", "que hora es??"]:
-        hora_actual = datetime.now().strftime("%H:%M")
-        return f"La hora actual es {hora_actual}."
-    elif eliminar_acentos(pregunta.lower()) in ["que fecha es hoy", "dime la fecha", "que fecha es hoy??", "que fecha es hoy?"]:
-        fecha_actual = datetime.now().strftime("%Y-%m-%d")
-        return f"La fecha de hoy es {fecha_actual}."
-    elif eliminar_acentos(pregunta.lower()) in ["que dia es hoy", "dime el dia", "que dia es hoy??", "que dia es hoy?", "en que dia estamos"]:
-        dia_actual = datetime.now().strftime("%A")
-        dia_actual_es = dias_semana.get(dia_actual, "día desconocido")
-        return f"Hoy es {dia_actual_es}."
-
-    # Verificar si la pregunta es el nombre de una categoría y devolver una respuesta aleatoria
-    if eliminar_acentos(pregunta) in conocimientos:
-        respuestas_categoria = list(conocimientos[eliminar_acentos(pregunta)].values())
-        if respuestas_categoria:
-            return random.choice(respuestas_categoria)
-        else:
-            return "IA: No tengo respuestas en esa categoría."
-
-    # Intentar encontrar una respuesta similar en cualquier categoría
-    for categoria, frases in conocimientos.items():
-        for conocida, respuesta in frases.items():
-            similitud = similar(pregunta, conocida)
-            if similitud > UMBRAL_SIMILITUD:
-                print(f"IA: Respondiendo automáticamente por similitud con '{conocida}' (similitud: {similitud:.2f})")
-                historial_conversacion.append({"pregunta": pregunta, "respuesta": respuesta})
-                if len(historial_conversacion) > MAX_HISTORIAL:
-                    historial_conversacion.pop(0)
-                return respuesta
-            elif 0.7 < similitud <= UMBRAL_SIMILITUD:
-                confirmacion = input(f"IA: ¿La frase '{pregunta}' significa lo mismo que '{conocida}'? (sí/no): ").lower()
-                if confirmacion in ["sí", "si", "s"]:
-                    historial_conversacion.append({"pregunta": pregunta, "respuesta": respuesta})
-                    if len(historial_conversacion) > MAX_HISTORIAL:
-                        historial_conversacion.pop(0)
-                    return respuesta
-
-    # Si no se encuentra la pregunta, aprender una nueva
-    nueva_respuesta = input("IA: No lo sé, ¿qué debería responder? ")
-    mostrar_categorias()
-    eleccion_categoria = input("IA: Elige una categoría o escribe 'nueva' para crear una nueva: ").lower()
-
-    if eleccion_categoria == "nueva":
-        nueva_categoria = input("IA: ¿Cómo se llamará la nueva categoría? ")
+    if nueva_categoria not in conocimientos:
         conocimientos[nueva_categoria] = {}
-        conocimientos[nueva_categoria][pregunta] = nueva_respuesta
-    elif eleccion_categoria.isdigit():
-        eleccion_categoria = list(conocimientos.keys())[int(eleccion_categoria) - 1]
-        conocimientos[eleccion_categoria][pregunta] = nueva_respuesta
-    elif eleccion_categoria in conocimientos:
-        conocimientos[eleccion_categoria][pregunta] = nueva_respuesta
+
+    # Preguntar si se va a crear una subcategoría
+    if obtener_respuesta_si_no("¿Deseas agregar una subcategoría?"):
+        nueva_subcategoria = input("Nombre de la subcategoría: ")
+        nueva_subcategoria = validar_campo_obligatorio(nueva_subcategoria, "Nombre de la subcategoría")
+        conocimientos[nueva_categoria][nueva_subcategoria] = {}
     else:
-        return "Categoría no válida."
+        conocimientos[nueva_categoria] = {}
+
+    # Detalles adicionales
+    nombre_completo = input("Nombre completo (opcional): ")
+    if nombre_completo:
+        conocimientos[nueva_categoria][nueva_subcategoria]["nombre_completo"] = nombre_completo
+
+    # Validar formato y añadir fecha
+    if obtener_respuesta_si_no("¿Deseas agregar una fecha?"):
+        formato_fecha = pedir_formato_fecha()
+        fecha = input(f"Introduce la fecha en formato {formato_fecha.replace('%D', '')}: ")
+        while not validar_fecha(fecha, formato_fecha):
+            print("Formato de fecha inválido.")
+            fecha = input(f"Introduce la fecha en formato {formato_fecha.replace('%D', '')}: ")
+        conocimientos[nueva_categoria][nueva_subcategoria]["fecha"] = fecha
+
+    # Agregar más detalles
+    descripcion = input("Descripción (opcional): ")
+    logros = input("Logros (opcional): ")
+    pais = input("País (opcional): ")
+    provincia = input("Provincia (opcional): ")
+    cargo = input("Cargo (opcional): ")
+
+    # Añadir al diccionario solo los campos con valores
+    if descripcion:
+        conocimientos[nueva_categoria][nueva_subcategoria]["descripcion"] = descripcion
+    if logros:
+        conocimientos[nueva_categoria][nueva_subcategoria]["logros"] = logros
+    if pais:
+        conocimientos[nueva_categoria][nueva_subcategoria]["pais"] = pais
+    if provincia:
+        conocimientos[nueva_categoria][nueva_subcategoria]["provincia"] = provincia
+    if cargo:
+        conocimientos[nueva_categoria][nueva_subcategoria]["cargo"] = cargo
+
+    # Guardar los conocimientos en un archivo JSON
+    guardar_conocimientos()
+
+    # Preguntar si quiere agregar más subcategorías
+    if obtener_respuesta_si_no("¿Deseas agregar más subcategorías dentro de esta subcategoría?"):
+        agregar_subcategoria(nueva_categoria, nueva_subcategoria)
+
+# Función para agregar subcategoría dentro de una subcategoría
+def agregar_subcategoria(categoria, subcategoria):
+    nueva_subcategoria = input("Nombre de la subcategoría dentro de la subcategoría: ")
+    conocimientos[categoria][subcategoria][nueva_subcategoria] = {}
+
+    # Repetir el proceso para agregar detalles
+    nombre_completo = input("Nombre completo (opcional): ")
+    if nombre_completo:
+        conocimientos[categoria][subcategoria][nueva_subcategoria]["nombre_completo"] = nombre_completo
+
+    if obtener_respuesta_si_no("¿Deseas agregar una fecha a la subcategoría?"):
+        formato_fecha = pedir_formato_fecha()
+        fecha = input(f"Introduce la fecha en formato {formato_fecha.replace('%D', '')}: ")
+        while not validar_fecha(fecha, formato_fecha):
+            print("Formato de fecha inválido.")
+            fecha = input(f"Introduce la fecha en formato {formato_fecha.replace('%D', '')}: ")
+        conocimientos[categoria][subcategoria][nueva_subcategoria]["fecha"] = fecha
+
+    descripcion = input("Descripción (opcional): ")
+    logros = input("Logros (opcional): ")
+    pais = input("País (opcional): ")
+    provincia = input("Provincia (opcional): ")
+    cargo = input("Cargo (opcional): ")
+
+    # Guardar información adicional
+    if descripcion:
+        conocimientos[categoria][subcategoria][nueva_subcategoria]["descripcion"] = descripcion
+    if logros:
+        conocimientos[categoria][subcategoria][nueva_subcategoria]["logros"] = logros
+    if pais:
+        conocimientos[categoria][subcategoria][nueva_subcategoria]["pais"] = pais
+    if provincia:
+        conocimientos[categoria][subcategoria][nueva_subcategoria]["provincia"] = provincia
+    if cargo:
+        conocimientos[categoria][subcategoria][nueva_subcategoria]["cargo"] = cargo
 
     guardar_conocimientos()
-    historial_conversacion.append({"pregunta": pregunta, "respuesta": nueva_respuesta})
-    if len(historial_conversacion) > MAX_HISTORIAL:
-        historial_conversacion.pop(0)
-    return "Gracias, he aprendido algo nuevo!"
+
+# Función para borrar una categoría, subcategoría o un detalle específico
+def borrar_conocimiento():
+    categoria = input("¿Qué categoría deseas borrar?: ")
+    if categoria in conocimientos:
+        subcategoria = input("¿Deseas borrar una subcategoría dentro de esta categoría? (si/no): ").lower()
+        if subcategoria == "si":
+            nombre_subcategoria = input("Nombre de la subcategoría: ")
+            if nombre_subcategoria in conocimientos[categoria]:
+                detalle = input("¿Deseas borrar un detalle específico de esta subcategoría? (si/no): ").lower()
+                if detalle == "si":
+                    detalle_borrar = input("Nombre del detalle a borrar (ej. fecha, descripcion, etc.): ")
+                    if detalle_borrar in conocimientos[categoria][nombre_subcategoria]:
+                        del conocimientos[categoria][nombre_subcategoria][detalle_borrar]
+                        print(f"Detalle '{detalle_borrar}' borrado con éxito.")
+                    else:
+                        print(f"El detalle '{detalle_borrar}' no existe.")
+                else:
+                    del conocimientos[categoria][nombre_subcategoria]
+                    print(f"Subcategoría '{nombre_subcategoria}' borrada con éxito.")
+            else:
+                print(f"La subcategoría '{nombre_subcategoria}' no existe.")
+        else:
+            del conocimientos[categoria]
+            print(f"Categoría '{categoria}' borrada con éxito.")
+    else:
+        print(f"La categoría '{categoria}' no existe.")
+    
+    guardar_conocimientos()
 
 # Función para guardar los conocimientos en un archivo JSON
 def guardar_conocimientos():
     with open("conocimientos.json", "w") as archivo:
         json.dump(conocimientos, archivo, indent=4)
-    print("IA: Conocimientos guardados exitosamente.")
+    print("Conocimientos guardados con éxito.")
 
-# Intentar cargar los conocimientos desde el archivo JSON
-try:
-    with open("conocimientos.json", "r") as archivo:
-        conocimientos = json.load(archivo)
-except FileNotFoundError:
-    conocimientos = {}
+# Función para cargar los conocimientos desde un archivo JSON
+def cargar_conocimientos():
+    try:
+        with open("conocimientos.json", "r") as archivo:
+            return json.load(archivo)
+    except FileNotFoundError:
+        return {}
 
-# Solicitar el nombre del usuario al inicio de la conversación
-nombre_usuario = input("¡Hola! Soy tu IA. ¿Cuál es tu nombre? ")
+# Función para responder a una pregunta
+def preguntar(pregunta):
+    for categoria, subcategorias in conocimientos.items():
+        if similar(categoria, pregunta) > UMBRAL_SIMILITUD:
+            return subcategorias
 
-print(f"¡Hola, {nombre_usuario}! Puedes preguntarme algo, pedirme la fecha/hora o decir 'deseo borrar algo' para eliminar conocimientos.")
-while True:
-    pregunta = preguntar()
-    if eliminar_acentos(pregunta.lower()) in ["salir", "adios", "adiós"]:
-        guardar_conocimientos()
-        print("IA: ¡Adiós!")
-        break
-    respuesta = responder(pregunta)
-    print("IA:", respuesta)
+        for subcategoria, detalles in subcategorias.items():
+            if similar(subcategoria, pregunta) > UMBRAL_SIMILITUD:
+                return detalles
+
+            # Validar si 'detalles' es un diccionario
+            if isinstance(detalles, dict):
+                for clave, valor in detalles.items():
+                    if similar(clave, pregunta) > UMBRAL_SIMILITUD:
+                        return valor
+            else:
+                # Si detalles no es un diccionario, devolverlo directamente
+                if similar(detalles, pregunta) > UMBRAL_SIMILITUD:
+                    return detalles
+
+    return "Lo siento, no tengo información sobre eso."
+
+
+# Función principal
+def main():
+    conocimientos.update(cargar_conocimientos())
+    #nombre_usuario = solicitar_nombre_usuario()
+    #print(f"¡Hola, {nombre_usuario}! Puedes preguntarme algo, agregar una categoría/subcategoría o borrar conocimiento.")
+    
+    while True:
+        pregunta = input("Tú: ")
+        pregunta_limpia = eliminar_acentos(pregunta.lower())
+
+        if pregunta_limpia in ["salir", "adios", "adiós"]:
+            guardar_conocimientos()
+            print("IA: ¡Adiós!")
+            break
+        elif pregunta_limpia == "agregar categoria":
+            agregar_categoria()
+        elif pregunta_limpia == "deseo borrar algo":
+            borrar_conocimiento()
+        else:
+            respuesta = preguntar(pregunta)
+            print(f"IA: {respuesta}")
+
+# Ejecutar el programa
+if __name__ == "__main__":
+    main()

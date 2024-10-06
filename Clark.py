@@ -6,7 +6,7 @@ import unicodedata
 # Diccionario que almacenará conocimientos organizados por categorías
 conocimientos = {}
 
-UMBRAL_SIMILITUD = 0.75
+UMBRAL_SIMILITUD = 0.85
 
 # Diccionario para traducir los días de la semana al español
 dias_semana = {
@@ -21,9 +21,14 @@ dias_semana = {
 
 # Función para eliminar acentos
 def eliminar_acentos(texto):
-    return ''.join(
-        c for c in unicodedata.normalize('NFD', texto) if unicodedata.category(c) != 'Mn'
-    ).lower()
+    # Normalizar el texto pero evitar que la 'ñ' se convierta
+    texto_normalizado = unicodedata.normalize('NFD', texto)
+    texto_modificado = ''.join(
+        c if c == 'ñ' or unicodedata.category(c) != 'Mn' else ''
+        for c in texto_normalizado
+    )
+    return texto_modificado.lower()
+
 
 # Función para calcular la similitud entre dos cadenas
 def similar(a, b):
@@ -78,8 +83,6 @@ def responder(pregunta):
 
     if respuesta_presidente:
         return respuesta_presidente
-
-    # Aquí continuarías con las demás verificaciones o lógica
 
 
 # Solicitar el nombre del usuario al inicio de la conversación
@@ -212,34 +215,106 @@ def agregar_subcategoria(categoria, subcategoria):
 
     guardar_conocimientos()
 
-# Función para borrar una categoría, subcategoría o un detalle específico
-def borrar_conocimiento():
-    categoria = input("¿Qué categoría deseas borrar?: ")
-    if categoria in conocimientos:
-        subcategoria = input("¿Deseas borrar una subcategoría dentro de esta categoría? (si/no): ").lower()
-        if subcategoria == "si":
-            nombre_subcategoria = input("Nombre de la subcategoría: ")
-            if nombre_subcategoria in conocimientos[categoria]:
-                detalle = input("¿Deseas borrar un detalle específico de esta subcategoría? (si/no): ").lower()
-                if detalle == "si":
-                    detalle_borrar = input("Nombre del detalle a borrar (ej. fecha, descripcion, etc.): ")
-                    if detalle_borrar in conocimientos[categoria][nombre_subcategoria]:
-                        del conocimientos[categoria][nombre_subcategoria][detalle_borrar]
-                        print(f"Detalle '{detalle_borrar}' borrado con éxito.")
-                    else:
-                        print(f"El detalle '{detalle_borrar}' no existe.")
-                else:
-                    del conocimientos[categoria][nombre_subcategoria]
-                    print(f"Subcategoría '{nombre_subcategoria}' borrada con éxito.")
-            else:
-                print(f"La subcategoría '{nombre_subcategoria}' no existe.")
-        else:
-            del conocimientos[categoria]
-            print(f"Categoría '{categoria}' borrada con éxito.")
-    else:
-        print(f"La categoría '{categoria}' no existe.")
+# Función para borrar una categoría o subcategoría
+def borrar_categoria():
+    if not conocimientos:
+        print("No hay categorías para borrar.")
+        return
 
-    guardar_conocimientos()
+    # Mostrar lista de categorías con números
+    print("Categorías disponibles:")
+    categorias = list(conocimientos.keys())
+    for idx, categoria in enumerate(categorias, start=1):
+        print(f"{idx}. {categoria}")
+
+    # Solicitar selección
+    seleccion = input("Escribe el número o el nombre de la categoría que deseas borrar: ")
+
+    # Verificar si la selección es un número
+    if seleccion.isdigit():
+        indice = int(seleccion) - 1
+        if 0 <= indice < len(categorias):
+            categoria_a_borrar = categorias[indice]
+        else:
+            print("Número inválido. Por favor intenta de nuevo.")
+            return
+    else:
+        categoria_a_borrar = seleccion
+
+    # Confirmar si existe la categoría
+    if categoria_a_borrar in conocimientos:
+        del conocimientos[categoria_a_borrar]
+        print(f"La categoría '{categoria_a_borrar}' ha sido borrada.")
+        guardar_conocimientos()
+    else:
+        print("Categoría no encontrada. Por favor intenta de nuevo.")
+
+
+
+# Función para borrar una subcategoría dentro de una categoría
+def borrar_subcategoria():
+    if not conocimientos:
+        print("No hay categorías disponibles.")
+        return
+
+    # Mostrar lista de categorías con números
+    print("Categorías disponibles:")
+    categorias = list(conocimientos.keys())
+    for idx, categoria in enumerate(categorias, start=1):
+        print(f"{idx}. {categoria}")
+
+    # Solicitar selección de categoría
+    seleccion_categoria = input("Escribe el número o el nombre de la categoría que contiene la subcategoría que deseas borrar: ")
+
+    # Verificar si la selección de categoría es un número
+    if seleccion_categoria.isdigit():
+        indice_categoria = int(seleccion_categoria) - 1
+        if 0 <= indice_categoria < len(categorias):
+            categoria_seleccionada = categorias[indice_categoria]
+        else:
+            print("Número de categoría inválido. Por favor intenta de nuevo.")
+            return
+    else:
+        categoria_seleccionada = seleccion_categoria
+
+    # Confirmar si existe la categoría seleccionada
+    if categoria_seleccionada in conocimientos:
+        subcategorias = conocimientos[categoria_seleccionada]
+        if not isinstance(subcategorias, dict):
+            print(f"La categoría '{categoria_seleccionada}' no tiene subcategorías.")
+            return
+
+        # Mostrar lista de subcategorías con números
+        print(f"Subcategorías disponibles en '{categoria_seleccionada}':")
+        subcategorias_lista = list(subcategorias.keys())
+        for idx, subcategoria in enumerate(subcategorias_lista, start=1):
+            print(f"{idx}. {subcategoria}")
+
+        # Solicitar selección de subcategoría
+        seleccion_subcategoria = input("Escribe el número o el nombre de la subcategoría que deseas borrar: ")
+
+        # Verificar si la selección de subcategoría es un número
+        if seleccion_subcategoria.isdigit():
+            indice_subcategoria = int(seleccion_subcategoria) - 1
+            if 0 <= indice_subcategoria < len(subcategorias_lista):
+                subcategoria_a_borrar = subcategorias_lista[indice_subcategoria]
+            else:
+                print("Número de subcategoría inválido. Por favor intenta de nuevo.")
+                return
+        else:
+            subcategoria_a_borrar = seleccion_subcategoria
+
+        # Confirmar si existe la subcategoría
+        if subcategoria_a_borrar in subcategorias:
+            del conocimientos[categoria_seleccionada][subcategoria_a_borrar]
+            print(f"La subcategoría '{subcategoria_a_borrar}' ha sido borrada de la categoría '{categoria_seleccionada}'.")
+            guardar_conocimientos()
+        else:
+            print("Subcategoría no encontrada. Por favor intenta de nuevo.")
+    else:
+        print("Categoría no encontrada. Por favor intenta de nuevo.")
+
+
 
 # Función para guardar los conocimientos en un archivo JSON
 def guardar_conocimientos():
@@ -256,7 +331,28 @@ def cargar_conocimientos():
         return {}
 
 # Función para responder a una pregunta
+
+# Función para responder a una pregunta
 def preguntar(pregunta):
+    pregunta_limpia = eliminar_acentos(pregunta.lower())
+
+    # Verificar si se pregunta por el día actual
+    if pregunta_limpia in ["que dia es hoy", "que dia estamos", "que dia es hoy?", "dime el dia"]:
+        dia_actual = datetime.now().strftime("%A")  # Nombre del día en inglés
+        dia_actual_espanol = dias_semana[dia_actual]  # Traducir al español
+        return f"Hoy es {dia_actual_espanol}."
+
+    # Verificar si se pregunta por la fecha actual
+    elif pregunta_limpia in ["que fecha es hoy", "dime la fecha", "que fecha es hoy?", "que fecha es hoy??"]:
+        fecha_actual = datetime.now().strftime("%d-%m-%Y")  # Fecha en formato dd-mm-yyyy
+        return f"La fecha de hoy es {fecha_actual}."
+
+    # Verificar si se pregunta por el año actual
+    elif pregunta_limpia in ["que año es", "en que anio estamos", "que anio es hoy?", "dime el ano"]:
+        anio_actual = datetime.now().strftime("%Y")  # Año actual
+        return f"Estamos en el año {anio_actual}."
+
+    # Buscar en los conocimientos almacenados
     for categoria, subcategorias in conocimientos.items():
         if similar(categoria, pregunta) > UMBRAL_SIMILITUD:
             return subcategorias
@@ -279,29 +375,6 @@ def preguntar(pregunta):
 
 
 # Función principal
-"""def main():
-    conocimientos.update(cargar_conocimientos())
-    #nombre_usuario = solicitar_nombre_usuario()
-    #print(f"¡Hola, {nombre_usuario}! Puedes preguntarme algo, agregar una categoría/subcategoría o borrar conocimiento.")
-
-    while True:
-        pregunta = input("Tú: ")
-        pregunta_limpia = eliminar_acentos(pregunta.lower())
-
-        if pregunta_limpia in ["salir", "adios", "adiós"]:
-            guardar_conocimientos()
-            print("IA: ¡Adiós!")
-            break
-        elif pregunta_limpia == "agregar categoria":
-            agregar_categoria()
-        elif pregunta_limpia == "deseo borrar algo":
-            borrar_conocimiento()
-        else:
-            respuesta = preguntar(pregunta)
-            print(f"IA: {respuesta}")
-"""
-
-# Función principal
 def main():
     conocimientos.update(cargar_conocimientos())
     #nombre_usuario = solicitar_nombre_usuario()  # Asegurarse de que el nombre de usuario se pida al inicio
@@ -318,7 +391,13 @@ def main():
         elif pregunta_limpia == "agregar categoria":
             agregar_categoria()
         elif pregunta_limpia == "deseo borrar algo":
-            borrar_conocimiento()
+            tipo_borrado = input("¿Deseas borrar una categoría o una subcategoría? (categoria/subcategoria): ").lower()
+            if tipo_borrado == "categoria":
+                borrar_categoria()
+            elif tipo_borrado == "subcategoria":
+                borrar_subcategoria()
+            else:
+                print("IA: Opción no reconocida. Por favor, elige 'categoria' o 'subcategoria'.")
         else:
             # Primero, buscar si hay una respuesta relacionada con presidentes
             respuesta_presidente = buscar_por_claves(pregunta)
@@ -329,7 +408,6 @@ def main():
                 # Si no se encuentra respuesta, utilizar la función preguntar
                 respuesta = preguntar(pregunta)
                 print(f"IA: {respuesta}")
-
 
 # Ejecutar el programa
 if __name__ == "__main__":

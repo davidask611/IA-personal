@@ -48,6 +48,39 @@ def validar_fecha(fecha, formato):
         return True
     except ValueError:
         return False
+# Buscar presidente y nombre clave y darlo
+def buscar_por_claves(pregunta):
+    # Convertir la pregunta a minúsculas sin acentos
+    pregunta_limpia = eliminar_acentos(pregunta.lower())
+
+    # Dividir la pregunta en palabras
+    palabras_pregunta = pregunta_limpia.split()
+
+    # Lista de presidentes en el diccionario
+    presidentes = conocimientos.get("presidente", {})
+
+    # Recorrer todos los presidentes para ver si sus nombres están en la pregunta
+    for nombre_presidente, detalles in presidentes.items():
+        # Limpiar el nombre del presidente para compararlo
+        nombre_presidente_limpio = eliminar_acentos(nombre_presidente.lower())
+
+        # Verificar si las palabras clave 'presidente' y el nombre del presidente están en la frase
+        if "presidente" in palabras_pregunta and nombre_presidente_limpio in palabras_pregunta:
+            return (f"{nombre_presidente}: {detalles['nombre_completo']} fue presidente entre {detalles['periodo']}. "
+                    f"Descripción: {detalles['descripcion']}")
+
+    return None  # Si no se encontró coincidencia
+
+# Nueva función 'responder' que procesa la pregunta
+def responder(pregunta):
+    # Buscar si la frase contiene las palabras 'presidente' y un nombre
+    respuesta_presidente = buscar_por_claves(pregunta)
+
+    if respuesta_presidente:
+        return respuesta_presidente
+
+    # Aquí continuarías con las demás verificaciones o lógica
+
 
 # Solicitar el nombre del usuario al inicio de la conversación
 def solicitar_nombre_usuario():
@@ -67,9 +100,9 @@ def pedir_formato_fecha():
     print("IA: ¿En qué formato te gustaría agregar la fecha?")
     print("1. Día-Mes-Año")
     print("2. Solo año")
-    
+
     eleccion = input("Elige una opción (1 o 2): ")
-    
+
     if eleccion == "1":
         return "%d-%m-%Y"
     elif eleccion == "2":
@@ -205,7 +238,7 @@ def borrar_conocimiento():
             print(f"Categoría '{categoria}' borrada con éxito.")
     else:
         print(f"La categoría '{categoria}' no existe.")
-    
+
     guardar_conocimientos()
 
 # Función para guardar los conocimientos en un archivo JSON
@@ -246,11 +279,11 @@ def preguntar(pregunta):
 
 
 # Función principal
-def main():
+"""def main():
     conocimientos.update(cargar_conocimientos())
     #nombre_usuario = solicitar_nombre_usuario()
     #print(f"¡Hola, {nombre_usuario}! Puedes preguntarme algo, agregar una categoría/subcategoría o borrar conocimiento.")
-    
+
     while True:
         pregunta = input("Tú: ")
         pregunta_limpia = eliminar_acentos(pregunta.lower())
@@ -266,6 +299,37 @@ def main():
         else:
             respuesta = preguntar(pregunta)
             print(f"IA: {respuesta}")
+"""
+
+# Función principal
+def main():
+    conocimientos.update(cargar_conocimientos())
+    #nombre_usuario = solicitar_nombre_usuario()  # Asegurarse de que el nombre de usuario se pida al inicio
+    #print(f"¡Hola, {nombre_usuario}! Puedes preguntarme algo, agregar una categoría/subcategoría o borrar conocimiento.")
+
+    while True:
+        pregunta = input("Tú: ")
+        pregunta_limpia = eliminar_acentos(pregunta.lower())
+
+        if pregunta_limpia in ["salir", "adios", "adiós"]:
+            guardar_conocimientos()
+            print("IA: ¡Adiós!")
+            break
+        elif pregunta_limpia == "agregar categoria":
+            agregar_categoria()
+        elif pregunta_limpia == "deseo borrar algo":
+            borrar_conocimiento()
+        else:
+            # Primero, buscar si hay una respuesta relacionada con presidentes
+            respuesta_presidente = buscar_por_claves(pregunta)
+
+            if respuesta_presidente:
+                print(f"IA: {respuesta_presidente}")
+            else:
+                # Si no se encuentra respuesta, utilizar la función preguntar
+                respuesta = preguntar(pregunta)
+                print(f"IA: {respuesta}")
+
 
 # Ejecutar el programa
 if __name__ == "__main__":

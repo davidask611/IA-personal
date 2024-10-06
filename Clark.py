@@ -151,12 +151,32 @@ def agregar_categoria():
             fecha = input(f"Introduce la fecha en formato {formato_fecha.replace('%D', '')}: ")
         conocimientos[nueva_categoria][nueva_subcategoria]["fecha"] = fecha
 
+    # Validar formato para fechas dobles (fecha-fecha)
+    if obtener_respuesta_si_no("¿Deseas agregar un rango de fechas (fecha-fecha)?"):
+        fecha_inicio = input("Introduce la fecha de inicio (DD-MM-YYYY): ")
+        fecha_fin = input("Introduce la fecha de fin (DD-MM-YYYY): ")
+        conocimientos[nueva_categoria][nueva_subcategoria]["fecha-fecha"] = f"{fecha_inicio} a {fecha_fin}"
+
+    # Periodo
+    if obtener_respuesta_si_no("¿Deseas agregar un periodo (por ejemplo, 2020-2024)?"):
+        periodo = input("Introduce el periodo: ")
+        conocimientos[nueva_categoria][nueva_subcategoria]["periodo"] = periodo
+
     # Agregar más detalles
     descripcion = input("Descripción (opcional): ")
     logros = input("Logros (opcional): ")
     pais = input("País (opcional): ")
     provincia = input("Provincia (opcional): ")
     cargo = input("Cargo (opcional): ")
+    raza = input("Raza (opcional): ")
+
+    # Elegir género musical (rock, romántico, pop, cumbia)
+    if obtener_respuesta_si_no("¿Deseas agregar un género musical?"):
+        genero = input("Elige un género musical (rock, romántico, pop, cumbia): ").lower()
+        while genero not in ["rock", "romantico", "pop", "cumbia"]:
+            print("Género musical no válido. Intenta de nuevo.")
+            genero = input("Elige un género musical (rock, romántico, pop, cumbia): ").lower()
+        conocimientos[nueva_categoria][nueva_subcategoria]["genero_musical"] = genero
 
     # Añadir al diccionario solo los campos con valores
     if descripcion:
@@ -169,6 +189,8 @@ def agregar_categoria():
         conocimientos[nueva_categoria][nueva_subcategoria]["provincia"] = provincia
     if cargo:
         conocimientos[nueva_categoria][nueva_subcategoria]["cargo"] = cargo
+    if raza:
+        conocimientos[nueva_categoria][nueva_subcategoria]["raza"] = raza
 
     # Guardar los conocimientos en un archivo JSON
     guardar_conocimientos()
@@ -176,6 +198,7 @@ def agregar_categoria():
     # Preguntar si quiere agregar más subcategorías
     if obtener_respuesta_si_no("¿Deseas agregar más subcategorías dentro de esta subcategoría?"):
         agregar_subcategoria(nueva_categoria, nueva_subcategoria)
+
 
 # Función para agregar subcategoría dentro de una subcategoría
 def agregar_subcategoria(categoria, subcategoria):
@@ -330,7 +353,6 @@ def cargar_conocimientos():
     except FileNotFoundError:
         return {}
 
-# Función para responder a una pregunta
 
 # Función para responder a una pregunta
 def preguntar(pregunta):

@@ -73,5 +73,10 @@
             "cargo": "mascota de compa\u00f1ia"
         }
     },
-    "signodelzodiaco": {}
+    "signodelzodiaco": {
+        "aries": {
+            "fecha-fecha": "21-03-2024 a 19-04-2024",
+            "descripcion": "Aries, el primer signo del zodiaco, se caracteriza por su energ\u00eda poderosa y ambici\u00f3n incansable. Son valientes, impulsivos y no temen enfrentar desaf\u00edos, tomando siempre la iniciativa. Este signo est\u00e1 lleno de entusiasmo, lo cual resulta contagioso y puede inspirar a quienes les rodean. Su esp\u00edritu competitivo y su deseo de liderar los convierten en l\u00edderes naturales, capaces de guiar a otros hacia el \u00e9xito. Sin embargo, la impaciencia y la impulsividad pueden hacerlos ansiosos, ya que desean que las cosas sucedan r\u00e1pido y sin demora. A pesar de estas cualidades, su valent\u00eda y determinaci\u00f3n los impulsan constantemente hacia sus objetivos, haciendo de Aries un signo fuerte y lleno de pasi\u00f3n."
+        }
+    }
 }

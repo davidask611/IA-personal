@@ -2,9 +2,28 @@ import json
 from difflib import SequenceMatcher
 from datetime import datetime
 import unicodedata
+import random
 
-# Diccionario que almacenará conocimientos organizados por categorías
-conocimientos = {}
+# Función para cargar el archivo JSON al inicio del programa
+def cargar_datos(nombre_archivo='datos.json'):
+    try:
+        with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
+            return json.load(archivo)
+    except FileNotFoundError:
+        # Si el archivo no existe, devuelve un diccionario vacío
+        return {}
+    except json.JSONDecodeError:
+        # Si el archivo está vacío o tiene un error, devuelve un diccionario vacío
+        return {}
+
+# Función para guardar el estado actual en el archivo JSON
+def guardar_datos(datos, nombre_archivo='datos.json'):
+    with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
+        json.dump(datos, archivo, indent=4, ensure_ascii=False)
+
+        # Cargar los conocimientos
+conocimientos = cargar_datos('conocimientos.json')
+
 
 UMBRAL_SIMILITUD = 0.85
 
@@ -21,19 +40,24 @@ dias_semana = {
 
 # Función para eliminar acentos
 def eliminar_acentos(texto):
-    # Reemplazar la ñ temporalmente
-    texto = texto.replace("ñ", "~")
+    if isinstance(texto, list):
+        # Si texto es una lista, aplicamos la función a cada elemento de la lista
+        texto = [eliminar_acentos(t) for t in texto]  # Llamamos recursivamente a la función para cada string
+    else:
+        # Reemplazar la ñ temporalmente
+        texto = texto.replace("ñ", "~")
 
-    # Normalizar acentos
-    texto = ''.join(
-        c for c in unicodedata.normalize('NFD', texto)
-        if unicodedata.category(c) != 'Mn'
-    )
+        # Normalizar acentos
+        texto = ''.join(
+            c for c in unicodedata.normalize('NFD', texto)
+            if unicodedata.category(c) != 'Mn'
+        )
 
-    # Devolver la ñ
-    texto = texto.replace("~", "ñ")
+        # Devolver la ñ
+        texto = texto.replace("~", "ñ")
 
     return texto
+
 
 
 # Función para calcular la similitud entre dos cadenas
@@ -59,6 +83,19 @@ def validar_fecha(fecha, formato):
         return True
     except ValueError:
         return False
+
+
+
+# Busca la categoria y su lista, de no encontrar avisa del error
+def obtener_chiste():
+    try:
+        lista_chistes = conocimientos["chiste"]["lista_chistes"]
+        return random.choice(lista_chistes)
+    except KeyError:
+        return "Lo siento, no tengo chistes guardados."
+
+
+
 # Buscar presidente y nombre clave y darlo
 def buscar_por_claves(pregunta):
     # Convertir la pregunta a minúsculas sin acentos
@@ -86,9 +123,15 @@ def buscar_por_claves(pregunta):
 def responder(pregunta):
     # Buscar si la frase contiene las palabras 'presidente' y un nombre
     respuesta_presidente = buscar_por_claves(pregunta)
-
     if respuesta_presidente:
         return respuesta_presidente
+
+    # Verificar si la pregunta es sobre un chiste
+    if "chiste" in eliminar_acentos(pregunta.lower()):
+        chiste = obtener_chiste()
+        return f"Aquí tienes un chiste: {chiste}"
+
+    return "Lo siento, no entiendo la pregunta."
 
 
 # Función para buscar música o cantante por claves
@@ -121,7 +164,6 @@ def buscar_musica_por_claves(pregunta):
             return respuesta
 
     return None  # Si no se encuentra coincidencia
-
 
 
 # Solicitar el nombre del usuario al inicio de la conversación
@@ -160,44 +202,7 @@ def obtener_respuesta_si_no(mensaje):
         respuesta = input(f"Respuesta inválida. {mensaje} (si/no): ").lower()
     return respuesta == "si"
 
-# Refactorizando la función de agregar categoría
-def agregar_categoria():
-    nueva_categoria = input("Nombre de la nueva categoría: ")
-    nueva_categoria = validar_campo_obligatorio(nueva_categoria, "Nombre de la nueva categoría")
-
-    if nueva_categoria not in conocimientos:
-        conocimientos[nueva_categoria] = {}
-
-    # Preguntar si se va a crear una subcategoría
-    if obtener_respuesta_si_no("¿Deseas agregar una subcategoría?"):
-        nueva_subcategoria = input("Nombre de la subcategoría: ")
-        nueva_subcategoria = validar_campo_obligatorio(nueva_subcategoria, "Nombre de la subcategoría")
-        conocimientos[nueva_categoria][nueva_subcategoria] = {}
-
-        # Utilizar la nueva función para pedir detalles opcionales
-        conocimientos[nueva_categoria][nueva_subcategoria]["nombre_completo"] = pedir_detalle_opcional("nombre completo")
-        conocimientos[nueva_categoria][nueva_subcategoria]["fecha"] = pedir_detalle_opcional("fecha", tipo="fecha")
-        conocimientos[nueva_categoria][nueva_subcategoria]["fecha-fecha"] = pedir_detalle_opcional("rango de fechas", tipo="fecha")
-        conocimientos[nueva_categoria][nueva_subcategoria]["periodo"] = pedir_detalle_opcional("periodo", tipo="periodo")
-        conocimientos[nueva_categoria][nueva_subcategoria]["descripcion"] = pedir_detalle_opcional("descripción")
-        conocimientos[nueva_categoria][nueva_subcategoria]["logros"] = pedir_detalle_opcional("logros")
-        conocimientos[nueva_categoria][nueva_subcategoria]["pais"] = pedir_detalle_opcional("país")
-        conocimientos[nueva_categoria][nueva_subcategoria]["provincia"] = pedir_detalle_opcional("provincia")
-        conocimientos[nueva_categoria][nueva_subcategoria]["cargo"] = pedir_detalle_opcional("cargo")
-        conocimientos[nueva_categoria][nueva_subcategoria]["raza"] = pedir_detalle_opcional("raza")
-
-        # Preguntar si quiere agregar un género musical
-        conocimientos[nueva_categoria][nueva_subcategoria]["genero_musical"] = pedir_detalle_opcional("género musical (rock, romántico, pop, cumbia)")
-
-    # Guardar los conocimientos en un archivo JSON
-    guardar_conocimientos()
-
-    # Preguntar si quiere agregar más subcategorías
-    if obtener_respuesta_si_no("¿Deseas agregar más subcategorías dentro de esta subcategoría?"):
-        agregar_subcategoria(nueva_categoria, nueva_subcategoria)
-
-
-    # Función para pedir un detalle opcional al usuario
+# Función para pedir un detalle opcional al usuario
 def pedir_detalle_opcional(campo, tipo="texto"):
     if obtener_respuesta_si_no(f"¿Deseas agregar {campo}?"):
         if tipo == "fecha":
@@ -213,67 +218,32 @@ def pedir_detalle_opcional(campo, tipo="texto"):
             return input(f"Introduce {campo}: ")
     return None  # Si no se desea agregar, no devuelve nada
 
+# Función para agregar detalles opcionales al conocimiento
+def agregar_detalles(diccionario):
+    campos = ["nombre_completo", "fecha", "periodo", "descripcion", "logros", "pais", "provincia", "cargo", "raza", "genero_musical"]
+    for campo in campos:
+        diccionario[campo] = pedir_detalle_opcional(campo)
 
+# Función para agregar categoría
+def agregar_categoria():
+    nueva_categoria = input("Nombre de la nueva categoría: ")
+    nueva_categoria = validar_campo_obligatorio(nueva_categoria, "Nombre de la nueva categoría")
 
-    # Añadir al diccionario solo los campos con valores
-    if descripcion:
-        conocimientos[nueva_categoria][nueva_subcategoria]["descripcion"] = descripcion
-    if logros:
-        conocimientos[nueva_categoria][nueva_subcategoria]["logros"] = logros
-    if pais:
-        conocimientos[nueva_categoria][nueva_subcategoria]["pais"] = pais
-    if provincia:
-        conocimientos[nueva_categoria][nueva_subcategoria]["provincia"] = provincia
-    if cargo:
-        conocimientos[nueva_categoria][nueva_subcategoria]["cargo"] = cargo
-    if raza:
-        conocimientos[nueva_categoria][nueva_subcategoria]["raza"] = raza
+    if nueva_categoria not in conocimientos:
+        conocimientos[nueva_categoria] = {}
 
-    # Guardar los conocimientos en un archivo JSON
-    guardar_conocimientos()
+    # Preguntar si se va a crear una subcategoría
+    if obtener_respuesta_si_no("¿Deseas agregar una subcategoría?"):
+        nueva_subcategoria = input("Nombre de la subcategoría: ")
+        nueva_subcategoria = validar_campo_obligatorio(nueva_subcategoria, "Nombre de la subcategoría")
+        conocimientos[nueva_categoria][nueva_subcategoria] = {}
 
-    # Preguntar si quiere agregar más subcategorías
-    if obtener_respuesta_si_no("¿Deseas agregar más subcategorías dentro de esta subcategoría?"):
-        agregar_subcategoria(nueva_categoria, nueva_subcategoria)
+        # Llamar a la función para agregar detalles
+        agregar_detalles(conocimientos[nueva_categoria][nueva_subcategoria])
 
+    # Guardar los conocimientos
+    guardar_datos(conocimientos, 'conocimientos.json')
 
-# Función para agregar subcategoría dentro de una subcategoría
-def agregar_subcategoria(categoria, subcategoria):
-    nueva_subcategoria = input("Nombre de la subcategoría dentro de la subcategoría: ")
-    conocimientos[categoria][subcategoria][nueva_subcategoria] = {}
-
-    # Repetir el proceso para agregar detalles
-    nombre_completo = input("Nombre completo (opcional): ")
-    if nombre_completo:
-        conocimientos[categoria][subcategoria][nueva_subcategoria]["nombre_completo"] = nombre_completo
-
-    if obtener_respuesta_si_no("¿Deseas agregar una fecha a la subcategoría?"):
-        formato_fecha = pedir_formato_fecha()
-        fecha = input(f"Introduce la fecha en formato {formato_fecha.replace('%D', '')}: ")
-        while not validar_fecha(fecha, formato_fecha):
-            print("Formato de fecha inválido.")
-            fecha = input(f"Introduce la fecha en formato {formato_fecha.replace('%D', '')}: ")
-        conocimientos[categoria][subcategoria][nueva_subcategoria]["fecha"] = fecha
-
-    descripcion = input("Descripción (opcional): ")
-    logros = input("Logros (opcional): ")
-    pais = input("País (opcional): ")
-    provincia = input("Provincia (opcional): ")
-    cargo = input("Cargo (opcional): ")
-
-    # Guardar información adicional
-    if descripcion:
-        conocimientos[categoria][subcategoria][nueva_subcategoria]["descripcion"] = descripcion
-    if logros:
-        conocimientos[categoria][subcategoria][nueva_subcategoria]["logros"] = logros
-    if pais:
-        conocimientos[categoria][subcategoria][nueva_subcategoria]["pais"] = pais
-    if provincia:
-        conocimientos[categoria][subcategoria][nueva_subcategoria]["provincia"] = provincia
-    if cargo:
-        conocimientos[categoria][subcategoria][nueva_subcategoria]["cargo"] = cargo
-
-    guardar_conocimientos()
 
 # Función para borrar una categoría o subcategoría
 def borrar_categoria():
@@ -305,7 +275,8 @@ def borrar_categoria():
     if categoria_a_borrar in conocimientos:
         del conocimientos[categoria_a_borrar]
         print(f"La categoría '{categoria_a_borrar}' ha sido borrada.")
-        guardar_conocimientos()
+        # Guardar los conocimientos
+        guardar_datos(conocimientos, 'conocimientos.json')
     else:
         print("Categoría no encontrada. Por favor intenta de nuevo.")
 
@@ -368,34 +339,12 @@ def borrar_subcategoria():
         if subcategoria_a_borrar in subcategorias:
             del conocimientos[categoria_seleccionada][subcategoria_a_borrar]
             print(f"La subcategoría '{subcategoria_a_borrar}' ha sido borrada de la categoría '{categoria_seleccionada}'.")
-            guardar_conocimientos()
+            # Guardar los conocimientos
+            guardar_datos(conocimientos, 'conocimientos.json')
         else:
             print("Subcategoría no encontrada. Por favor intenta de nuevo.")
     else:
         print("Categoría no encontrada. Por favor intenta de nuevo.")
-
-
-
-# Función para guardar los conocimientos en un archivo JSON
-def guardar_conocimientos():
-    try:
-        with open("conocimientos.json", "w", encoding='utf-8') as archivo:  # Especificar encoding
-            json.dump(conocimientos, archivo, ensure_ascii=False, indent=4)  # Asegurarse de que los caracteres no ASCII se guarden correctamente
-        print("Conocimientos guardados con éxito.")
-    except IOError:
-        print("Error: No se pudo guardar el archivo conocimientos.json.")
-
-
-# Función para cargar los conocimientos desde un archivo JSON
-def cargar_conocimientos():
-    try:
-        with open("conocimientos.json", "r", encoding='utf-8') as archivo:  # Especificar encoding
-            return json.load(archivo)
-    except FileNotFoundError:
-        return {}
-    except json.JSONDecodeError:
-        print("Error: El archivo conocimientos.json está corrupto o tiene un formato inválido.")
-        return {}
 
 
 
@@ -453,20 +402,23 @@ def preguntar(pregunta):
 
 # Función principal
 def main():
-    conocimientos.update(cargar_conocimientos())
-    #nombre_usuario = solicitar_nombre_usuario()  # Asegurarse de que el nombre de usuario se pida al inicio
-    #print(f"¡Hola, {nombre_usuario}! Puedes preguntarme algo, agregar una categoría/subcategoría o borrar conocimiento.")
+    conocimientos.update(cargar_datos())
 
     while True:
         pregunta = input("Tú: ")
         pregunta_limpia = eliminar_acentos(pregunta.lower())
 
         if pregunta_limpia in ["salir", "adios", "adiós"]:
-            guardar_conocimientos()
+            # Guardar los conocimientos
+            guardar_datos(conocimientos, 'conocimientos.json')
             print("IA: ¡Adiós!")
             break
         elif pregunta_limpia == "agregar categoria":
             agregar_categoria()
+        elif pregunta_limpia in ["dime un chiste", "otro chiste", "sabes algun chiste", "me cuentas un chiste", "cuentame un chiste", "quiero un chiste"]:
+            print("Buscando chiste...")
+            chiste = obtener_chiste()
+            print(f"IA: {chiste}")
         elif pregunta_limpia == "deseo borrar algo":
             tipo_borrado = input("¿Deseas borrar una categoría o una subcategoría? (categoria/subcategoria): ").lower()
             if tipo_borrado == "categoria":
@@ -485,6 +437,7 @@ def main():
                 # Si no se encuentra respuesta, utilizar la función preguntar
                 respuesta = preguntar(pregunta)
                 print(f"IA: {respuesta}")
+
 
 # Ejecutar el programa
 if __name__ == "__main__":

@@ -21,13 +21,19 @@ dias_semana = {
 
 # Función para eliminar acentos
 def eliminar_acentos(texto):
-    # Normalizar el texto pero evitar que la 'ñ' se convierta
-    texto_normalizado = unicodedata.normalize('NFD', texto)
-    texto_modificado = ''.join(
-        c if c == 'ñ' or unicodedata.category(c) != 'Mn' else ''
-        for c in texto_normalizado
+    # Reemplazar la ñ temporalmente
+    texto = texto.replace("ñ", "~")
+
+    # Normalizar acentos
+    texto = ''.join(
+        c for c in unicodedata.normalize('NFD', texto)
+        if unicodedata.category(c) != 'Mn'
     )
-    return texto_modificado.lower()
+
+    # Devolver la ñ
+    texto = texto.replace("~", "ñ")
+
+    return texto
 
 
 # Función para calcular la similitud entre dos cadenas
@@ -83,6 +89,39 @@ def responder(pregunta):
 
     if respuesta_presidente:
         return respuesta_presidente
+
+
+# Función para buscar música o cantante por claves
+def buscar_musica_por_claves(pregunta):
+    # Convertir la pregunta a minúsculas sin acentos
+    pregunta_limpia = eliminar_acentos(pregunta.lower())
+
+    # Dividir la pregunta en palabras
+    palabras_pregunta = pregunta_limpia.split()
+
+    # Lista de géneros musicales en la categoría 'música'
+    musica = conocimientos.get("musica", {})
+
+    # Buscar por palabras clave relacionadas con 'musica', 'cantante' y 'información' junto con el nombre del cantante
+    for genero, detalles in musica.items():
+        nombre_cantante = eliminar_acentos(detalles["nombre_completo"].lower())
+
+        # Verificar si la palabra 'musica', 'cantante', o 'informacion' y el nombre del cantante están en la pregunta
+        if (("musica" in palabras_pregunta or "cantante" in palabras_pregunta or "informacion" in palabras_pregunta)
+            and nombre_cantante in palabras_pregunta):
+
+            # Construir la respuesta básica
+            respuesta = (f"{nombre_cantante}: {detalles['nombre_completo']} es un {detalles['cargo']} de {detalles['genero_musical']}, "
+                         f"nació el {detalles['fecha']} en {detalles['provincia']}, {detalles['pais']}.")
+
+            # Si se pidió información y hay descripción, agregarla
+            if "informacion" in palabras_pregunta and detalles.get("descripcion"):
+                respuesta += f" Descripción: {detalles['descripcion']}"
+
+            return respuesta
+
+    return None  # Si no se encuentra coincidencia
+
 
 
 # Solicitar el nombre del usuario al inicio de la conversación
@@ -340,8 +379,8 @@ def borrar_subcategoria():
 # Función para guardar los conocimientos en un archivo JSON
 def guardar_conocimientos():
     try:
-        with open("conocimientos.json", "w") as archivo:
-            json.dump(conocimientos, archivo, indent=4)
+        with open("conocimientos.json", "w", encoding='utf-8') as archivo:  # Especificar encoding
+            json.dump(conocimientos, archivo, ensure_ascii=False, indent=4)  # Asegurarse de que los caracteres no ASCII se guarden correctamente
         print("Conocimientos guardados con éxito.")
     except IOError:
         print("Error: No se pudo guardar el archivo conocimientos.json.")
@@ -350,7 +389,7 @@ def guardar_conocimientos():
 # Función para cargar los conocimientos desde un archivo JSON
 def cargar_conocimientos():
     try:
-        with open("conocimientos.json", "r") as archivo:
+        with open("conocimientos.json", "r", encoding='utf-8') as archivo:  # Especificar encoding
             return json.load(archivo)
     except FileNotFoundError:
         return {}
@@ -370,15 +409,25 @@ def preguntar(pregunta):
         dia_actual_espanol = dias_semana.get(dia_actual, "un día desconocido")  # Usar 'get' para evitar KeyError # Traducir al español
         return f"Hoy es {dia_actual_espanol}."
 
+    # Verificar si se pregunta por la hora actual
+    elif pregunta_limpia in ["que hora es", "que hora es?", "que hora es??", "decime la hora", "me decis la hora"]:
+        hora_actual = datetime.now().strftime("%H:%M")  # Formato de 24 horas
+        return f"La hora actual es {hora_actual}."
+
     # Verificar si se pregunta por la fecha actual
     elif pregunta_limpia in ["que fecha es hoy", "dime la fecha", "que fecha es hoy?", "que fecha es hoy??"]:
         fecha_actual = datetime.now().strftime("%d-%m-%Y")  # Fecha en formato dd-mm-yyyy
         return f"La fecha de hoy es {fecha_actual}."
 
     # Verificar si se pregunta por el año actual
-    elif pregunta_limpia in ["que año es", "en que anio estamos", "que anio es hoy?", "dime el ano"]:
+    elif pregunta_limpia in ["que año es", "en que año estamos", "en que año estamos?", "dime el año"]:
         anio_actual = datetime.now().strftime("%Y")  # Año actual
         return f"Estamos en el año {anio_actual}."
+
+    # Verificar si se pregunta por información de un cantante o música
+    respuesta_musica = buscar_musica_por_claves(pregunta)
+    if respuesta_musica:
+        return respuesta_musica
 
     # Buscar en los conocimientos almacenados
     for categoria, subcategorias in conocimientos.items():

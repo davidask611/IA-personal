@@ -3,6 +3,7 @@ from difflib import SequenceMatcher
 from datetime import datetime
 import unicodedata
 import random
+import re
 
 # Función para cargar el archivo JSON al inicio del programa
 def cargar_datos(nombre_archivo='datos.json'):
@@ -101,17 +102,22 @@ def obtener_signo(signo):
     else:
         return "Lo siento, no tengo información sobre ese signo."
 
-# Función para detectar si se menciona 'signo' y un signo zodiacal
+
+# Función para detectar signos zodiacales con 're'
 def detectar_signo(pregunta):
     pregunta_limpia = eliminar_acentos(pregunta.lower())  # Eliminar acentos y convertir a minúsculas
-    palabras_pregunta = pregunta_limpia.split()  # Dividir la pregunta en palabras
 
-    # Verificar si la palabra "signo" está en la pregunta
-    if "signo" in palabras_pregunta:
-        # Buscar si algún signo está presente en la pregunta
-        for signo in signos_zodiacales:
-            if signo in palabras_pregunta:
-                return obtener_signo(signo)  # Devolver la información del signo encontrado
+    # Crear un patrón que busque "signo" seguido o precedido por un signo zodiacal
+    signos = '|'.join(signos_zodiacales.keys())  # Crear un patrón para todos los signos (ej. 'aries|tauro|geminis')
+    patron = rf"(signo.*\b({signos})\b|\b({signos})\b.*signo)"
+
+    # Buscar el patrón en la pregunta
+    coincidencia = re.search(patron, pregunta_limpia)
+
+    if coincidencia:
+        # Si se encuentra un signo en la pregunta, devolver la información del signo
+        signo_encontrado = coincidencia.group(2) or coincidencia.group(3)
+        return obtener_signo(signo_encontrado)
 
     return None  # Si no se encuentra ninguna coincidencia
 

@@ -5,11 +5,30 @@ import unicodedata
 import random
 import re
 
+import json
+
+# Cache en memoria
+respuestas_cache = {}
+
 # Función para cargar el archivo JSON al inicio del programa
 def cargar_datos(nombre_archivo='datos.json'):
     try:
         with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
-            return json.load(archivo)
+            datos = json.load(archivo)  # Cargar el contenido del archivo
+
+            # Cargar signos zodiacales
+            if "signos_zodiacales" in datos:
+                for signo, detalles in datos["signos_zodiacales"].items():
+                    respuestas_cache[f"signo_{signo}"] = detalles["descripcion"]  # Llenar el cache con la descripción
+
+            # Puedes repetir el proceso para otras categorías, como música
+            if "musica" in datos:
+                for genero, detalles in datos["musica"].items():
+                    # Llenar el cache con descripciones de música
+                    respuestas_cache[f"cantante_{detalles['nombre_completo'].lower()}"] = detalles["descripcion"]
+
+            return datos  # Retornar los datos cargados
+
     except FileNotFoundError:
         # Si el archivo no existe, devuelve un diccionario vacío
         return {}
@@ -22,8 +41,9 @@ def guardar_datos(datos, nombre_archivo='datos.json'):
     with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
         json.dump(datos, archivo, indent=4, ensure_ascii=False)
 
-        # Cargar los conocimientos
+# Cargar los conocimientos
 conocimientos = cargar_datos('conocimientos.json')
+
 
 
 UMBRAL_SIMILITUD = 0.85
@@ -388,6 +408,12 @@ def borrar_subcategoria():
 def preguntar(pregunta):
     pregunta_limpia = eliminar_acentos(pregunta.lower())
 
+    # Verificar en el cache primero para signos zodiacales
+    if "signo" in pregunta_limpia:
+        for signo in signos_zodiacales:
+            if signo in pregunta_limpia:
+                return respuestas_cache.get(f"signo_{signo}", "Lo siento, no tengo información sobre ese signo.")
+
     # Verificar si se pregunta por el día actual
     if pregunta_limpia in ["que dia es hoy", "que dia estamos", "que dia es hoy?", "dime el dia"]:
         dia_actual = datetime.now().strftime("%A")  # Nombre del día en inglés
@@ -408,11 +434,6 @@ def preguntar(pregunta):
     elif pregunta_limpia in ["que año es", "en que año estamos", "en que año estamos?", "dime el año"]:
         anio_actual = datetime.now().strftime("%Y")  # Año actual
         return f"Estamos en el año {anio_actual}."
-
-    # Verificar si se pregunta por información de un signo zodiacal
-    respuesta_signo = detectar_signo(pregunta)
-    if respuesta_signo:
-        return respuesta_signo
 
     # Verificar si se pregunta por información de un cantante o música
     respuesta_musica = buscar_musica_por_claves(pregunta)
@@ -439,7 +460,6 @@ def preguntar(pregunta):
                     return detalles
 
     return "Lo siento, no tengo información sobre eso."
-
 
 
 # Función principal

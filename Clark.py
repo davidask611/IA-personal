@@ -86,6 +86,36 @@ def validar_fecha(fecha, formato):
 
 
 
+# Asegurarse de que los signos están en el diccionario 'conocimientos'
+signos_zodiacales = conocimientos.get("signos_zodiacales", {})
+
+# Función para obtener la descripción de un signo zodiacal desde el diccionario cargado
+def obtener_signo(signo):
+    signo = signo.lower()  # Convertimos a minúsculas para evitar errores de mayúsculas/minúsculas
+    if signo in signos_zodiacales:
+        # Construir la respuesta con la descripción y más detalles del signo
+        info_signo = signos_zodiacales[signo]
+        descripcion = (f"El signo {signo.capitalize()} cubre desde {info_signo['fecha-fecha']}. "
+                       f"Su elemento es {info_signo['elemento']}. {info_signo['descripcion']}")
+        return descripcion
+    else:
+        return "Lo siento, no tengo información sobre ese signo."
+
+# Función para detectar si se menciona 'signo' y un signo zodiacal
+def detectar_signo(pregunta):
+    pregunta_limpia = eliminar_acentos(pregunta.lower())  # Eliminar acentos y convertir a minúsculas
+    palabras_pregunta = pregunta_limpia.split()  # Dividir la pregunta en palabras
+
+    # Verificar si la palabra "signo" está en la pregunta
+    if "signo" in palabras_pregunta:
+        # Buscar si algún signo está presente en la pregunta
+        for signo in signos_zodiacales:
+            if signo in palabras_pregunta:
+                return obtener_signo(signo)  # Devolver la información del signo encontrado
+
+    return None  # Si no se encuentra ninguna coincidencia
+
+
 # Busca la categoria y su lista, de no encontrar avisa del error
 def obtener_chiste():
     try:
@@ -355,7 +385,7 @@ def preguntar(pregunta):
     # Verificar si se pregunta por el día actual
     if pregunta_limpia in ["que dia es hoy", "que dia estamos", "que dia es hoy?", "dime el dia"]:
         dia_actual = datetime.now().strftime("%A")  # Nombre del día en inglés
-        dia_actual_espanol = dias_semana.get(dia_actual, "un día desconocido")  # Usar 'get' para evitar KeyError # Traducir al español
+        dia_actual_espanol = dias_semana.get(dia_actual, "un día desconocido")  # Traducir al español
         return f"Hoy es {dia_actual_espanol}."
 
     # Verificar si se pregunta por la hora actual
@@ -372,6 +402,11 @@ def preguntar(pregunta):
     elif pregunta_limpia in ["que año es", "en que año estamos", "en que año estamos?", "dime el año"]:
         anio_actual = datetime.now().strftime("%Y")  # Año actual
         return f"Estamos en el año {anio_actual}."
+
+    # Verificar si se pregunta por información de un signo zodiacal
+    respuesta_signo = detectar_signo(pregunta)
+    if respuesta_signo:
+        return respuesta_signo
 
     # Verificar si se pregunta por información de un cantante o música
     respuesta_musica = buscar_musica_por_claves(pregunta)
@@ -400,9 +435,10 @@ def preguntar(pregunta):
     return "Lo siento, no tengo información sobre eso."
 
 
+
 # Función principal
 def main():
-    conocimientos.update(cargar_datos())
+    conocimientos.update(cargar_datos())  # Cargar los conocimientos desde el archivo
 
     while True:
         pregunta = input("Tú: ")
@@ -413,12 +449,15 @@ def main():
             guardar_datos(conocimientos, 'conocimientos.json')
             print("IA: ¡Adiós!")
             break
+
         elif pregunta_limpia == "agregar categoria":
             agregar_categoria()
+
         elif pregunta_limpia in ["dime un chiste", "otro chiste", "sabes algun chiste", "me cuentas un chiste", "cuentame un chiste", "quiero un chiste"]:
             print("Buscando chiste...")
             chiste = obtener_chiste()
             print(f"IA: {chiste}")
+
         elif pregunta_limpia == "deseo borrar algo":
             tipo_borrado = input("¿Deseas borrar una categoría o una subcategoría? (categoria/subcategoria): ").lower()
             if tipo_borrado == "categoria":
@@ -427,16 +466,29 @@ def main():
                 borrar_subcategoria()
             else:
                 print("IA: Opción no reconocida. Por favor, elige 'categoria' o 'subcategoria'.")
-        else:
-            # Primero, buscar si hay una respuesta relacionada con presidentes
-            respuesta_presidente = buscar_por_claves(pregunta)
 
+        else:
+            # Primero, buscar si hay una respuesta relacionada con signos zodiacales
+            respuesta_signo = detectar_signo(pregunta)
+            if respuesta_signo:
+                print(f"IA: {respuesta_signo}")
+                continue  # Saltar a la siguiente iteración del bucle
+
+            # Luego, buscar si hay una respuesta relacionada con música
+            respuesta_musica = buscar_musica_por_claves(pregunta)
+            if respuesta_musica:
+                print(f"IA: {respuesta_musica}")
+                continue  # Saltar a la siguiente iteración del bucle
+
+            # Luego, buscar si hay una respuesta relacionada con presidentes
+            respuesta_presidente = buscar_por_claves(pregunta)
             if respuesta_presidente:
                 print(f"IA: {respuesta_presidente}")
-            else:
-                # Si no se encuentra respuesta, utilizar la función preguntar
-                respuesta = preguntar(pregunta)
-                print(f"IA: {respuesta}")
+                continue  # Saltar a la siguiente iteración del bucle
+
+            # Si no se encuentra respuesta, utilizar la función preguntar
+            respuesta = preguntar(pregunta)
+            print(f"IA: {respuesta}")
 
 
 # Ejecutar el programa

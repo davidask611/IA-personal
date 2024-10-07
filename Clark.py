@@ -45,7 +45,6 @@ def guardar_datos(datos, nombre_archivo='datos.json'):
 conocimientos = cargar_datos('conocimientos.json')
 
 
-
 UMBRAL_SIMILITUD = 0.85
 
 # Diccionario para traducir los días de la semana al español
@@ -78,7 +77,6 @@ def eliminar_acentos(texto):
         texto = texto.replace("~", "ñ")
 
     return texto
-
 
 
 # Función para calcular la similitud entre dos cadenas

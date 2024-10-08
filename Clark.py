@@ -45,7 +45,7 @@ def guardar_datos(datos, nombre_archivo='datos.json'):
 conocimientos = cargar_datos('conocimientos.json')
 
 
-UMBRAL_SIMILITUD = 0.85
+UMBRAL_SIMILITUD = 0.6  # O un valor más bajo
 
 # Diccionario para traducir los días de la semana al español
 dias_semana = {
@@ -103,8 +103,89 @@ def validar_fecha(fecha, formato):
     except ValueError:
         return False
 
+# Aca empezara funciones, despues de acentos y ciertas validaciones
+
+historial_conversacion = []  # Lista para almacenar el historial de conversación
+MAX_HISTORIAL = 6  # Limitar el historial a los últimos 6 mensajes
+
+# Recordar el historial de la charla
+def recordar_historial():
+    if historial_conversacion:
+        print("IA: Recordando el historial reciente...")
+        for idx, item in enumerate(historial_conversacion[-MAX_HISTORIAL:], 1):
+            print(f"{idx}. Tú dijiste: '{item['pregunta']}' -> IA respondió: '{item['respuesta']}'")
+    else:
+        print("IA: No hay historial de conversación disponible.")
+
+# Actualizar el historial de conversación
+def actualizar_historial(pregunta, respuesta):
+    historial_conversacion.append({"pregunta": pregunta, "respuesta": respuesta})
+
+    # Limitar el historial a los últimos 6 mensajes
+    if len(historial_conversacion) > MAX_HISTORIAL:
+        historial_conversacion.pop(0)  # Eliminar el mensaje más antiguo
+
+###
+def cargar_relaciones(nombre_archivo='conocimientos.json'):
+    try:
+        with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
+            return json.load(archivo)
+    except FileNotFoundError:
+        print("Error: Archivo de relaciones no encontrado.")
+        return {}
+    except json.JSONDecodeError:
+        print("Error: Formato inválido en el archivo JSON.")
+        return {}
 
 
+######################################################################################################
+
+# Cargar datos desde el JSON al inicio de tu script
+datos = cargar_datos('conocimientos.json')
+
+# Función para buscar palabras clave en la pregunta
+def buscar_palabras_clave(pregunta):
+    for categoria, info in datos["categorias"].items():
+        for palabra in info["palabrasClave"]:
+            if palabra in pregunta.lower():
+                return categoria
+    return None
+
+# Función para obtener una respuesta de la categoría
+def obtener_respuesta(categoria):
+    if categoria:
+        respuestas = datos["categorias"][categoria]["respuesta"]
+        return random.choice(respuestas)  # Respuesta dinámica
+    return "No tengo suficiente información para responder."
+
+# Función para obtener una respuesta más específica si hay relaciones
+def obtener_relaciones(categoria, pregunta):
+    if categoria:
+        relaciones = datos["categorias"][categoria].get("relaciones", {})
+        for palabra in relaciones:
+            if palabra in pregunta.lower():
+                return relaciones[palabra]
+    return None
+
+# Función para actualizar el contexto de la conversación
+def actualizar_contexto(pregunta):
+    datos["contexto"]["ultimaPregunta"] = pregunta
+
+# Función para verificar si el contexto puede dar más pistas sobre la pregunta actual
+def manejar_contexto(pregunta):
+    ultima_pregunta = datos["contexto"]["ultimaPregunta"]
+    if ultima_pregunta and "fuego" in ultima_pregunta.lower() and "como" in pregunta.lower():
+        return "¿Te refieres a cómo apagar el fuego o cómo mantenerlo encendido?"
+    return None
+
+# Función para manejar preguntas vagas o amplias
+def manejar_preguntas_ampias(categoria):
+    if categoria and "respuestaIncompleta" in datos["categorias"][categoria]:
+        return datos["categorias"][categoria]["respuestaIncompleta"]
+    return None
+
+
+####################################################################################################
 # Asegurarse de que los signos están en el diccionario 'conocimientos'
 signos_zodiacales = conocimientos.get("signos_zodiacales", {})
 
@@ -402,62 +483,109 @@ def borrar_subcategoria():
 
 
 
-# Función para responder a una pregunta
 def preguntar(pregunta):
     pregunta_limpia = eliminar_acentos(pregunta.lower())
+    palabras_clave = pregunta_limpia.split()
+
+    # Primero, revisar si la pregunta anterior puede ayudar con el contexto
+    respuesta_contexto = manejar_contexto(pregunta)
+    if respuesta_contexto:
+        return respuesta_contexto
+
+    # Buscar categoría relacionada con las palabras clave
+    categoria = buscar_palabras_clave(pregunta)
+
+    # Si no se encuentra una categoría, devolver un mensaje genérico
+    if not categoria:
+        return "No tengo suficiente información para responder."
+
+    # Si la categoría tiene relaciones y coincide con la pregunta, devolver esa relación
+    respuesta_relacion = obtener_relaciones(categoria, pregunta)
+    if respuesta_relacion:
+        return respuesta_relacion
+
+    # Manejar preguntas amplias
+    respuesta_incompleta = manejar_preguntas_ampias(categoria)
+    if respuesta_incompleta:
+        return respuesta_incompleta
+
+    # Obtener una respuesta aleatoria de la categoría
+    respuesta = obtener_respuesta(categoria)
+
+    # Actualizar el contexto con la nueva pregunta
+    actualizar_contexto(pregunta)
+
+    #return respuesta
+
 
     # Verificar en el cache primero para signos zodiacales
     if "signo" in pregunta_limpia:
         for signo in signos_zodiacales:
             if signo in pregunta_limpia:
-                return respuestas_cache.get(f"signo_{signo}", "Lo siento, no tengo información sobre ese signo.")
+                respuesta = respuestas_cache.get(f"signo_{signo}", "Lo siento, no tengo información sobre ese signo.")
+                actualizar_historial(pregunta, respuesta)
+                return respuesta
 
     # Verificar si se pregunta por el día actual
     if pregunta_limpia in ["que dia es hoy", "que dia estamos", "que dia es hoy?", "dime el dia"]:
-        dia_actual = datetime.now().strftime("%A")  # Nombre del día en inglés
-        dia_actual_espanol = dias_semana.get(dia_actual, "un día desconocido")  # Traducir al español
-        return f"Hoy es {dia_actual_espanol}."
+        dia_actual = datetime.now().strftime("%A")
+        dia_actual_espanol = dias_semana.get(dia_actual, "un día desconocido")
+        respuesta = f"Hoy es {dia_actual_espanol}."
+        actualizar_historial(pregunta, respuesta)
+        return respuesta
 
     # Verificar si se pregunta por la hora actual
     elif pregunta_limpia in ["que hora es", "que hora es?", "que hora es??", "decime la hora", "me decis la hora"]:
-        hora_actual = datetime.now().strftime("%H:%M")  # Formato de 24 horas
-        return f"La hora actual es {hora_actual}."
+        hora_actual = datetime.now().strftime("%H:%M")
+        respuesta = f"La hora actual es {hora_actual}."
+        actualizar_historial(pregunta, respuesta)
+        return respuesta
 
     # Verificar si se pregunta por la fecha actual
     elif pregunta_limpia in ["que fecha es hoy", "dime la fecha", "que fecha es hoy?", "que fecha es hoy??"]:
-        fecha_actual = datetime.now().strftime("%d-%m-%Y")  # Fecha en formato dd-mm-yyyy
-        return f"La fecha de hoy es {fecha_actual}."
+        fecha_actual = datetime.now().strftime("%d-%m-%Y")
+        respuesta = f"La fecha de hoy es {fecha_actual}."
+        actualizar_historial(pregunta, respuesta)
+        return respuesta
 
     # Verificar si se pregunta por el año actual
     elif pregunta_limpia in ["que año es", "en que año estamos", "en que año estamos?", "dime el año"]:
-        anio_actual = datetime.now().strftime("%Y")  # Año actual
-        return f"Estamos en el año {anio_actual}."
+        anio_actual = datetime.now().strftime("%Y")
+        respuesta = f"Estamos en el año {anio_actual}."
+        actualizar_historial(pregunta, respuesta)
+        return respuesta
 
     # Verificar si se pregunta por información de un cantante o música
     respuesta_musica = buscar_musica_por_claves(pregunta)
     if respuesta_musica:
+        actualizar_historial(pregunta, respuesta_musica)
         return respuesta_musica
 
     # Buscar en los conocimientos almacenados
     for categoria, subcategorias in conocimientos.items():
         if similar(categoria, pregunta) > UMBRAL_SIMILITUD:
+            actualizar_historial(pregunta, subcategorias)
             return subcategorias
 
         for subcategoria, detalles in subcategorias.items():
             if similar(subcategoria, pregunta) > UMBRAL_SIMILITUD:
+                actualizar_historial(pregunta, detalles)
                 return detalles
 
-            # Validar si 'detalles' es un diccionario
             if isinstance(detalles, dict):
                 for clave, valor in detalles.items():
                     if similar(clave, pregunta) > UMBRAL_SIMILITUD:
+                        actualizar_historial(pregunta, valor)
                         return valor
             else:
-                # Si detalles no es un diccionario, devolverlo directamente
                 if similar(detalles, pregunta) > UMBRAL_SIMILITUD:
+                    actualizar_historial(pregunta, detalles)
                     return detalles
 
-    return "Lo siento, no tengo información sobre eso."
+    # Si no se encuentra información coherente
+    respuesta = "Lo siento, no tengo información sobre eso."
+    actualizar_historial(pregunta, respuesta)
+    return respuesta
 
 
 # Función principal
@@ -474,6 +602,10 @@ def main():
             print("IA: ¡Adiós!")
             break
 
+        elif pregunta_limpia == "recordar charla":
+            recordar_historial()  # Recordar la charla previa
+            continue
+
         elif pregunta_limpia == "agregar categoria":
             agregar_categoria()
 
@@ -481,6 +613,7 @@ def main():
             print("Buscando chiste...")
             chiste = obtener_chiste()
             print(f"IA: {chiste}")
+            actualizar_historial(pregunta, chiste)  # Actualizar el historial con el chiste
 
         elif pregunta_limpia == "deseo borrar algo":
             tipo_borrado = input("¿Deseas borrar una categoría o una subcategoría? (categoria/subcategoria): ").lower()
@@ -492,27 +625,42 @@ def main():
                 print("IA: Opción no reconocida. Por favor, elige 'categoria' o 'subcategoria'.")
 
         else:
-            # Primero, buscar si hay una respuesta relacionada con signos zodiacales
-            respuesta_signo = detectar_signo(pregunta)
-            if respuesta_signo:
-                print(f"IA: {respuesta_signo}")
-                continue  # Saltar a la siguiente iteración del bucle
+            # 1. Manejar el contexto
+            respuesta_contexto = manejar_contexto(pregunta_limpia)
+            if respuesta_contexto:
+                print(f"IA: {respuesta_contexto}")
+                actualizar_historial(pregunta, respuesta_contexto)
+                continue
 
-            # Luego, buscar si hay una respuesta relacionada con música
-            respuesta_musica = buscar_musica_por_claves(pregunta)
-            if respuesta_musica:
-                print(f"IA: {respuesta_musica}")
-                continue  # Saltar a la siguiente iteración del bucle
+            # 2. Buscar palabras clave o sinónimos y encontrar una categoría
+            categoria = buscar_palabras_clave(pregunta_limpia)
+            if categoria:
+                # 3. Verificar si la pregunta es amplia y requiere más información
+                respuesta_amplia = manejar_preguntas_ampias(categoria)
+                if respuesta_amplia:
+                    print(f"IA: {respuesta_amplia}")
+                    actualizar_historial(pregunta, respuesta_amplia)
+                    continue
 
-            # Luego, buscar si hay una respuesta relacionada con presidentes
-            respuesta_presidente = buscar_por_claves(pregunta)
-            if respuesta_presidente:
-                print(f"IA: {respuesta_presidente}")
-                continue  # Saltar a la siguiente iteración del bucle
+                # 4. Buscar relaciones dentro de la categoría
+                respuesta_relacionada = obtener_relaciones(categoria, pregunta_limpia)
+                if respuesta_relacionada:
+                    print(f"IA: {respuesta_relacionada}")
+                    actualizar_historial(pregunta, respuesta_relacionada)
+                    continue
 
-            # Si no se encuentra respuesta, utilizar la función preguntar
+                # 5. Obtener una respuesta de la categoría
+                respuesta_categoria = obtener_respuesta(categoria)
+                print(f"IA: {respuesta_categoria}")
+                actualizar_historial(pregunta, respuesta_categoria)
+                continue
+
+            # 6. Si no se encuentra ninguna respuesta en los pasos anteriores, usar la función preguntar
             respuesta = preguntar(pregunta)
+            actualizar_historial(pregunta, respuesta)  # Actualizar el historial con la nueva interacción
             print(f"IA: {respuesta}")
+
+
 
 
 # Ejecutar el programa

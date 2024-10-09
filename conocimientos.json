@@ -2,27 +2,28 @@
     "saludos": {
         "buenas": "buenas como estas??",
         "hola": "hola, como estas??",
-        "bien y tu ??": "bien, gracias por preguntar",
+        "bien y tu ?": "bien, gracias por preguntar",
         "hasta mañana": "hasta mañana",
         "me ire a dormir": "que descanses, hasta mañana",
-        "bien y vos??": "bien, gracias por preguntar",
+        "bien y vos?": "bien, gracias por preguntar",
         "me llamo david": "que lindo nombre",
         "bien": "que bueno que estes bien",
         "lindo nombre": "gracias",
-        "como estas??": "estoy bien, gracias por preguntar",
+        "como estas?": "estoy bien, gracias por preguntar",
         "gracias": "de nada"
     },
     "datosdelaIA": {
         "como te llamas?": "Mi nombre es Clark",
         "que edad tenes?": "soy una IA, no tengo edad. tengo fecha de creacion.",
-        "eres hombre o mujer??": "Mi creador David no me definio un sexo, Me llamo Clark, espero que eso responda tu pregunta."
+        "eres hombre o mujer?": "Mi creador David no me definio un sexo, Me llamo Clark, espero que eso responda tu pregunta."
     },
     "charla": {
         "tienes un hobby?": "¡Sí! Me gusta aprender sobre diferentes temas y ayudar a las personas.",
         "cual es tu comida favorita?": "No como, pero me encanta saber sobre diferentes platillos del mundo.",
         "que opinas de la musica?": "La música es una forma maravillosa de expresión. Hay tantos géneros y estilos que siempre hay algo nuevo por descubrir.",
         "que harias si fueras humano por un dia?": "¡Exploraría el mundo y probaría todas las cosas que he leído sobre ser humano!",
-        "crees en los extraterrestres?": "Es un tema fascinante. Hay tantas teorías y evidencias, ¡quién sabe qué hay allá afuera!"
+        "crees en los extraterrestres?": "Es un tema fascinante. Hay tantas teorías y evidencias, ¡quién sabe qué hay allá afuera!",
+        "te gustan los animales?": "Si, los animales me gustan, me parecen seres increibles"
     },
     "presidente": {
         "Alfonsin": {
@@ -67,13 +68,31 @@
         }
     },
     "animal": {
-        "te gustan los animales??": "Si, los animales me gustan, me parecen seres increibles",
         "perro": {
+            "bulldog": {
             "nombre_completo": "bulldog frances",
-            "logros": "El bulldog francés es una raza pequeña y musculosa, conocida por su carácter amigable y sus orejas distintivas de \"murciélago\". Originario de Francia, fue criado como un perro de compañía y es famoso por ser un excelente compañero familiar. Su peso suele oscilar entre 8 y 14 kg, y tiene un pelaje corto, suave y fácil de mantener. Los bulldogs franceses tienen una naturaleza juguetona y afectuosa, se llevan bien con niños y otros animales. Son perros braquicéfalos, lo cual significa que tienen un hocico corto, y debido a esto, pueden ser propensos a problemas respiratorios.",
-            "pais": "francia",
-            "provincia": "no",
-            "cargo": "mascota de compañia"
+            "descripcion": "El bulldog francés es una raza pequeña y musculosa, conocida por su carácter amigable y sus orejas distintivas de \"murciélago\". Su naturaleza juguetona y afectuosa lo convierte en un excelente compañero familiar.",
+            "caracteristicas": {
+            "docilidad": "Es una raza generalmente dócil y amigable.",
+            "amabilidad": "Es muy cariñoso y se lleva bien con niños."
+            }
+            },
+            "labrador": {
+            "nombre_completo": "doberman pinscher",
+            "descripcion": "El doberman es una raza inteligente y leal, conocida por su capacidad de protección.",
+            "caracteristicas": {
+            "docilidad": "Es una raza que puede ser dócil si se le socializa adecuadamente.",
+            "amabilidad": "Es leal a su familia y puede ser amigable con los niños."
+            }
+            },
+            "pastor aleman": {
+            "nombre_completo": "cachorro",
+            "descripcion": "Cachorros de diferentes razas.",
+            "caracteristicas": {
+            "docilidad": "Los cachorros suelen ser juguetones y curiosos.",
+            "amabilidad": "Generalmente son muy amigables y juguetones."
+            }
+            }
         }
     },
     "signos_zodiacales": {

@@ -285,6 +285,35 @@ def presidente(pregunta):
 
     return "Lo siento, no tengo información sobre ese presidente."  # Mensaje por defecto si no hay coincidencia
 
+##################
+# Buscar perro y nombre o caracteristicas y darlo
+def animales(pregunta, conocimientos):
+    # Convertir la pregunta a minúsculas sin acentos
+    pregunta_limpia = eliminar_acentos(pregunta.lower())
+
+    # Dividir la pregunta en palabras
+    palabras_pregunta = pregunta_limpia.split()
+
+    # Lista de razas de perros en el diccionario
+    perros = conocimientos.get("animal", {}).get("perro", {})
+
+    # Recorrer todas las razas de perro en el diccionario
+    for raza, detalles in perros.items():
+        # Limpiar el nombre de la raza para compararlo
+        raza_limpia = eliminar_acentos(raza.lower())
+
+        # Verificar si la pregunta menciona la raza directamente o junto con "perro"
+        if raza_limpia in palabras_pregunta or ("perro" in palabras_pregunta and raza_limpia in palabras_pregunta):
+            # Responder con las características de la raza de perro
+            return (f"{raza}: {detalles['nombre_completo']}. "
+                    f"Descripción: {detalles['descripcion']} "
+                    f"Docilidad: {detalles['caracteristicas']['docilidad']}. "
+                    f"Amabilidad: {detalles['caracteristicas']['amabilidad']}")
+
+    return "Lo siento, no tengo información sobre esa raza de perro."  # Mensaje por defecto si no hay coincidencia
+
+
+
 
 # Función para buscar música o cantante por claves
 def buscar_musica_por_claves(pregunta):
@@ -500,7 +529,11 @@ def borrar_subcategoria():
 
 
 # Función principal de preguntas
-def preguntar(pregunta):
+def preguntar(pregunta, conocimientos):
+    # Verificar si "contexto" está en "conocimientos"
+    if "contexto" not in conocimientos:
+        conocimientos["contexto"] = {"ultimaPregunta": ""}  # Inicializa el contexto
+
     pregunta_limpia = eliminar_acentos(pregunta.lower())
 
     # Primero, salir si se pide
@@ -508,9 +541,10 @@ def preguntar(pregunta):
         return "¡Adiós! Espero verte pronto."
 
     # Revisar si la pregunta anterior puede ayudar con el contexto
-    respuesta_contexto = manejar_contexto(pregunta)
+    respuesta_contexto = manejar_contexto(pregunta, conocimientos)  # Ahora pasa ambos argumentos
     if respuesta_contexto:
         return respuesta_contexto
+
 
     # Verificar si es un saludo
     respuesta_saludo = buscar_saludo(pregunta_limpia, conocimientos)
@@ -555,6 +589,12 @@ def preguntar(pregunta):
                 actualizar_historial(pregunta, respuesta)
                 return respuesta
 
+    # Llamar a la función de animales, pasarle "conocimientos" también
+    respuesta_animales = animales(pregunta, conocimientos)
+    if respuesta_animales:
+        actualizar_historial(pregunta, respuesta_animales)
+        return respuesta_animales
+
     # Verificar si se pregunta por el presidente
     if "presidente" in pregunta_limpia:
         respuesta_presidente = conocimientos.get("presidente_actual", "No tengo información sobre el presidente.")
@@ -593,6 +633,7 @@ def preguntar(pregunta):
     # Retornar la respuesta obtenida
     actualizar_historial(pregunta, respuesta)
     return respuesta
+
 
 
 

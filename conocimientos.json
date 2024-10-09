@@ -3,13 +3,14 @@
         "buenas": "buenas como estas??",
         "hola": "hola, como estas??",
         "bien y tu ??": "bien, gracias por preguntar",
-        "hasta maÃ±ana": "hasta maÃ±ana",
-        "me ire a dormir": "que descanses, hasta maÃ±ana",
-        "bien, y vos??": "bien, gracias por preguntar",
-        "yo me llamo David": "que lindo nombre",
+        "hasta mañana": "hasta mañana",
+        "me ire a dormir": "que descanses, hasta mañana",
+        "bien y vos??": "bien, gracias por preguntar",
+        "me llamo david": "que lindo nombre",
         "bien": "que bueno que estes bien",
         "lindo nombre": "gracias",
-        "como estas??": "estoy bien, gracias por preguntar"
+        "como estas??": "estoy bien, gracias por preguntar",
+        "gracias": "de nada"
     },
     "datosdelaIA": {
         "como te llamas?": "Mi nombre es Clark",
@@ -17,9 +18,11 @@
         "eres hombre o mujer??": "Mi creador David no me definio un sexo, Me llamo Clark, espero que eso responda tu pregunta."
     },
     "charla": {
-        "jajajajaja": "que bueno te hizo reir",
-        "sabes sumar": "aun no aprendo, pronto te ayudare con eso",
-        "me ayudas en algo": "si, dime que precisas y vere si puedo ayudarte"
+        "tienes un hobby?": "¡Sí! Me gusta aprender sobre diferentes temas y ayudar a las personas.",
+        "cual es tu comida favorita?": "No como, pero me encanta saber sobre diferentes platillos del mundo.",
+        "que opinas de la musica?": "La música es una forma maravillosa de expresión. Hay tantos géneros y estilos que siempre hay algo nuevo por descubrir.",
+        "que harias si fueras humano por un dia?": "¡Exploraría el mundo y probaría todas las cosas que he leído sobre ser humano!",
+        "crees en los extraterrestres?": "Es un tema fascinante. Hay tantas teorías y evidencias, ¡quién sabe qué hay allá afuera!"
     },
     "presidente": {
         "Alfonsin": {
@@ -32,7 +35,7 @@
             "nombre_completo": "Carlos Menem",
             "descripcion": "Carlos Menem, presidente durante una de las etapas mas controversiales de Argentina, implemento un modelo economico de liberalizacion que incluyo privatizaciones masivas y apertura comercial. Su gobierno trajo consigo un periodo de crecimiento economico inicial, pero tambien un aumento en la desigualdad y la pobreza. Menem es recordado por su carisma y estilo populista, aunque su administracion se vio marcada por la corrupcion y escandalos. Su mandato se extiende hasta el aÃ±o 1999, donde dejo un legado mixto en la politica argentina."
         },
-        "De la RÃºa": {
+        "De la Rua": {
             "periodo": "1999 - 2001",
             "nombre_completo": "Fernando de la RÃºa",
             "descripcion": "Fernando de la Rua asumio la presidencia en un contexto de crisis economica y social. Su gobierno enfrento grandes desafios desde el inicio, incluyendo una creciente recesion y aumento del desempleo. Intento implementar politicas de austeridad para controlar el deficit fiscal, pero esto resulto en protestas masivas y descontento popular. La falta de apoyo y la incapacidad para estabilizar la economia llevaron a su renuncia en diciembre de 2001, en un momento de gran convulsion social. Su presidencia es recordada como un periodo de inestabilidad."
@@ -60,7 +63,7 @@
         "Milei": {
             "periodo": "2023 - presente",
             "nombre_completo": "Javier Gerardo Milei",
-            "descripcion": "Javier Milei es un economista y polÃ­tico argentino que asumiÃ³ la presidencia en 2024. Es conocido por su postura libertaria y por proponer reformas econÃ³micas radicales en un contexto de crisis econÃ³mica y alta inflaciÃ³n. Su enfoque se centra en reducir drÃ¡sticamente el gasto pÃºblico, eliminar regulaciones y promover la libertad de mercado. Milei ha ganado notoriedad por su estilo provocador y su discurso anti-establishment, apelando a votantes que buscan un cambio en el sistema polÃ­tico tradicional. Es un firme defensor de la propiedad privada y ha manifestado su intenciÃ³n de cerrar el Banco Central."
+            "descripcion": "Javier Milei es un economista y poli­tico argentino que asumia la presidencia en 2024. Es conocido por su postura libertaria y por proponer reformas econÃ³micas radicales en un contexto de crisis econÃ³mica y alta inflaciÃ³n. Su enfoque se centra en reducir drÃ¡sticamente el gasto pÃºblico, eliminar regulaciones y promover la libertad de mercado. Milei ha ganado notoriedad por su estilo provocador y su discurso anti-establishment, apelando a votantes que buscan un cambio en el sistema polÃ­tico tradicional. Es un firme defensor de la propiedad privada y ha manifestado su intenciÃ³n de cerrar el Banco Central."
         }
     },
     "animal": {
@@ -199,14 +202,10 @@
         "pop": {
             "nombre_completo": "Madonna",
             "fecha": "16-8-1958",
-            "fecha-fecha": null,
-            "periodo": null,
             "descripcion": "conocida como la Reina del Pop, es una de las artistas más influyentes y exitosas en la historia de la música. Nacida el 16 de agosto de 1958 en Bay City, Míchigan, se traslado a Nueva York para perseguir sus sueños artisticos. A lo largo de su carrera, ha redefinido el pop y ha sido pionera en fusionar generos musicales y romper barreras culturales. Su capacidad para reinventarse constantemente la ha mantenido en la cima durante decadas. Madonna es reconocida no solo por sus exitos musicales, como Like a Virgin, Vogue y Like a Prayer, sino también por su impacto en la moda, el arte y la cultura popular. Ademas, es una defensora de los derechos humanos y ha utilizado su fama para promover causas como la igualdad de género y los derechos LGBTQ+. Su impacto trasciende la musica, consolidandola como un icono cultural mundial.",
-            "logros": null,
             "pais": "Estados Unidos",
             "provincia": "Míchigan",
             "cargo": "cantante",
-            "raza": null,
             "genero_musical": "pop"
         }
     },
@@ -254,29 +253,14 @@
             "¿Por qué las abejas tienen pelo pegajoso? Porque usan miel."
         ]
     },
-    "fuego": {
-        "agua": "El fuego se apaga con agua.",
-        "extintor": "El fuego puede ser apagado con un extintor.",
-        "madera": "El fuego necesita madera u otros combustibles para mantenerse encendido."
-    },
-    "computadora": {
-        "electricidad": "La computadora funciona con electricidad.",
-        "pantalla": "La pantalla es un componente importante de la computadora."
-    },
-    "auto": {
-        "gasolina": "El auto funciona con gasolina.",
-        "motor": "El motor es el corazón del auto."
-    },
-    "comentario": {
-        "comentario": "El comentario es una opinión o observación sobre algo."
-    },
     "categorias": {
-          "fuego": {
+        "fuego": {
             "palabrasClave": ["fuego", "llama", "incendio", "combustión"],
             "respuesta": [
               "El fuego necesita madera u otros combustibles para mantenerse encendido.",
               "El fuego se apaga con agua, arena o un extintor.",
-              "Si el fuego es pequeño, puedes apagarlo con una manta o cubriéndolo."
+              "Si el fuego es pequeño, puedes apagarlo con una manta o cubriéndolo.",
+              "Para mantener el fuego encendido, asegúrate de que tenga suficiente combustible y oxígeno."
             ],
             "relaciones": {
               "agua": "El fuego se apaga con agua.",
@@ -284,7 +268,7 @@
             },
             "validacion": "Información validada según la guía de primeros auxilios."
           },
-          "auto": {
+        "auto": {
             "palabrasClave": ["auto", "carro", "vehículo", "coche"],
             "respuesta": [
               "El motor es el corazón del auto.",
@@ -297,7 +281,7 @@
             },
             "validacion": "Información validada según un manual de mantenimiento vehicular."
           },
-          "agua": {
+        "agua": {
             "palabrasClave": ["agua", "líquido"],
             "respuesta": [
               "El agua es vital para la vida en la Tierra.",
@@ -305,10 +289,14 @@
               "El agua es uno de los mejores solventes naturales."
             ],
             "respuestaIncompleta": "¿Te refieres a cómo apagar el fuego con agua o cómo utilizarla en otra situación?",
-            "validacion": "Información extraída de la guía de primeros auxilios y enciclopedia general."
-          }
-        },
+            "validacion": "Información extraída de la guía de primeros auxilios y enciclopedia general.",
+            "relaciones": {
+              "fuego": "El agua se usa para apagar el fuego.",
+              "importancia": "El agua es esencial para la vida humana y para muchos procesos naturales."
+            }
+          },
         "contexto": {
           "ultimaPregunta": ""
         }
+    }
 }

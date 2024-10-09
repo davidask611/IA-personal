@@ -262,7 +262,7 @@ def obtener_chiste():
 
 
 
-# Buscar presidente y nombre clave y darlo
+# Buscar presidente y nombre clave y año y darlo
 def presidente(pregunta):
     # Convertir la pregunta a minúsculas sin acentos
     pregunta_limpia = eliminar_acentos(pregunta.lower())
@@ -273,7 +273,24 @@ def presidente(pregunta):
     # Lista de presidentes en el diccionario
     presidentes = conocimientos.get("presidente", {})
 
-    # Recorrer todos los presidentes para ver si sus nombres están en la pregunta
+    # Verificar si hay un año en la pregunta (se busca un número de 4 dígitos)
+    for palabra in palabras_pregunta:
+        if palabra.isdigit() and len(palabra) == 4:
+            anio_pregunta = int(palabra)
+            # Recorrer todos los presidentes y sus períodos
+            for nombre_presidente, detalles in presidentes.items():
+                # Dividir el período en años de inicio y fin
+                periodo = detalles['periodo'].split(" - ")
+                anio_inicio = int(periodo[0])
+                anio_fin = int(periodo[1])
+
+                # Verificar si el año preguntado está dentro del período de ese presidente
+                if anio_inicio <= anio_pregunta <= anio_fin:
+                    return (f"{nombre_presidente}: {detalles['nombre_completo']} fue presidente entre {detalles['periodo']}. "
+                            f"Descripción: {detalles['descripcion']}")
+            return "Lo siento, no tengo información sobre ese año o ingresa el año completo (4 dígitos)."
+
+    # Si no hay un año en la pregunta, se busca por el nombre del presidente
     for nombre_presidente, detalles in presidentes.items():
         # Limpiar el nombre del presidente para compararlo
         nombre_presidente_limpio = eliminar_acentos(nombre_presidente.lower())
@@ -283,7 +300,8 @@ def presidente(pregunta):
             return (f"{nombre_presidente}: {detalles['nombre_completo']} fue presidente entre {detalles['periodo']}. "
                     f"Descripción: {detalles['descripcion']}")
 
-    return "Lo siento, no tengo información sobre ese presidente."  # Mensaje por defecto si no hay coincidencia
+    return "Lo siento, no tengo información sobre ese presidente o año."
+
 
 ##################
 # Buscar perro y nombre o caracteristicas y darlo
@@ -291,26 +309,27 @@ def animales(pregunta, conocimientos):
     # Convertir la pregunta a minúsculas sin acentos
     pregunta_limpia = eliminar_acentos(pregunta.lower())
 
-    # Dividir la pregunta en palabras
-    palabras_pregunta = pregunta_limpia.split()
+    # Unir todas las palabras de la pregunta para poder comparar nombres completos
+    pregunta_unida = "".join(pregunta_limpia.split())
 
-    # Lista de razas de perros en el diccionario
-    perros = conocimientos.get("animal", {}).get("perro", {})
+    # Lista de animales en el diccionario
+    animales = conocimientos.get("animal", {}).get("perro", {})
 
     # Recorrer todas las razas de perro en el diccionario
-    for raza, detalles in perros.items():
+    for raza, detalles in animales.items():
         # Limpiar el nombre de la raza para compararlo
         raza_limpia = eliminar_acentos(raza.lower())
+        raza_unida = "".join(raza_limpia.split())  # Unir el nombre completo de la raza
 
-        # Verificar si la pregunta menciona la raza directamente o junto con "perro"
-        if raza_limpia in palabras_pregunta or ("perro" in palabras_pregunta and raza_limpia in palabras_pregunta):
+        # Verificar si la pregunta menciona la palabra "perro" seguida de un nombre de raza
+        if "perro" in pregunta_unida and raza_unida in pregunta_unida:
             # Responder con las características de la raza de perro
             return (f"{raza}: {detalles['nombre_completo']}. "
                     f"Descripción: {detalles['descripcion']} "
                     f"Docilidad: {detalles['caracteristicas']['docilidad']}. "
                     f"Amabilidad: {detalles['caracteristicas']['amabilidad']}")
 
-    return "Lo siento, no tengo información sobre esa raza de perro."  # Mensaje por defecto si no hay coincidencia
+    return "Lo siento, no tengo información sobre esa raza de perro o intenta reformular la pregunta"
 
 
 

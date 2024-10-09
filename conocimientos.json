@@ -62,14 +62,14 @@
             "descripcion": "Alberto Fernandez asumio la presidencia en un contexto de crisis economica agudizada por la pandemia de COVID-19. Su gobierno enfrento retos significativos, incluyendo la gestion de la emergencia sanitaria y la reestructuracion de la deuda externa. Implemento politicas de apoyo a sectores vulnerables y busco establecer un dialogo con diferentes actores politicos y sociales. Su administracion ha sido criticada por la inflacion y la falta de crecimiento, aunque se ha centrado en recuperar la economia tras la crisis sanitaria, trabajando en medidas para estabilizar el pais."
         },
         "Milei": {
-            "periodo": "2023 - presente",
+            "periodo": "2023 - 2024",
             "nombre_completo": "Javier Gerardo Milei",
             "descripcion": "Javier Milei es un economista y poli­tico argentino que asumia la presidencia en 2024. Es conocido por su postura libertaria y por proponer reformas econÃ³micas radicales en un contexto de crisis econÃ³mica y alta inflaciÃ³n. Su enfoque se centra en reducir drÃ¡sticamente el gasto pÃºblico, eliminar regulaciones y promover la libertad de mercado. Milei ha ganado notoriedad por su estilo provocador y su discurso anti-establishment, apelando a votantes que buscan un cambio en el sistema polÃ­tico tradicional. Es un firme defensor de la propiedad privada y ha manifestado su intenciÃ³n de cerrar el Banco Central."
         }
     },
     "animal": {
         "perro": {
-            "bulldog": {
+            "bulldog frances": {
             "nombre_completo": "bulldog frances",
             "descripcion": "El bulldog francés es una raza pequeña y musculosa, conocida por su carácter amigable y sus orejas distintivas de \"murciélago\". Su naturaleza juguetona y afectuosa lo convierte en un excelente compañero familiar.",
             "caracteristicas": {

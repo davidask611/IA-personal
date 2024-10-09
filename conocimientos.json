@@ -69,29 +69,93 @@
     },
     "animal": {
         "perro": {
-            "bulldog frances": {
-            "nombre_completo": "bulldog frances",
-            "descripcion": "El bulldog francés es una raza pequeña y musculosa, conocida por su carácter amigable y sus orejas distintivas de \"murciélago\". Su naturaleza juguetona y afectuosa lo convierte en un excelente compañero familiar.",
-            "caracteristicas": {
-            "docilidad": "Es una raza generalmente dócil y amigable.",
-            "amabilidad": "Es muy cariñoso y se lleva bien con niños."
-            }
+            "bulldog": {
+                "nombre_completo": "bulldog frances",
+                "descripcion": "El bulldog frances es una raza pequeña y musculosa, conocida por su carácter amigable y sus orejas distintivas de 'murcielago'. Su naturaleza juguetona y afectuosa lo convierte en un excelente compañero familiar.",
+                "caracteristicas": {
+                    "docilidad": "Es una raza generalmente docil y amigable.",
+                    "amabilidad": "Es muy carinoso y se lleva bien con niños."
+                }
             },
             "labrador": {
-            "nombre_completo": "doberman pinscher",
-            "descripcion": "El doberman es una raza inteligente y leal, conocida por su capacidad de protección.",
-            "caracteristicas": {
-            "docilidad": "Es una raza que puede ser dócil si se le socializa adecuadamente.",
-            "amabilidad": "Es leal a su familia y puede ser amigable con los niños."
-            }
+                "nombre_completo": "labrador retriever",
+                "descripcion": "El labrador es una raza conocida por su inteligencia, docilidad y su habilidad como perro de asistencia. Es muy activo, amigable y leal.",
+                "caracteristicas": {
+                    "docilidad": "Es una raza muy docil y facil de entrenar.",
+                    "amabilidad": "Es extremadamente carinoso y amigable con las personas y otros animales."
+                }
             },
             "pastor aleman": {
-            "nombre_completo": "cachorro",
-            "descripcion": "Cachorros de diferentes razas.",
-            "caracteristicas": {
-            "docilidad": "Los cachorros suelen ser juguetones y curiosos.",
-            "amabilidad": "Generalmente son muy amigables y juguetones."
-            }
+                "nombre_completo": "pastor aleman",
+                "descripcion": "El pastor aleman es una raza versatil, conocida por su inteligencia y habilidades de trabajo. Es leal, valiente y protector.",
+                "caracteristicas": {
+                    "docilidad": "Es una raza obediente si se le entrena adecuadamente.",
+                    "amabilidad": "Es leal y protector con su familia, pero reservado con extraños."
+                }
+            },
+            "caniche": {
+                "nombre_completo": "caniche",
+                "descripcion": "El caniche es una raza elegante y muy inteligente, conocida por su pelaje rizado. Son perros activos y les encanta aprender trucos.",
+                "caracteristicas": {
+                    "docilidad": "Son muy obedientes y faciles de entrenar.",
+                    "amabilidad": "Carinosos y juguetones, son excelentes compañeros familiares."
+                }
+            },
+            "bichon maltes": {
+                "nombre_completo": "bichon maltes",
+                "descripcion": "El bichon maltes, tambien conocido como habanero, es una raza pequeña con un pelaje largo y blanco. Son carinosos, alegres y se llevan bien con todos.",
+                "caracteristicas": {
+                    "docilidad": "Son amigables y faciles de manejar.",
+                    "amabilidad": "Son muy carinosos con las personas y otros animales."
+                }
+            },
+            "beagle": {
+                "nombre_completo": "beagle",
+                "descripcion": "El beagle es una raza de tamaño medio, conocida por su gran olfato y habilidades de caza. Son curiosos, juguetones y les encanta estar en manada.",
+                "caracteristicas": {
+                    "docilidad": "Generalmente son dociles, pero pueden ser testarudos.",
+                    "amabilidad": "Son muy amistosos y se llevan bien con niños y otros perros."
+                }
+            },
+            "galgo": {
+                "nombre_completo": "galgo",
+                "descripcion": "El galgo es una raza esbelta y rapida, famosa por su velocidad. Son tranquilos, amables y disfrutan de largos paseos.",
+                "caracteristicas": {
+                    "docilidad": "Son tranquilos y faciles de manejar.",
+                    "amabilidad": "Amigables y afectuosos, especialmente con su familia."
+                }
+            },
+            "siberiano": {
+                "nombre_completo": "husky siberiano",
+                "descripcion": "El husky siberiano es una raza resistente, conocida por su capacidad para tirar de trineos. Son independientes y activos.",
+                "caracteristicas": {
+                    "docilidad": "Pueden ser tercos, pero son amigables.",
+                    "amabilidad": "Amigables con las personas, pero requieren socializacion temprana."
+                }
+            },
+            "san bernardo": {
+                "nombre_completo": "san bernardo",
+                "descripcion": "El san bernardo es una raza gigante, conocida por su tamaño y su rol en el rescate en las montañas. Son tranquilos y protectores.",
+                "caracteristicas": {
+                    "docilidad": "Muy tranquilos y faciles de manejar.",
+                    "amabilidad": "Amigables, leales y protectores con su familia."
+                }
+            },
+            "rottweiler": {
+                "nombre_completo": "rottweiler",
+                "descripcion": "El rottweiler es una raza fuerte y musculosa, conocida por su valentia y lealtad. Son perros protectores y confiables.",
+                "caracteristicas": {
+                    "docilidad": "Son obedientes si se les entrena adecuadamente.",
+                    "amabilidad": "Leales y protectores con su familia, pueden ser reservados con extraños."
+                }
+            },
+            "bobtail": {
+                "nombre_completo": "bobtail",
+                "descripcion": "El bobtail, o viejo pastor ingles, es una raza grande y esponjosa, conocida por su naturaleza amigable y su habilidad para el pastoreo.",
+                "caracteristicas": {
+                    "docilidad": "Son amigables y faciles de entrenar.",
+                    "amabilidad": "Son muy carinosos y juguetones, especialmente con los niños."
+                }
             }
         }
     },
@@ -274,48 +338,61 @@
     },
     "categorias": {
         "fuego": {
-            "palabrasClave": ["fuego", "llama", "incendio", "combustión"],
+            "palabrasClave": [
+                "fuego",
+                "llama",
+                "incendio",
+                "combustión"
+            ],
             "respuesta": [
-              "El fuego necesita madera u otros combustibles para mantenerse encendido.",
-              "El fuego se apaga con agua, arena o un extintor.",
-              "Si el fuego es pequeño, puedes apagarlo con una manta o cubriéndolo.",
-              "Para mantener el fuego encendido, asegúrate de que tenga suficiente combustible y oxígeno."
+                "El fuego necesita madera u otros combustibles para mantenerse encendido.",
+                "El fuego se apaga con agua, arena o un extintor.",
+                "Si el fuego es pequeño, puedes apagarlo con una manta o cubriéndolo.",
+                "Para mantener el fuego encendido, asegúrate de que tenga suficiente combustible y oxígeno."
             ],
             "relaciones": {
-              "agua": "El fuego se apaga con agua.",
-              "oxígeno": "El fuego necesita oxígeno para mantenerse encendido."
+                "agua": "El fuego se apaga con agua.",
+                "oxígeno": "El fuego necesita oxígeno para mantenerse encendido."
             },
             "validacion": "Información validada según la guía de primeros auxilios."
-          },
+        },
         "auto": {
-            "palabrasClave": ["auto", "carro", "vehículo", "coche"],
+            "palabrasClave": [
+                "auto",
+                "carro",
+                "vehículo",
+                "coche"
+            ],
             "respuesta": [
-              "El motor es el corazón del auto.",
-              "El auto funciona con gasolina o electricidad.",
-              "Recuerda realizar el mantenimiento de tu auto cada cierto tiempo."
+                "El motor es el corazón del auto.",
+                "El auto funciona con gasolina o electricidad.",
+                "Recuerda realizar el mantenimiento de tu auto cada cierto tiempo."
             ],
             "relaciones": {
-              "motor": "El motor es esencial para que el auto funcione.",
-              "combustible": "Los autos pueden funcionar con gasolina o electricidad."
+                "motor": "El motor es esencial para que el auto funcione.",
+                "combustible": "Los autos pueden funcionar con gasolina o electricidad."
             },
             "validacion": "Información validada según un manual de mantenimiento vehicular."
-          },
+        },
         "agua": {
-            "palabrasClave": ["agua", "líquido"],
+            "palabrasClave": [
+                "agua",
+                "líquido"
+            ],
             "respuesta": [
-              "El agua es vital para la vida en la Tierra.",
-              "Puedes usar agua para apagar un incendio pequeño.",
-              "El agua es uno de los mejores solventes naturales."
+                "El agua es vital para la vida en la Tierra.",
+                "Puedes usar agua para apagar un incendio pequeño.",
+                "El agua es uno de los mejores solventes naturales."
             ],
             "respuestaIncompleta": "¿Te refieres a cómo apagar el fuego con agua o cómo utilizarla en otra situación?",
             "validacion": "Información extraída de la guía de primeros auxilios y enciclopedia general.",
             "relaciones": {
-              "fuego": "El agua se usa para apagar el fuego.",
-              "importancia": "El agua es esencial para la vida humana y para muchos procesos naturales."
+                "fuego": "El agua se usa para apagar el fuego.",
+                "importancia": "El agua es esencial para la vida humana y para muchos procesos naturales."
             }
-          },
+        },
         "contexto": {
-          "ultimaPregunta": ""
+            "ultimaPregunta": ""
         }
     }
 }

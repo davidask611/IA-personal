@@ -262,7 +262,7 @@ def obtener_chiste():
 
 
 
-# Buscar presidente y nombre clave y año y darlo
+# Buscar presidente y nombre clave y darlo
 def presidente(pregunta):
     # Convertir la pregunta a minúsculas sin acentos
     pregunta_limpia = eliminar_acentos(pregunta.lower())
@@ -273,37 +273,23 @@ def presidente(pregunta):
     # Lista de presidentes en el diccionario
     presidentes = conocimientos.get("presidente", {})
 
-    # Verificar si hay un año en la pregunta (se busca un número de 4 dígitos)
-    for palabra in palabras_pregunta:
-        if palabra.isdigit() and len(palabra) == 4:
-            anio_pregunta = int(palabra)
-            # Recorrer todos los presidentes y sus períodos
-            for nombre_presidente, detalles in presidentes.items():
-                # Dividir el período en años de inicio y fin
-                periodo = detalles['periodo'].split(" - ")
-                anio_inicio = int(periodo[0])
-                anio_fin = int(periodo[1])
+    # Si hay una mención de "presidente" en la pregunta
+    if "presidente" in palabras_pregunta:
+        # Recorrer todos los presidentes y sus detalles
+        for nombre_presidente, detalles in presidentes.items():
+            # Limpiar el nombre del presidente para compararlo
+            nombre_presidente_limpio = eliminar_acentos(nombre_presidente.lower())
 
-                # Verificar si el año preguntado está dentro del período de ese presidente
-                if anio_inicio <= anio_pregunta <= anio_fin:
-                    return (f"{nombre_presidente}: {detalles['nombre_completo']} fue presidente entre {detalles['periodo']}. "
-                            f"Descripción: {detalles['descripcion']}")
-            return "Lo siento, no tengo información sobre ese año o ingresa el año completo (4 dígitos)."
+            # Verificar si el nombre del presidente está en la pregunta
+            if nombre_presidente_limpio in palabras_pregunta:
+                return (f"{nombre_presidente}: {detalles['nombre_completo']} fue presidente entre {detalles['periodo']}. "
+                        f"Descripción: {detalles['descripcion']}")
 
-    # Si no hay un año en la pregunta, se busca por el nombre del presidente
-    for nombre_presidente, detalles in presidentes.items():
-        # Limpiar el nombre del presidente para compararlo
-        nombre_presidente_limpio = eliminar_acentos(nombre_presidente.lower())
-
-        # Verificar si las palabras clave 'presidente' y el nombre del presidente están en la frase
-        if "presidente" in palabras_pregunta and nombre_presidente_limpio in palabras_pregunta:
-            return (f"{nombre_presidente}: {detalles['nombre_completo']} fue presidente entre {detalles['periodo']}. "
-                    f"Descripción: {detalles['descripcion']}")
-
-    return "Lo siento, no tengo información sobre ese presidente o año."
+    return "Lo siento, no tengo información sobre ese presidente."
 
 
-##################
+
+"""
 # Buscar perro y nombre o caracteristicas y darlo
 def animales(pregunta, conocimientos):
     # Convertir la pregunta a minúsculas sin acentos
@@ -330,7 +316,7 @@ def animales(pregunta, conocimientos):
                     f"Amabilidad: {detalles['caracteristicas']['amabilidad']}")
 
     return "Lo siento, no tengo información sobre esa raza de perro o intenta reformular la pregunta"
-
+"""
 
 
 
@@ -560,10 +546,9 @@ def preguntar(pregunta, conocimientos):
         return "¡Adiós! Espero verte pronto."
 
     # Revisar si la pregunta anterior puede ayudar con el contexto
-    respuesta_contexto = manejar_contexto(pregunta, conocimientos)  # Ahora pasa ambos argumentos
+    respuesta_contexto = manejar_contexto(pregunta, conocimientos)
     if respuesta_contexto:
         return respuesta_contexto
-
 
     # Verificar si es un saludo
     respuesta_saludo = buscar_saludo(pregunta_limpia, conocimientos)
@@ -571,88 +556,14 @@ def preguntar(pregunta, conocimientos):
         actualizar_historial(pregunta, respuesta_saludo)
         return respuesta_saludo
 
-    # Verificar si se pregunta por la hora actual
-    if pregunta_limpia in ["que hora es", "que hora es?", "que hora es??", "decime la hora", "me decis la hora"]:
-        hora_actual = datetime.now().strftime("%H:%M")
-        respuesta = f"La hora actual es {hora_actual}."
-        actualizar_historial(pregunta, respuesta)
-        return respuesta
-
-    # Verificar si se pregunta por la fecha actual
-    elif pregunta_limpia in ["que fecha es hoy", "dime la fecha", "que fecha es hoy?", "que fecha es hoy??"]:
-        fecha_actual = datetime.now().strftime("%d-%m-%Y")
-        respuesta = f"La fecha de hoy es {fecha_actual}."
-        actualizar_historial(pregunta, respuesta)
-        return respuesta
-
-    # Verificar si se pregunta por el día actual
-    elif pregunta_limpia in ["que dia es hoy", "que dia estamos", "que dia es hoy?", "dime el dia"]:
-        dia_actual = datetime.now().strftime("%A")
-        dia_actual_espanol = dias_semana.get(dia_actual, "un día desconocido")
-        respuesta = f"Hoy es {dia_actual_espanol}."
-        actualizar_historial(pregunta, respuesta)
-        return respuesta
-
-    # Verificar si se pregunta por el año actual
-    elif pregunta_limpia in ["que año es", "en que año estamos", "en que año estamos?", "dime el año"]:
-        anio_actual = datetime.now().strftime("%Y")
-        respuesta = f"Estamos en el año {anio_actual}."
-        actualizar_historial(pregunta, respuesta)
-        return respuesta
-
-    # Verificar en el archivo conocimientos para signos zodiacales
-    if "signo" in pregunta_limpia:
-        for signo in signos_zodiacales:
-            if signo in pregunta_limpia:
-                respuesta = conocimientos.get(f"signo_{signo}", "Lo siento, no tengo información sobre ese signo.")
-                actualizar_historial(pregunta, respuesta)
-                return respuesta
-
-    # Llamar a la función de animales, pasarle "conocimientos" también
-    respuesta_animales = animales(pregunta, conocimientos)
-    if respuesta_animales:
-        actualizar_historial(pregunta, respuesta_animales)
-        return respuesta_animales
-
     # Verificar si se pregunta por el presidente
-    if "presidente" in pregunta_limpia:
-        respuesta_presidente = conocimientos.get("presidente_actual", "No tengo información sobre el presidente.")
-        actualizar_historial(pregunta, respuesta_presidente)
+    respuesta_presidente = presidente(pregunta)
+    if respuesta_presidente != "Lo siento, no tengo información sobre ese presidente.":
         return respuesta_presidente
 
-    # Verificar si se pregunta por información de un cantante o música
-    respuesta_musica = buscar_musica_por_claves(pregunta)
-    if respuesta_musica:
-        actualizar_historial(pregunta, respuesta_musica)
-        return respuesta_musica
+    # Aquí puedes seguir revisando otras preguntas o información
 
-    # Buscar categoría relacionada con las palabras clave
-    categoria = buscar_palabras_clave(pregunta_limpia)
-
-    # Si no se encuentra una categoría, devolver un mensaje genérico
-    if not categoria:
-        return "No tengo suficiente información para responder."
-
-    # Si la categoría tiene relaciones y coincide con la pregunta, devolver esa relación
-    respuesta_relacion = obtener_relaciones(categoria, pregunta_limpia)
-    if respuesta_relacion:
-        return respuesta_relacion
-
-    # Manejar preguntas amplias
-    respuesta_incompleta = manejar_preguntas_ampias(categoria)
-    if respuesta_incompleta:
-        return respuesta_incompleta
-
-    # Obtener una respuesta aleatoria de la categoría
-    respuesta = obtener_respuesta(categoria)
-
-    # Actualizar el contexto con la nueva pregunta
-    actualizar_contexto(pregunta)
-
-    # Retornar la respuesta obtenida
-    actualizar_historial(pregunta, respuesta)
-    return respuesta
-
+    return "No tengo suficiente información para responder."
 
 
 
@@ -676,7 +587,7 @@ def main():
             print(f"IA: {respuesta_sobre_ia}")
             continue
 
-        # Aqui buscamos si la pregunta esta en charla cotidiana
+        # Aquí buscamos si la pregunta está en charla cotidiana
         respuesta_charla = manejar_charla(pregunta_limpia, conocimientos)
         if respuesta_charla:
             print(f"IA: {respuesta_charla}")
@@ -687,104 +598,14 @@ def main():
         respuesta_saludo = buscar_saludo(pregunta_limpia, conocimientos)
         if respuesta_saludo:
             print(f"IA: {respuesta_saludo}")
+            actualizar_historial(pregunta, respuesta_saludo)  # Actualizar el historial con la respuesta de saludo
             continue
 
-        # Verificar si se pregunta por el día actual
-        if pregunta_limpia in ["que dia es hoy", "que dia estamos", "que dia es hoy?", "dime el dia"]:
-            dia_actual = datetime.now().strftime("%A")
-            dia_actual_espanol = dias_semana.get(dia_actual, "un día desconocido")
-            respuesta = f"Hoy es {dia_actual_espanol}."
-            actualizar_historial(pregunta, respuesta)
-            print(f"IA: {respuesta}")
-            continue
-
-        # Verificar si se pregunta por la hora actual
-        elif pregunta_limpia in ["que hora es", "que hora es?", "que hora es??", "decime la hora", "me decis la hora"]:
-            hora_actual = datetime.now().strftime("%H:%M")
-            respuesta = f"La hora actual es {hora_actual}."
-            actualizar_historial(pregunta, respuesta)
-            print(f"IA: {respuesta}")
-            continue
-
-        # Verificar si se pregunta por la fecha actual
-        elif pregunta_limpia in ["que fecha es hoy", "dime la fecha", "que fecha es hoy?", "que fecha es hoy??"]:
-            fecha_actual = datetime.now().strftime("%d-%m-%Y")
-            respuesta = f"La fecha de hoy es {fecha_actual}."
-            actualizar_historial(pregunta, respuesta)
-            print(f"IA: {respuesta}")
-            continue
-
-        # Verificar si se pregunta por el año actual
-        elif pregunta_limpia in ["que año es", "en que año estamos", "en que año estamos?", "dime el año"]:
-            anio_actual = datetime.now().strftime("%Y")
-            respuesta = f"Estamos en el año {anio_actual}."
-            actualizar_historial(pregunta, respuesta)
-            print(f"IA: {respuesta}")
-            continue
-
-        # Verificar signos zodiacales
-        if "signo" in pregunta_limpia:
-            for signo in signos_zodiacales:
-                if signo in pregunta_limpia:
-                    respuesta = conocimientos.get(f"signo_{signo}", "Lo siento, no tengo información sobre ese signo.")
-                    actualizar_historial(pregunta, respuesta)
-                    print(f"IA: {respuesta}")
-                    continue
-
-       # Llamar a la función presidente
-        respuesta_presidente = presidente(pregunta)
-        if respuesta_presidente != "Lo siento, no tengo información sobre ese presidente.":
-            print(f"IA: {respuesta_presidente}")
-            continue
-
-        # Verificar información de cantantes o música
-        respuesta_musica = buscar_musica_por_claves(pregunta_limpia)
-        if respuesta_musica:
-            actualizar_historial(pregunta, respuesta_musica)
-            print(f"IA: {respuesta_musica}")
-            continue
-
-        # 1. Manejar el contexto con una función personalizada
-        respuesta_fuego = manejar_fuego(pregunta_limpia)
-        if respuesta_fuego:
-            print(f"IA: {respuesta_fuego}")
-            actualizar_historial(pregunta, respuesta_fuego)
-            continue
-
-        # 2. Responder con contexto, si aplica
-        respuesta_contexto = responder_con_contexto(pregunta_limpia)
-        if respuesta_contexto:
-            print(f"IA: {respuesta_contexto}")
-            actualizar_historial(pregunta, respuesta_contexto)
-            continue
-
-        # 3. Buscar palabras clave o sinónimos y encontrar una categoría
-        categoria = buscar_palabras_clave(pregunta_limpia, conocimientos)
-        if categoria:
-            # Verificar si la pregunta es amplia y requiere más información
-            respuesta_amplia = manejar_preguntas_ampias(categoria)
-            if respuesta_amplia:
-                print(f"IA: {respuesta_amplia}")
-                actualizar_historial(pregunta, respuesta_amplia)
-                continue
-
-            # Buscar relaciones dentro de la categoría
-            respuesta_relacionada = obtener_relaciones(categoria, pregunta_limpia)
-            if respuesta_relacionada:
-                print(f"IA: {respuesta_relacionada}")
-                actualizar_historial(pregunta, respuesta_relacionada)
-                continue
-
-            # Obtener una respuesta de la categoría
-            respuesta_categoria = obtener_respuesta(categoria)
-            print(f"IA: {respuesta_categoria}")
-            actualizar_historial(pregunta, respuesta_categoria)
-            continue
-
-        # Si no se encuentra ninguna respuesta en los pasos anteriores, usar la función preguntar
+        # Llamar a la función preguntar para manejar todas las preguntas
         respuesta = preguntar(pregunta, conocimientos)
-        actualizar_historial(pregunta, respuesta)  # Actualizar el historial con la nueva interacción
         print(f"IA: {respuesta}")
+        actualizar_historial(pregunta, respuesta)  # Actualizar el historial con la nueva interacción
+
 
 
 # Ejecutar el programa

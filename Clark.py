@@ -1,5 +1,5 @@
 import json
-from difflib import SequenceMatcher
+#from difflib import SequenceMatcher
 from datetime import datetime
 import unicodedata
 import random
@@ -15,17 +15,6 @@ dias_semana = {
     "Sunday": "domingo"
 }
 
-# Definición de la función para cargar datos
-def datos(nombre_archivo='conocimientos.json'):
-    try:
-        with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
-            return json.load(archivo)  # Cargar datos del archivo JSON
-    except FileNotFoundError:
-        print("Error: Archivo no encontrado.")
-        return {}  # Retorna un diccionario vacío si no se encuentra el archivo
-    except json.JSONDecodeError:
-        print("Error: Formato inválido en el archivo JSON.")
-        return {}  # Retorna un diccionario vacío si hay un error de formato
 
 # Definición de la función para cargar datos
 def cargar_datos(nombre_archivo='conocimientos.json'):
@@ -57,11 +46,9 @@ animales_data = cargar_animales('animales.json')  # Cargar datos de animales
 # Cargar datos desde el JSON al inicio de tu script
 conocimientos = cargar_datos('conocimientos.json')
 
-# Cargar datos desde el JSON al inicio de tu script
-datos = datos('conocimientos.json')
 
 # Iniciar listas vacías
-respuestas_cache = {}
+#respuestas_cache = {}
 UMBRAL_SIMILITUD = 0.6
 historial_preguntas = []
 historial_conversacion = []  # Lista para almacenar el historial de conversación
@@ -101,13 +88,14 @@ def actualizar_historial(pregunta, respuesta):
         historial_conversacion.pop(0)  # Eliminar el mensaje más antiguo
 
 
-def guardar_datos(datos, nombre_archivo='conocimientos.json'):
+def guardar_datos(conocimientos, nombre_archivo='conocimientos.json'):
     try:
         with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
-            json.dump(datos, archivo, ensure_ascii=False, indent=4)
+            json.dump(conocimientos, archivo, ensure_ascii=False, indent=4)
         print(f"Datos guardados exitosamente en '{nombre_archivo}'.")
     except IOError as e:
         print(f"Error al guardar los datos en el archivo: {e}")
+
 
 ######################################################################################################
 def buscar_saludo(pregunta_limpia, conocimientos):
@@ -130,26 +118,26 @@ def buscar_saludo(pregunta_limpia, conocimientos):
 
     return None
 
-# Función para buscar palabras clave en la pregunta
-def buscar_palabras_clave(pregunta, datos):  # Agregando datos como parámetro
-    for categoria, info in datos["categorias"].items():
+def buscar_palabras_clave(pregunta, conocimientos):  # Cambiar datos por conocimientos
+    for categoria, info in conocimientos["categorias"].items():
         if "palabrasClave" in info:  # Verificar si 'palabrasClave' existe
             for palabra in info["palabrasClave"]:
                 if palabra in pregunta.lower():
                     return categoria
     return None
 
+
 # Función para obtener una respuesta de la categoría
 def obtener_respuesta(categoria):
     if categoria:
-        respuestas = datos["categorias"][categoria]["respuesta"]
+        respuestas = conocimientos["categorias"][categoria]["respuesta"]
         return random.choice(respuestas)  # Respuesta dinámica
     return "No tengo suficiente información para responder."
 
 # Función para obtener una respuesta más específica si hay relaciones
 def obtener_relaciones(categoria, pregunta):
     if categoria:
-        relaciones = datos["categorias"][categoria].get("relaciones", {})
+        relaciones = conocimientos["categorias"][categoria].get("relaciones", {})
         for palabra in relaciones:
             if palabra in pregunta.lower():
                 return relaciones[palabra]
@@ -167,8 +155,8 @@ def manejar_contexto(pregunta, conocimientos):
 
 # Función para manejar preguntas vagas o amplias
 def manejar_preguntas_ampias(categoria):
-    if categoria and "respuestaIncompleta" in datos["categorias"][categoria]:
-        return datos["categorias"][categoria]["respuestaIncompleta"]
+    if categoria and "respuestaIncompleta" in conocimientos["categorias"][categoria]:
+        return conocimientos["categorias"][categoria]["respuestaIncompleta"]
     return None
 
 # Función para manejar el fuego con más precisión
@@ -260,8 +248,8 @@ def manejar_charla(pregunta, conocimientos):
     return conocimientos.get('charla', {}).get(pregunta_limpia, None)
 
 
-# Buscar presidente y nombre clave y darlo
-def presidente(pregunta):
+# Funcion buscar presidente,nombre,año y pasarlo
+def presidente(pregunta, conocimientos):
     # Convertir la pregunta a minúsculas sin acentos
     pregunta_limpia = eliminar_acentos(pregunta.lower())
 
@@ -310,6 +298,7 @@ def presidente(pregunta):
                         f"Descripción: {detalles['descripcion']}")
 
     return "Lo siento, no tengo información sobre ese presidente."
+
 
 
 
@@ -423,25 +412,26 @@ def obtener_chiste():
 # Categorias
 
 # Función para buscar palabras clave en la pregunta
-def buscar_palabras_clave(pregunta, datos):  # Agregando datos como parámetro
-    for categoria, info in datos["categorias"].items():
+def buscar_palabras_clave(pregunta, conocimientos):  # Cambiando datos por conocimientos
+    for categoria, info in conocimientos["categorias"].items():
         if "palabrasClave" in info:  # Verificar si 'palabrasClave' existe
             for palabra in info["palabrasClave"]:
                 if palabra in pregunta.lower():
                     return categoria
     return None
 
+
 # Función para obtener una respuesta de la categoría
 def obtener_respuesta(categoria):
     if categoria:
-        respuestas = datos["categorias"][categoria]["respuesta"]
+        respuestas = conocimientos["categorias"][categoria]["respuesta"]
         return random.choice(respuestas)  # Respuesta dinámica
     return "No tengo suficiente información para responder."
 
 # Función para obtener una respuesta más específica si hay relaciones
 def obtener_relaciones(categoria, pregunta):
     if categoria:
-        relaciones = datos["categorias"][categoria].get("relaciones", {})
+        relaciones = conocimientos["categorias"][categoria].get("relaciones", {})
         for palabra in relaciones:
             if palabra in pregunta.lower():
                 return relaciones[palabra]
@@ -464,8 +454,8 @@ def manejar_contexto(pregunta, conocimientos):
 
 # Función para manejar preguntas vagas o amplias
 def manejar_preguntas_ampias(categoria):
-    if categoria and "respuestaIncompleta" in datos["categorias"][categoria]:
-        return datos["categorias"][categoria]["respuestaIncompleta"]
+    if categoria and "respuestaIncompleta" in conocimientos["categorias"][categoria]:
+        return conocimientos["categorias"][categoria]["respuestaIncompleta"]
     return None
 
 # Función para manejar el fuego con más precisión
@@ -687,15 +677,15 @@ def preguntar(pregunta, conocimientos, animales_data):
         actualizar_historial(pregunta, respuesta_saludo)
         return respuesta_saludo
 
-    # Primero verificamos si es una pregunta sobre animales
-    respuesta_animal = animales(pregunta_limpia, animales_data)  # Cambiar aquí
-    if respuesta_animal:
-        return respuesta_animal
-
     # Verificar si se pregunta por el presidente
-    respuesta_presidente = presidente(pregunta)
+    respuesta_presidente = presidente(pregunta_limpia, conocimientos)  # Pasa los conocimientos aquí
     if respuesta_presidente != "Lo siento, no tengo información sobre ese presidente.":
         return respuesta_presidente
+
+    # Primero verificamos si es una pregunta sobre animales
+    respuesta_animal = animales(pregunta_limpia, animales_data)
+    if respuesta_animal:
+        return respuesta_animal
 
     # Aquí puedes seguir revisando otras preguntas o información
 
@@ -739,17 +729,11 @@ def main():
             actualizar_historial(pregunta, respuesta_saludo)  # Actualizar el historial con la respuesta de saludo
             continue
 
-        # Buscar respuesta sobre animales
-        respuesta_animal = animales(pregunta_limpia, animales_data)
-        if respuesta_animal:
-            print(f"IA: {respuesta_animal}")
-            actualizar_historial(pregunta, respuesta_animal)
-            continue
-
         # Llamar a la función preguntar para manejar todas las preguntas
-        respuesta = preguntar(pregunta, conocimientos)
+        respuesta = preguntar(pregunta, conocimientos, animales_data)  # Aquí llamas a preguntar
         print(f"IA: {respuesta}")
         actualizar_historial(pregunta, respuesta)  # Actualizar el historial con la nueva interacción
+
 
 
 

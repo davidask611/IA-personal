@@ -248,7 +248,7 @@ def manejar_charla(pregunta, conocimientos):
     return conocimientos.get('charla', {}).get(pregunta_limpia, None)
 
 
-# Funcion buscar presidente,nombre,año y pasarlo
+# Función buscar presidente, nombre, año y pasarlo
 def presidente(pregunta, conocimientos):
     # Convertir la pregunta a minúsculas sin acentos
     pregunta_limpia = eliminar_acentos(pregunta.lower())
@@ -276,8 +276,7 @@ def presidente(pregunta, conocimientos):
 
                 # Verificar si el año está dentro del periodo del presidente
                 if anio_inicio <= anio <= anio_fin:
-                    return (f"{nombre_presidente}: {detalles['nombre_completo']} fue presidente entre {detalles['periodo']}. "
-                            f"Descripción: {detalles['descripcion']}")
+                    return (f"{detalles['nombre_completo']} fue presidente entre {detalles['periodo']}.")
 
             # Si no se encuentra un presidente para ese año
             return f"No tengo información sobre quién fue presidente en el año {anio}. Intenta con 'quién fue presidente en el año 2022'."
@@ -285,7 +284,7 @@ def presidente(pregunta, conocimientos):
         # Verificar si se encuentra un año de solo dos cifras
         anio_dos_cifras = re.search(r"\b\d{2}\b", pregunta_limpia)
         if anio_dos_cifras:
-            return "No tengo información sobre ese presidente o esa fecha. Intenta con 'quién fue presidente en el año 2022'."
+            return "No tengo información sobre ese presidente o esa fecha. Por favor, intenta con un año de cuatro cifras, como 'quién fue presidente en el año 2022'."
 
         # Si no se encontró un año, buscar por el nombre del presidente
         for nombre_presidente, detalles in presidentes.items():
@@ -294,10 +293,11 @@ def presidente(pregunta, conocimientos):
 
             # Verificar si el nombre del presidente está en la pregunta
             if nombre_presidente_limpio in palabras_pregunta:
-                return (f"{nombre_presidente}: {detalles['nombre_completo']} fue presidente entre {detalles['periodo']}. "
+                return (f"{detalles['nombre_completo']} fue presidente entre {detalles['periodo']}. "
                         f"Descripción: {detalles['descripcion']}")
 
     return "Lo siento, no tengo información sobre ese presidente."
+
 
 
 

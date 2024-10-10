@@ -39,9 +39,26 @@ def cargar_datos(nombre_archivo='conocimientos.json'):
         print("Error: Formato inválido en el archivo JSON.")
         return {}  # Retorna un diccionario vacío si hay un error de formato
 
+# Definición de la función para cargar animales
+def cargar_animales(nombre_archivo='animales.json'):
+    try:
+        with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
+            return json.load(archivo)  # Cargar datos del archivo JSON
+    except FileNotFoundError:
+        print("Error: Archivo no encontrado.")
+        return {}  # Retorna un diccionario vacío si no se encuentra el archivo
+    except json.JSONDecodeError:
+        print("Error: Formato inválido en el archivo JSON.")
+        return {}  # Retorna un diccionario vacío si hay un error de formato
+
+# Cargar datos desde el json animales
+animales_data = cargar_animales('animales.json')  # Cargar datos de animales
 
 # Cargar datos desde el JSON al inicio de tu script
 conocimientos = cargar_datos('conocimientos.json')
+
+# Cargar datos desde el JSON al inicio de tu script
+datos = datos('conocimientos.json')
 
 # Iniciar listas vacías
 respuestas_cache = {}
@@ -205,60 +222,42 @@ def validar_campo_obligatorio(valor, campo):
     return valor
 
 ####################################################################################################
-# Función para obtener la descripción de un signo zodiacal desde el diccionario cargado
-def obtener_signo(signo):
-    signo = signo.lower()  # Convertimos a minúsculas para evitar errores de mayúsculas/minúsculas
-    if signo in signos_zodiacales:
-        # Construir la respuesta con la descripción y más detalles del signo
-        info_signo = signos_zodiacales[signo]
-        descripcion = (f"El signo {signo.capitalize()} cubre desde {info_signo['fecha-fecha']}. "
-                       f"Su elemento es {info_signo['elemento']}. {info_signo['descripcion']}")
-        return descripcion
-    else:
-        return "Lo siento, no tengo información sobre ese signo."
+# Función para buscar un saludo
+def buscar_saludo(pregunta_limpia, conocimientos):
+    # Obtener la lista de saludos del archivo JSON
+    saludos = conocimientos.get("saludos", {})
+
+    # Intentar encontrar un saludo exacto
+    for saludo in saludos:
+        if saludo in pregunta_limpia:
+            return saludos[saludo]
+
+    # Si no encuentra el saludo, puedes intentar buscar coincidencias parciales
+    palabras_pregunta = set(pregunta_limpia.split())  # Divide la pregunta en palabras
+    for saludo, respuesta in saludos.items():
+        palabras_saludo = set(saludo.split())  # Divide los saludos en palabras
+
+        # Verifica si alguna palabra del saludo coincide con la pregunta
+        if palabras_saludo & palabras_pregunta:  # El operador & busca intersección
+            return respuesta
+
+    return None
 
 
-# Función para detectar signos zodiacales con 're'
-def detectar_signo(pregunta):
-    pregunta_limpia = eliminar_acentos(pregunta.lower())  # Eliminar acentos y convertir a minúsculas
-
-    # Crear un patrón que busque "signo" seguido o precedido por un signo zodiacal
-    signos = '|'.join(signos_zodiacales.keys())  # Crear un patrón para todos los signos (ej. 'aries|tauro|geminis')
-    patron = rf"(signo.*\b({signos})\b|\b({signos})\b.*signo)"
-
-    # Buscar el patrón en la pregunta
-    coincidencia = re.search(patron, pregunta_limpia)
-
-    if coincidencia:
-        # Si se encuentra un signo en la pregunta, devolver la información del signo
-        signo_encontrado = coincidencia.group(2) or coincidencia.group(3)
-        return obtener_signo(signo_encontrado)
-
-    return None  # Si no se encuentra ninguna coincidencia
-# Revisar codigo de los signos
-
-# Funcion datos la IA
+# Función para responder sobre la IA
 def responder_sobre_ia(pregunta_limpia, conocimientos):
     if pregunta_limpia in conocimientos["datosdelaIA"]:
         return conocimientos["datosdelaIA"][pregunta_limpia]
     return None  # Si la pregunta no está en el JSON, devolvemos None
 
-# Funcion charla cotidiana
+
+# Función para manejar la charla cotidiana
 def manejar_charla(pregunta, conocimientos):
     # Limpiar la pregunta para que coincida con las claves del diccionario
     pregunta_limpia = eliminar_acentos(pregunta.lower())
 
     # Buscar en el JSON de conocimientos
     return conocimientos.get('charla', {}).get(pregunta_limpia, None)
-
-
-# Busca la categoria y su lista, de no encontrar avisa del error
-def obtener_chiste():
-    try:
-        lista_chistes = conocimientos["chiste"]["lista_chistes"]
-        return random.choice(lista_chistes)
-    except KeyError:
-        return "Lo siento, no tengo chistes guardados."
 
 
 # Buscar presidente y nombre clave y darlo
@@ -316,37 +315,68 @@ def presidente(pregunta):
 
 
 
-
-
-"""
-# Buscar perro y nombre o caracteristicas y darlo
-def animales(pregunta, conocimientos):
-    # Convertir la pregunta a minúsculas sin acentos
+# Función buscar animales o características y devolverlo
+def animales(pregunta, animales_data):
+    # Convertir la pregunta a minúsculas y eliminar acentos
     pregunta_limpia = eliminar_acentos(pregunta.lower())
 
-    # Unir todas las palabras de la pregunta para poder comparar nombres completos
-    pregunta_unida = "".join(pregunta_limpia.split())
+    # Detectar palabras clave (animal, raza o características)
+    if "perro" in pregunta_limpia:
+        subcategoria = "perro"
+    elif "gato" in pregunta_limpia or "felino" in pregunta_limpia:
+        subcategoria = "gato"
+    elif "ave" in pregunta_limpia or "pajaro" in pregunta_limpia:
+        subcategoria = "ave"
+    else:
+        return "No comprendo a qué animal te refieres. Intenta especificar 'perro', 'gato', 'ave', etc."
 
-    # Lista de animales en el diccionario
-    animales = conocimientos.get("animal", {}).get("perro", {})
+    # Buscar la raza específica dentro de la subcategoría
+    razas = animales_data.get("animal", {}).get(subcategoria, {})
 
-    # Recorrer todas las razas de perro en el diccionario
-    for raza, detalles in animales.items():
-        # Limpiar el nombre de la raza para compararlo
-        raza_limpia = eliminar_acentos(raza.lower())
-        raza_unida = "".join(raza_limpia.split())  # Unir el nombre completo de la raza
+    # Buscar la raza o características en la pregunta
+    for raza, info in razas.items():
+        if raza in pregunta_limpia:
+            return (f"{info['nombre_completo']}: {info['descripcion']} "
+                    f"Características: Peligro: {info['caracteristicas']['peligro']}, "
+                    f"Docilidad: {info['caracteristicas']['docilidad']}, "
+                    f"Amabilidad: {info['caracteristicas']['amabilidad']}")
 
-        # Verificar si la pregunta menciona la palabra "perro" seguida de un nombre de raza
-        if "perro" in pregunta_unida and raza_unida in pregunta_unida:
-            # Responder con las características de la raza de perro
-            return (f"{raza}: {detalles['nombre_completo']}. "
-                    f"Descripción: {detalles['descripcion']} "
-                    f"Docilidad: {detalles['caracteristicas']['docilidad']}. "
-                    f"Amabilidad: {detalles['caracteristicas']['amabilidad']}")
+    # Si no se encuentra la raza o información
+    return f"No tengo información sobre esa raza de {subcategoria}. Intenta reformular la pregunta."
 
-    return "Lo siento, no tengo información sobre esa raza de perro o intenta reformular la pregunta"
-"""
 
+
+
+
+# Función para obtener la descripción de un signo zodiacal desde el diccionario cargado
+def obtener_signo(signo):
+    signo = signo.lower()  # Convertimos a minúsculas para evitar errores de mayúsculas/minúsculas
+    if signo in signos_zodiacales:
+        # Construir la respuesta con la descripción y más detalles del signo
+        info_signo = signos_zodiacales[signo]
+        descripcion = (f"El signo {signo.capitalize()} cubre desde {info_signo['fecha-fecha']}. "
+                       f"Su elemento es {info_signo['elemento']}. {info_signo['descripcion']}")
+        return descripcion
+    else:
+        return "Lo siento, no tengo información sobre ese signo."
+
+# Función para detectar signos zodiacales con 're'
+def detectar_signo(pregunta):
+    pregunta_limpia = eliminar_acentos(pregunta.lower())  # Eliminar acentos y convertir a minúsculas
+
+    # Crear un patrón que busque "signo" seguido o precedido por un signo zodiacal
+    signos = '|'.join(signos_zodiacales.keys())  # Crear un patrón para todos los signos (ej. 'aries|tauro|geminis')
+    patron = rf"(signo.*\b({signos})\b|\b({signos})\b.*signo)"
+
+    # Buscar el patrón en la pregunta
+    coincidencia = re.search(patron, pregunta_limpia)
+
+    if coincidencia:
+        # Si se encuentra un signo en la pregunta, devolver la información del signo
+        signo_encontrado = coincidencia.group(2) or coincidencia.group(3)
+        return obtener_signo(signo_encontrado)
+
+    return None  # Si no se encuentra ninguna coincidencia
 
 
 # Función para buscar música o cantante por claves
@@ -379,6 +409,77 @@ def buscar_musica_por_claves(pregunta):
             return respuesta
 
     return None  # Si no se encuentra coincidencia
+
+
+# Función para obtener un chiste aleatorio
+def obtener_chiste():
+    try:
+        lista_chistes = conocimientos["chiste"]["lista_chistes"]
+        return random.choice(lista_chistes)
+    except KeyError:
+        return "Lo siento, no tengo chistes guardados."
+
+
+# Categorias
+
+# Función para buscar palabras clave en la pregunta
+def buscar_palabras_clave(pregunta, datos):  # Agregando datos como parámetro
+    for categoria, info in datos["categorias"].items():
+        if "palabrasClave" in info:  # Verificar si 'palabrasClave' existe
+            for palabra in info["palabrasClave"]:
+                if palabra in pregunta.lower():
+                    return categoria
+    return None
+
+# Función para obtener una respuesta de la categoría
+def obtener_respuesta(categoria):
+    if categoria:
+        respuestas = datos["categorias"][categoria]["respuesta"]
+        return random.choice(respuestas)  # Respuesta dinámica
+    return "No tengo suficiente información para responder."
+
+# Función para obtener una respuesta más específica si hay relaciones
+def obtener_relaciones(categoria, pregunta):
+    if categoria:
+        relaciones = datos["categorias"][categoria].get("relaciones", {})
+        for palabra in relaciones:
+            if palabra in pregunta.lower():
+                return relaciones[palabra]
+    return None
+
+
+# Otras funciones
+
+# Función para actualizar el contexto
+def actualizar_contexto(pregunta, conocimientos):
+    conocimientos["contexto"]["ultimaPregunta"] = pregunta
+    guardar_datos(conocimientos, 'conocimientos.json')  # Guarda los cambios en el archivo JSON
+
+# Función para manejar el contexto
+def manejar_contexto(pregunta, conocimientos):
+    ultima_pregunta = conocimientos["contexto"]["ultimaPregunta"]
+    if ultima_pregunta and "fuego" in ultima_pregunta.lower() and "como" in pregunta.lower():
+        return "¿Te refieres a cómo apagar el fuego o cómo mantenerlo encendido?"
+    return None
+
+# Función para manejar preguntas vagas o amplias
+def manejar_preguntas_ampias(categoria):
+    if categoria and "respuestaIncompleta" in datos["categorias"][categoria]:
+        return datos["categorias"][categoria]["respuestaIncompleta"]
+    return None
+
+# Función para manejar el fuego con más precisión
+def manejar_fuego(pregunta_limpia):
+    if "apagar" in pregunta_limpia or "extinguir" in pregunta_limpia:
+        return "Si el fuego es pequeño, puedes apagarlo con una manta o cubriéndolo."
+
+    elif "mantener encendido" in pregunta_limpia or "no se apague" in pregunta_limpia:
+        return "Para mantener el fuego encendido, asegúrate de que tenga suficiente combustible y oxígeno."
+
+    elif "necesita el fuego" in pregunta_limpia:
+        return "El fuego necesita tres elementos principales para mantenerse: combustible, oxígeno y calor."
+
+    return None  # Si no encuentra coincidencia, devolver None
 
 
 # Solicitar el nombre del usuario al inicio de la conversación
@@ -562,8 +663,9 @@ def borrar_subcategoria():
         print("Categoría no encontrada. Por favor intenta de nuevo.")
 
 
+
 # Función principal de preguntas
-def preguntar(pregunta, conocimientos):
+def preguntar(pregunta, conocimientos, animales_data):
     # Verificar si "contexto" está en "conocimientos"
     if "contexto" not in conocimientos:
         conocimientos["contexto"] = {"ultimaPregunta": ""}  # Inicializa el contexto
@@ -585,6 +687,11 @@ def preguntar(pregunta, conocimientos):
         actualizar_historial(pregunta, respuesta_saludo)
         return respuesta_saludo
 
+    # Primero verificamos si es una pregunta sobre animales
+    respuesta_animal = animales(pregunta_limpia, animales_data)  # Cambiar aquí
+    if respuesta_animal:
+        return respuesta_animal
+
     # Verificar si se pregunta por el presidente
     respuesta_presidente = presidente(pregunta)
     if respuesta_presidente != "Lo siento, no tengo información sobre ese presidente.":
@@ -597,8 +704,10 @@ def preguntar(pregunta, conocimientos):
 
 
 
+
 def main():
     conocimientos = cargar_datos('conocimientos.json')  # Cargar conocimientos
+    animales_data = cargar_animales('animales.json')  # Cargar datos de animales
 
     while True:
         pregunta = input("Tú: ")
@@ -628,6 +737,13 @@ def main():
         if respuesta_saludo:
             print(f"IA: {respuesta_saludo}")
             actualizar_historial(pregunta, respuesta_saludo)  # Actualizar el historial con la respuesta de saludo
+            continue
+
+        # Buscar respuesta sobre animales
+        respuesta_animal = animales(pregunta_limpia, animales_data)
+        if respuesta_animal:
+            print(f"IA: {respuesta_animal}")
+            actualizar_historial(pregunta, respuesta_animal)
             continue
 
         # Llamar a la función preguntar para manejar todas las preguntas

@@ -299,11 +299,6 @@ def presidente(pregunta, conocimientos):
     return "Lo siento, no tengo información sobre ese presidente."
 
 
-
-
-
-
-
 # Función buscar animales o características y devolverlo
 def animales(pregunta, animales_data):
     # Convertir la pregunta a minúsculas y eliminar acentos
@@ -334,17 +329,16 @@ def animales(pregunta, animales_data):
     return f"No tengo información sobre esa raza de {subcategoria}. Intenta reformular la pregunta."
 
 
-
-
-
 # Función para obtener la descripción de un signo zodiacal desde el diccionario cargado
 def obtener_signo(signo):
     signo = signo.lower()  # Convertimos a minúsculas para evitar errores de mayúsculas/minúsculas
     if signo in signos_zodiacales:
         # Construir la respuesta con la descripción y más detalles del signo
         info_signo = signos_zodiacales[signo]
+        compatibilidad = ", ".join(info_signo['compatibilidad'])  # Convertir lista a cadena
         descripcion = (f"El signo {signo.capitalize()} cubre desde {info_signo['fecha-fecha']}. "
-                       f"Su elemento es {info_signo['elemento']}. {info_signo['descripcion']}")
+                       f"Su elemento es {info_signo['elemento']}. {info_signo['descripcion']} "
+                       f"Es compatible con: {compatibilidad}.")
         return descripcion
     else:
         return "Lo siento, no tengo información sobre ese signo."
@@ -353,19 +347,21 @@ def obtener_signo(signo):
 def detectar_signo(pregunta):
     pregunta_limpia = eliminar_acentos(pregunta.lower())  # Eliminar acentos y convertir a minúsculas
 
-    # Crear un patrón que busque "signo" seguido o precedido por un signo zodiacal
+    # Crear un patrón que busque signos zodiacales
     signos = '|'.join(signos_zodiacales.keys())  # Crear un patrón para todos los signos (ej. 'aries|tauro|geminis')
-    patron = rf"(signo.*\b({signos})\b|\b({signos})\b.*signo)"
+    patron = rf"\b({signos})\b"  # Solo buscar signos, sin necesidad de "signo" antes o después
 
     # Buscar el patrón en la pregunta
     coincidencia = re.search(patron, pregunta_limpia)
 
     if coincidencia:
         # Si se encuentra un signo en la pregunta, devolver la información del signo
-        signo_encontrado = coincidencia.group(2) or coincidencia.group(3)
+        signo_encontrado = coincidencia.group(1)
         return obtener_signo(signo_encontrado)
 
     return None  # Si no se encuentra ninguna coincidencia
+
+
 
 
 # Función para buscar música o cantante por claves
@@ -682,6 +678,11 @@ def preguntar(pregunta, conocimientos, animales_data):
     if respuesta_presidente != "Lo siento, no tengo información sobre ese presidente.":
         return respuesta_presidente
 
+    # Verificar si se pregunta por signos zodiacales
+    respuesta_signo = detectar_signo(pregunta_limpia)
+    if respuesta_signo:
+        return respuesta_signo
+
     # Primero verificamos si es una pregunta sobre animales
     respuesta_animal = animales(pregunta_limpia, animales_data)
     if respuesta_animal:
@@ -690,6 +691,7 @@ def preguntar(pregunta, conocimientos, animales_data):
     # Aquí puedes seguir revisando otras preguntas o información
 
     return "No tengo suficiente información para responder."
+
 
 
 
@@ -733,7 +735,6 @@ def main():
         respuesta = preguntar(pregunta, conocimientos, animales_data)  # Aquí llamas a preguntar
         print(f"IA: {respuesta}")
         actualizar_historial(pregunta, respuesta)  # Actualizar el historial con la nueva interacción
-
 
 
 

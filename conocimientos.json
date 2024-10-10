@@ -29,12 +29,12 @@
         "Alfonsin": {
             "periodo": "1983 - 1989",
             "nombre_completo": "Raul Alfonsin",
-            "descripcion": "Raul Alfonsin fue el primer presidente democratico de Argentina tras la dictadura militar. Su gobierno se caracterizo por la defensa de los derechos humanos y el establecimiento de un estado democratico. Alfonsin enfrento numerosos desafios, incluyendo una economia en crisis y tensiones sociales. Su administraciÃ³n es recordada por la implementacion de juicios a los lideres de la dictadura, un paso importante hacia la justicia. Sin embargo, su mandato culmino en medio de problemas economicos y presiones sociales, lo que condujo a su renuncia anticipada en 1989."
+            "descripcion": "Raul Alfonsin fue el primer presidente democratico de Argentina tras la dictadura militar. Su gobierno se caracterizo por la defensa de los derechos humanos y el establecimiento de un estado democratico. Alfonsin enfrento numerosos desafios, incluyendo una economia en crisis y tensiones sociales. Su administracion es recordada por la implementacion de juicios a los lideres de la dictadura, un paso importante hacia la justicia. Sin embargo, su mandato culmino en medio de problemas economicos y presiones sociales, lo que condujo a su renuncia anticipada en 1989."
         },
         "Menem": {
             "periodo": "1989 - 1999",
             "nombre_completo": "Carlos Menem",
-            "descripcion": "Carlos Menem, presidente durante una de las etapas mas controversiales de Argentina, implemento un modelo economico de liberalizacion que incluyo privatizaciones masivas y apertura comercial. Su gobierno trajo consigo un periodo de crecimiento economico inicial, pero tambien un aumento en la desigualdad y la pobreza. Menem es recordado por su carisma y estilo populista, aunque su administracion se vio marcada por la corrupcion y escandalos. Su mandato se extiende hasta el aÃ±o 1999, donde dejo un legado mixto en la politica argentina."
+            "descripcion": "Carlos Menem, presidente durante una de las etapas mas controversiales de Argentina, implemento un modelo economico de liberalizacion que incluyo privatizaciones masivas y apertura comercial. Su gobierno trajo consigo un periodo de crecimiento economico inicial, pero tambien un aumento en la desigualdad y la pobreza. Menem es recordado por su carisma y estilo populista, aunque su administracion se vio marcada por la corrupcion y escandalos. Su mandato se extiende hasta el año 1999, donde dejo un legado mixto en la politica argentina."
         },
         "Rua": {
             "periodo": "1999 - 2001",
@@ -44,12 +44,17 @@
         "Duhalde": {
             "periodo": "2002 - 2003",
             "nombre_completo": "Eduardo Duhalde",
-            "descripcion": "Eduardo Duhalde asumio la presidencia en medio de una crisis economica devastadora que afecto a Argentina. Su gestion se centrÃ³ en la estabilizacion de la economia y la implementacion de politicas sociales para mitigar el impacto de la crisis en los ciudadanos. Promovio la devaluacion del peso, lo que, aunque controlo la inflacion, genero un impacto en los ahorros de la poblacion. Su periodo fue breve, pero crucial, ya que sento las bases para la recuperacion economica que vendria con la presidencia de Nestor Kirchner."
+            "descripcion": "Eduardo Duhalde asumio la presidencia en medio de una crisis economica devastadora que afecto a Argentina. Su gestion se centro en la estabilizacion de la economia y la implementacion de politicas sociales para mitigar el impacto de la crisis en los ciudadanos. Promovio la devaluacion del peso, lo que, aunque controlo la inflacion, genero un impacto en los ahorros de la poblacion. Su periodo fue breve, pero crucial, ya que sento las bases para la recuperacion economica que vendria con la presidencia de Nestor Kirchner."
+        },
+        "Nestor": {
+            "periodo": "2003 - 2007",
+            "nombre_completo": "Nestor Kirchner",
+            "descripcion": "Nestor Kirchner asumio la presidencia en un contexto de crisis economica y politica en Argentina. Su gobierno se enfoco en la recuperacion economica, la reestructuracion de la deuda externa y la promocion de politicas de derechos humanos. Implemento programas sociales para combatir la pobreza y el desempleo. Su gestion se caracterizo por un fuerte crecimiento economico, impulsado por la recuperacion de la industria y la agricultura, asi como por el aumento de las exportaciones. Tambien fue conocido por su postura energica frente al Fondo Monetario Internacional y por su liderazgo en la region."
         },
         "Cristina": {
             "periodo": "2007 - 2015",
             "nombre_completo": "Cristina Fernandez de Kirchner",
-            "descripcion": "Cristina Fernandez de Kirchner, esposa de Nestor Kirchner, se convirtio en la primera mujer en ser reelegida como presidenta de Argentina. Su gobierno se caracterizo por un enfoque en la expansion del gasto social, la defensa de los derechos humanos y la nacionalizacion de diversas industrias. Enfrento grandes desafios, incluyendo conflictos con el campo y oposicion politica. Su gestion fue marcada por un crecimiento economico sostenido en los primeros aÃ±os, pero luego enfrentÃ³ problemas de inflacion y deudas externas, lo que afecto su popularidad en los ultimos aÃ±os."
+            "descripcion": "Cristina Fernandez de Kirchner, esposa de Nestor Kirchner, se convirtio en la primera mujer en ser reelegida como presidenta de Argentina. Su gobierno se caracterizo por un enfoque en la expansion del gasto social, la defensa de los derechos humanos y la nacionalizacion de diversas industrias. Enfrento grandes desafios, incluyendo conflictos con el campo y oposicion politica. Su gestion fue marcada por un crecimiento economico sostenido en los primeros años, pero luego enfrento problemas de inflacion y deudas externas, lo que afecto su popularidad en los ultimos años."
         },
         "Macri": {
             "periodo": "2015 - 2019",
@@ -64,10 +69,10 @@
         "Milei": {
             "periodo": "2023 - 2024",
             "nombre_completo": "Javier Gerardo Milei",
-            "descripcion": "Javier Milei es un economista y poli­tico argentino que asumia la presidencia en 2024. Es conocido por su postura libertaria y por proponer reformas econÃ³micas radicales en un contexto de crisis econÃ³mica y alta inflaciÃ³n. Su enfoque se centra en reducir drÃ¡sticamente el gasto pÃºblico, eliminar regulaciones y promover la libertad de mercado. Milei ha ganado notoriedad por su estilo provocador y su discurso anti-establishment, apelando a votantes que buscan un cambio en el sistema polÃ­tico tradicional. Es un firme defensor de la propiedad privada y ha manifestado su intenciÃ³n de cerrar el Banco Central."
+            "descripcion": "Javier Milei es un economista y politico argentino que asumio la presidencia en 2024. Es conocido por su postura libertaria y por proponer reformas economicas radicales en un contexto de crisis economica y alta inflacion. Su enfoque se centra en reducir drasticamente el gasto publico, eliminar regulaciones y promover la libertad de mercado. Milei ha ganado notoriedad por su estilo provocador y su discurso anti-establishment, apelando a votantes que buscan un cambio en el sistema politico tradicional. Es un firme defensor de la propiedad privada y ha manifestado su intencion de cerrar el Banco Central."
         }
     },
-        "signos_zodiacales": {
+    "signos_zodiacales": {
         "aries": {
             "fecha-fecha": "21-03-2024 a 19-04-2024",
             "descripcion": "Aries, el primer signo del zodiaco, es conocido por su energía y determinación. Los arianos son aventureros y les gusta ser líderes en cualquier situación. Son audaces y no temen asumir riesgos. Su personalidad ardiente les impulsa a actuar con rapidez y a buscar nuevas experiencias.",

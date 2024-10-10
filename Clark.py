@@ -365,35 +365,54 @@ def detectar_signo(pregunta):
 
 
 # Función para buscar música o cantante por claves
-def buscar_musica_por_claves(pregunta):
+def buscar_musica_por_claves(pregunta, conocimientos):
     # Convertir la pregunta a minúsculas sin acentos
     pregunta_limpia = eliminar_acentos(pregunta.lower())
 
     # Dividir la pregunta en palabras
     palabras_pregunta = pregunta_limpia.split()
 
-    # Lista de géneros musicales en la categoría 'música'
+    # Lista de géneros musicales en la categoría 'musica'
     musica = conocimientos.get("musica", {})
 
-    # Buscar por palabras clave relacionadas con 'musica', 'cantante' y 'información' junto con el nombre del cantante
-    for genero, detalles in musica.items():
-        nombre_cantante = eliminar_acentos(detalles["nombre_completo"].lower())
+    # Palabras clave a buscar
+    palabras_cantante = ["musica", "cantante", "informacion"]
+    palabras_canciones = ["canciones", "temas", "exitos"]
 
-        # Verificar si la palabra 'musica', 'cantante', o 'informacion' y el nombre del cantante están en la pregunta
-        if (("musica" in palabras_pregunta or "cantante" in palabras_pregunta or "informacion" in palabras_pregunta)
-            and nombre_cantante in palabras_pregunta):
+    # Inicializar una variable para saber si se detectó un nombre pero no se encontró en el JSON
+    nombre_detectado = None
 
-            # Construir la respuesta básica
-            respuesta = (f"{nombre_cantante}: {detalles['nombre_completo']} es un {detalles['cargo']} de {detalles['genero_musical']}, "
-                         f"nació el {detalles['fecha']} en {detalles['provincia']}, {detalles['pais']}.")
+    # Buscar por palabras clave relacionadas con 'cantante' y el nombre del cantante
+    for genero, artistas in musica.items():
+        for nombre_cantante, detalles in artistas.items():
+            nombre_cantante_limpio = eliminar_acentos(nombre_cantante.lower())
 
-            # Si se pidió información y hay descripción, agregarla
-            if "informacion" in palabras_pregunta and detalles.get("descripcion"):
-                respuesta += f" Descripción: {detalles['descripcion']}"
+            # Verificar si el nombre del cantante está en la pregunta
+            if nombre_cantante_limpio in palabras_pregunta:
+                nombre_detectado = nombre_cantante  # Guardar el nombre si se detecta
 
-            return respuesta
+                # Si se detecta también la palabra 'cantante' o 'informacion'
+                if any(palabra in palabras_pregunta for palabra in palabras_cantante):
+                    # Construir la respuesta con información básica
+                    respuesta = (f"{nombre_cantante}: {detalles['nombre_completo']} es un cantante de {genero}. "
+                                 f"Nació el {detalles['fecha_nacimiento']}. {detalles['descripcion']}")
+                    return respuesta
 
-    return None  # Si no se encuentra coincidencia
+                # Si se detecta la palabra 'canciones', 'temas', o 'exitos'
+                elif any(palabra in palabras_pregunta for palabra in palabras_canciones):
+                    if detalles.get("canciones"):
+                        canciones = ', '.join(detalles["canciones"])
+                        return f"Las canciones más exitosas de {nombre_cantante} son: {canciones}."
+                    else:
+                        return f"No tengo información sobre las canciones de {nombre_cantante}."
+
+    # Si se detectó un nombre pero no se encontró información en el JSON
+    if nombre_detectado:
+        return f"No tengo información sobre {nombre_detectado}. Intenta con otro nombre o verifica la ortografía."
+
+    # Si no se encuentra coincidencia y no se detectó un nombre
+    return "No tengo suficiente información. Podrías intentar con 'cantante' seguido del nombre del artista o 'canciones' con su nombre."
+
 
 
 # Función para obtener un chiste aleatorio
@@ -682,6 +701,12 @@ def preguntar(pregunta, conocimientos, animales_data):
     respuesta_signo = detectar_signo(pregunta_limpia)
     if respuesta_signo:
         return respuesta_signo
+
+    # Verificar si se pregunta por musica o cantante
+    respuesta_musica = buscar_musica_por_claves(pregunta_limpia, conocimientos)
+    if respuesta_musica:
+        return respuesta_musica
+
 
     # Primero verificamos si es una pregunta sobre animales
     respuesta_animal = animales(pregunta_limpia, animales_data)

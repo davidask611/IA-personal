@@ -376,12 +376,27 @@ def buscar_musica_por_claves(pregunta, conocimientos):
 """
 
 # Función para obtener un chiste aleatorio
-def obtener_chiste():
+def obtener_chiste(conocimientos):
     try:
         lista_chistes = conocimientos["chiste"]["lista_chistes"]
         return random.choice(lista_chistes)
     except KeyError:
         return "Lo siento, no tengo chistes guardados."
+
+# Función para verificar si se ha solicitado un chiste
+def verificar_chiste(pregunta, conocimientos):
+    # Convertir la pregunta a minúsculas y eliminar acentos
+    pregunta_limpia = eliminar_acentos(pregunta.lower())
+
+    # Lista de palabras clave para identificar que se trata de un chiste
+    palabras_clave_chiste = ["chiste", "cuentame un chiste", "otro chiste", "me cuentas un chiste"]
+
+    # Verificar si alguna de las palabras clave está en la pregunta
+    if any(palabra in pregunta_limpia for palabra in palabras_clave_chiste):
+        return obtener_chiste(conocimientos)
+
+    return None  # Retornar None si no es una pregunta sobre chistes
+
 
 # TODO # Función buscar animales o características y devolverlo
 """def animales(pregunta, animales_data):
@@ -446,7 +461,7 @@ def verificar_musica_animal(pregunta, conocimientos, animales):
         return "No comprendo a qué animal te refieres. Intenta especificar 'perro', 'gato', 'ave', etc."
 
     # Verificar si la pregunta es sobre música
-    elif "musica" in pregunta_limpia or "cantante" in pregunta_limpia or "canciones" in pregunta_limpia:
+    elif "musica" in pregunta_limpia or "cantante" in pregunta_limpia or "informacion" in pregunta_limpia or "canciones" in pregunta_limpia or "temas" in pregunta_limpia or "exitos" in pregunta_limpia:
         # Procesar la pregunta como una consulta sobre música
         musica = conocimientos.get("musica", {})
         palabras_pregunta = pregunta_limpia.split()
@@ -674,7 +689,7 @@ def borrar_subcategoria():
 
 
 
-# TODO Función principal de preguntar
+# TODO Función principal de preguntar(logica de preguntas)
 def preguntar(pregunta, conocimientos, animales_data):
     # Verificar si "contexto" está en "conocimientos"
     if "contexto" not in conocimientos:
@@ -711,6 +726,11 @@ def preguntar(pregunta, conocimientos, animales_data):
     respuesta_musica_animal = verificar_musica_animal(pregunta, conocimientos, animales_data)
     if respuesta_musica_animal != "No tengo suficiente información para responder esta pregunta.":
         return respuesta_musica_animal
+
+    # Verificar si la pregunta es sobre chistes
+    respuesta_chiste = verificar_chiste(pregunta, conocimientos)
+    if respuesta_chiste:
+        return respuesta_chiste
 
     # Verificar si se pregunta por música o cantante
     #respuesta_musica = buscar_musica_por_claves(pregunta_limpia, conocimientos)
@@ -763,6 +783,13 @@ def main():
         if respuesta_saludo:
             print(f"IA: {respuesta_saludo}")
             actualizar_historial(pregunta, respuesta_saludo)  # Actualizar el historial con la respuesta de saludo
+            continue
+
+        # Verificar si es una pregunta sobre chistes
+        respuesta_chiste = verificar_chiste(pregunta_limpia, conocimientos)
+        if respuesta_chiste:
+            print(f"IA: {respuesta_chiste}")
+            actualizar_historial(pregunta, respuesta_chiste)
             continue
 
         # Llamar a la función preguntar para manejar todas las preguntas

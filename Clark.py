@@ -15,7 +15,7 @@ dias_semana = {
     "Sunday": "domingo"
 }
 
-
+# TODO: Carga de datos
 # Definición de la función para cargar datos
 def cargar_datos(nombre_archivo='conocimientos.json'):
     try:
@@ -46,16 +46,17 @@ animales_data = cargar_animales('animales.json')  # Cargar datos de animales
 # Cargar datos desde el JSON al inicio de tu script
 conocimientos = cargar_datos('conocimientos.json')
 
+# Asegurarse de que los signos están en el diccionario 'conocimientos'
+signos_zodiacales = conocimientos.get("signos_zodiacales", {})
 
-# Iniciar listas vacías
+# TODO Iniciar listas vacías
 #respuestas_cache = {}
 UMBRAL_SIMILITUD = 0.6
 historial_preguntas = []
 historial_conversacion = []  # Lista para almacenar el historial de conversación
 MAX_HISTORIAL = 6  # Limitar el historial a los últimos 6 mensajes
-signos_zodiacales = conocimientos.get("signos_zodiacales", {})  # Asegurarse de que los signos están en el diccionario 'conocimientos'
 
-# Funciones
+# TODO Funciones acentos, limpieza, historial, etc
 def eliminar_acentos(texto):
     # Reemplazar la 'ñ' por un símbolo temporal (por ejemplo, ~)
     texto = texto.replace('ñ', '~').replace('Ñ', '~')  # Reemplazar tanto minúscula como mayúscula
@@ -67,6 +68,14 @@ def eliminar_acentos(texto):
     texto_final = texto_sin_acentos.replace('~', 'ñ')
     return texto_final
 
+def guardar_datos(conocimientos, nombre_archivo='conocimientos.json'):
+    try:
+        with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
+            json.dump(conocimientos, archivo, ensure_ascii=False, indent=4)
+        print(f"Datos guardados exitosamente en '{nombre_archivo}'.")
+    except IOError as e:
+        print(f"Error al guardar los datos en el archivo: {e}")
+    return None
 
 # Recordar el historial de la charla
 def recordar_historial():
@@ -88,36 +97,20 @@ def actualizar_historial(pregunta, respuesta):
         historial_conversacion.pop(0)  # Eliminar el mensaje más antiguo
 
 
-def guardar_datos(conocimientos, nombre_archivo='conocimientos.json'):
+# TODO funciones de categoria
+def validar_fecha(fecha_str, formato="%d-%m-%Y"):
     try:
-        with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
-            json.dump(conocimientos, archivo, ensure_ascii=False, indent=4)
-        print(f"Datos guardados exitosamente en '{nombre_archivo}'.")
-    except IOError as e:
-        print(f"Error al guardar los datos en el archivo: {e}")
+        datetime.strptime(fecha_str, formato)
+        return True
+    except ValueError:
+        return False
 
+def validar_campo_obligatorio(valor, campo):
+    while not valor.strip():  # Comprobar si está vacío
+        valor = input(f"El {campo} es obligatorio. Introduce {campo}: ")
+    return valor
 
-######################################################################################################
-def buscar_saludo(pregunta_limpia, conocimientos):
-    # Obtener la lista de saludos del archivo JSON
-    saludos = conocimientos.get("saludos", {})
-
-    # Intentar encontrar un saludo exacto
-    for saludo in saludos:
-        if saludo in pregunta_limpia:
-            return saludos[saludo]
-
-    # Si no encuentra el saludo, puedes intentar buscar coincidencias parciales
-    palabras_pregunta = set(pregunta_limpia.split())  # Divide la pregunta en palabras
-    for saludo, respuesta in saludos.items():
-        palabras_saludo = set(saludo.split())  # Divide los saludos en palabras
-
-        # Verifica si alguna palabra del saludo coincide con la pregunta
-        if palabras_saludo & palabras_pregunta:  # El operador & busca intersección
-            return respuesta
-
-    return None
-
+# Función para buscar palabras clave en la pregunta
 def buscar_palabras_clave(pregunta, conocimientos):  # Cambiar datos por conocimientos
     for categoria, info in conocimientos["categorias"].items():
         if "palabrasClave" in info:  # Verificar si 'palabrasClave' existe
@@ -128,11 +121,12 @@ def buscar_palabras_clave(pregunta, conocimientos):  # Cambiar datos por conocim
 
 
 # Función para obtener una respuesta de la categoría
-def obtener_respuesta(categoria):
-    if categoria:
-        respuestas = conocimientos["categorias"][categoria]["respuesta"]
-        return random.choice(respuestas)  # Respuesta dinámica
-    return "No tengo suficiente información para responder."
+#def obtener_respuesta(categoria):
+#    if categoria:
+#        respuestas = conocimientos["categorias"][categoria]["respuesta"]
+#        return random.choice(respuestas)  # Respuesta dinámica
+#    return "No tengo suficiente información para responder."
+
 
 # Función para obtener una respuesta más específica si hay relaciones
 def obtener_relaciones(categoria, pregunta):
@@ -143,15 +137,20 @@ def obtener_relaciones(categoria, pregunta):
                 return relaciones[palabra]
     return None
 
+
+# Función para actualizar el contexto
 def actualizar_contexto(pregunta, conocimientos):
     conocimientos["contexto"]["ultimaPregunta"] = pregunta
     guardar_datos(conocimientos, 'conocimientos.json')  # Guarda los cambios en el archivo JSON
 
+
+# Función para manejar el contexto
 def manejar_contexto(pregunta, conocimientos):
     ultima_pregunta = conocimientos["contexto"]["ultimaPregunta"]
     if ultima_pregunta and "fuego" in ultima_pregunta.lower() and "como" in pregunta.lower():
         return "¿Te refieres a cómo apagar el fuego o cómo mantenerlo encendido?"
     return None
+
 
 # Función para manejar preguntas vagas o amplias
 def manejar_preguntas_ampias(categoria):
@@ -159,22 +158,19 @@ def manejar_preguntas_ampias(categoria):
         return conocimientos["categorias"][categoria]["respuestaIncompleta"]
     return None
 
+
 # Función para manejar el fuego con más precisión
 def manejar_fuego(pregunta_limpia):
     if "apagar" in pregunta_limpia or "extinguir" in pregunta_limpia:
         return "Si el fuego es pequeño, puedes apagarlo con una manta o cubriéndolo."
-
     elif "mantener encendido" in pregunta_limpia or "no se apague" in pregunta_limpia:
         return "Para mantener el fuego encendido, asegúrate de que tenga suficiente combustible y oxígeno."
-
     elif "necesita el fuego" in pregunta_limpia:
         return "El fuego necesita tres elementos principales para mantenerse: combustible, oxígeno y calor."
-
     return None  # Si no encuentra coincidencia, devolver None
 
 
 # Variable global para almacenar las últimas preguntas
-
 def actualizar_historial_preguntas(pregunta):
     if len(historial_preguntas) >= 3:  # Mantener las últimas 3 preguntas
         historial_preguntas.pop(0)
@@ -197,19 +193,8 @@ def responder_con_contexto(pregunta_limpia):
     # Si no hay historial o no se encuentra una relación en el historial, devolvemos None
     return None
 
-def validar_fecha(fecha_str, formato="%d-%m-%Y"):
-    try:
-        datetime.strptime(fecha_str, formato)
-        return True
-    except ValueError:
-        return False
 
-def validar_campo_obligatorio(valor, campo):
-    while not valor.strip():  # Comprobar si está vacío
-        valor = input(f"El {campo} es obligatorio. Introduce {campo}: ")
-    return valor
-
-####################################################################################################
+# TODO Funciones complejas (saludo, datosdelaIA, charla, presidente, signoszodiacales, musica, chiste, animal)
 # Función para buscar un saludo
 def buscar_saludo(pregunta_limpia, conocimientos):
     # Obtener la lista de saludos del archivo JSON
@@ -299,36 +284,6 @@ def presidente(pregunta, conocimientos):
     return "Lo siento, no tengo información sobre ese presidente."
 
 
-# Función buscar animales o características y devolverlo
-def animales(pregunta, animales_data):
-    # Convertir la pregunta a minúsculas y eliminar acentos
-    pregunta_limpia = eliminar_acentos(pregunta.lower())
-
-    # Detectar palabras clave (animal, raza o características)
-    if "perro" in pregunta_limpia:
-        subcategoria = "perro"
-    elif "gato" in pregunta_limpia or "felino" in pregunta_limpia:
-        subcategoria = "gato"
-    elif "ave" in pregunta_limpia or "pajaro" in pregunta_limpia:
-        subcategoria = "ave"
-    else:
-        return "No comprendo a qué animal te refieres. Intenta especificar 'perro', 'gato', 'ave', etc."
-
-    # Buscar la raza específica dentro de la subcategoría
-    razas = animales_data.get("animal", {}).get(subcategoria, {})
-
-    # Buscar la raza o características en la pregunta
-    for raza, info in razas.items():
-        if raza in pregunta_limpia:
-            return (f"{info['nombre_completo']}: {info['descripcion']} "
-                    f"Características: Peligro: {info['caracteristicas']['peligro']}, "
-                    f"Docilidad: {info['caracteristicas']['docilidad']}, "
-                    f"Amabilidad: {info['caracteristicas']['amabilidad']}")
-
-    # Si no se encuentra la raza o información
-    return f"No tengo información sobre esa raza de {subcategoria}. Intenta reformular la pregunta."
-
-
 # Función para obtener la descripción de un signo zodiacal desde el diccionario cargado
 def obtener_signo(signo):
     signo = signo.lower()  # Convertimos a minúsculas para evitar errores de mayúsculas/minúsculas
@@ -361,10 +316,8 @@ def detectar_signo(pregunta):
 
     return None  # Si no se encuentra ninguna coincidencia
 
-
-
-
-# Función para buscar música o cantante por claves
+# TODO # Función para buscar música o cantante por claves
+"""
 def buscar_musica_por_claves(pregunta, conocimientos):
     # Convertir la pregunta a minúsculas sin acentos
     pregunta_limpia = eliminar_acentos(pregunta.lower())
@@ -382,6 +335,15 @@ def buscar_musica_por_claves(pregunta, conocimientos):
     # Inicializar una variable para saber si se detectó un nombre pero no se encontró en el JSON
     nombre_detectado = None
 
+    # Lista de todos los nombres de cantantes en el JSON para comparación
+    nombres_cantantes_json = [eliminar_acentos(nombre.lower()) for genero in musica.values() for nombre in genero.keys()]
+
+    # Verificar si algún nombre de cantante en el JSON aparece en la pregunta
+    for palabra in palabras_pregunta:
+        if palabra in nombres_cantantes_json:
+            nombre_detectado = palabra
+            break
+
     # Buscar por palabras clave relacionadas con 'cantante' y el nombre del cantante
     for genero, artistas in musica.items():
         for nombre_cantante, detalles in artistas.items():
@@ -389,8 +351,6 @@ def buscar_musica_por_claves(pregunta, conocimientos):
 
             # Verificar si el nombre del cantante está en la pregunta
             if nombre_cantante_limpio in palabras_pregunta:
-                nombre_detectado = nombre_cantante  # Guardar el nombre si se detecta
-
                 # Si se detecta también la palabra 'cantante' o 'informacion'
                 if any(palabra in palabras_pregunta for palabra in palabras_cantante):
                     # Construir la respuesta con información básica
@@ -406,14 +366,14 @@ def buscar_musica_por_claves(pregunta, conocimientos):
                     else:
                         return f"No tengo información sobre las canciones de {nombre_cantante}."
 
-    # Si se detectó un nombre pero no se encontró información en el JSON
+    # If-else para manejar los mensajes de error:
     if nombre_detectado:
+        # Si se detectó un nombre pero no se encontró información en el JSON
         return f"No tengo información sobre {nombre_detectado}. Intenta con otro nombre o verifica la ortografía."
 
-    # Si no se encuentra coincidencia y no se detectó un nombre
-    return "No tengo suficiente información. Podrías intentar con 'cantante' seguido del nombre del artista o 'canciones' con su nombre."
-
-
+    # Si no se encuentra coincidencia y no se detectó un nombre, devolvemos None
+    return None
+"""
 
 # Función para obtener un chiste aleatorio
 def obtener_chiste():
@@ -423,68 +383,112 @@ def obtener_chiste():
     except KeyError:
         return "Lo siento, no tengo chistes guardados."
 
+# TODO # Función buscar animales o características y devolverlo
+"""def animales(pregunta, animales_data):
+    # Convertir la pregunta a minúsculas y eliminar acentos
+    pregunta_limpia = eliminar_acentos(pregunta.lower())
 
-# Categorias
+    # Detectar palabras clave (animal, raza o características)
+    if "perro" in pregunta_limpia:
+        subcategoria = "perro"
+    elif "gato" in pregunta_limpia or "felino" in pregunta_limpia:
+        subcategoria = "gato"
+    elif "ave" in pregunta_limpia or "pajaro" in pregunta_limpia:
+        subcategoria = "ave"
+    else:
+        return "No comprendo a qué animal te refieres. Intenta especificar 'perro', 'gato', 'ave', etc."
 
-# Función para buscar palabras clave en la pregunta
-def buscar_palabras_clave(pregunta, conocimientos):  # Cambiando datos por conocimientos
-    for categoria, info in conocimientos["categorias"].items():
-        if "palabrasClave" in info:  # Verificar si 'palabrasClave' existe
-            for palabra in info["palabrasClave"]:
-                if palabra in pregunta.lower():
-                    return categoria
-    return None
+    # Buscar la raza específica dentro de la subcategoría
+    razas = animales_data.get("animal", {}).get(subcategoria, {})
 
+    # Buscar la raza o características en la pregunta
+    for raza, info in razas.items():
+        if raza in pregunta_limpia:
+            return (f"{info['nombre_completo']}: {info['descripcion']} "
+                    f"Características: Peligro: {info['caracteristicas']['peligro']}, "
+                    f"Docilidad: {info['caracteristicas']['docilidad']}, "
+                    f"Amabilidad: {info['caracteristicas']['amabilidad']}")
 
-# Función para obtener una respuesta de la categoría
-def obtener_respuesta(categoria):
-    if categoria:
-        respuestas = conocimientos["categorias"][categoria]["respuesta"]
-        return random.choice(respuestas)  # Respuesta dinámica
-    return "No tengo suficiente información para responder."
+    # Si no se encuentra la raza o información
+    return f"No tengo información sobre esa raza de {subcategoria}. Intenta reformular la pregunta."
+"""
+# TODO verificar_musica_animal
+def verificar_musica_animal(pregunta, conocimientos, animales):
+    # Convertir la pregunta a minúsculas y eliminar acentos
+    pregunta_limpia = eliminar_acentos(pregunta.lower())
 
-# Función para obtener una respuesta más específica si hay relaciones
-def obtener_relaciones(categoria, pregunta):
-    if categoria:
-        relaciones = conocimientos["categorias"][categoria].get("relaciones", {})
-        for palabra in relaciones:
-            if palabra in pregunta.lower():
-                return relaciones[palabra]
-    return None
+    # Verificar si la pregunta es sobre animales
+    if "perro" in pregunta_limpia or "gato" in pregunta_limpia or "ave" in pregunta_limpia or "animal" in pregunta_limpia:
+        # Procesar la pregunta como una consulta sobre animales
+        subcategoria = None
+        if "perro" in pregunta_limpia:
+            subcategoria = "perro"
+        elif "gato" in pregunta_limpia or "felino" in pregunta_limpia:
+            subcategoria = "gato"
+        elif "ave" in pregunta_limpia or "pajaro" in pregunta_limpia:
+            subcategoria = "ave"
 
+        # Buscar la raza específica dentro de la subcategoría
+        if subcategoria:
+            animales_data = animales.get("animal", {})
+            razas = animales_data.get(subcategoria, {})
 
-# Otras funciones
+            # Buscar la raza o características en la pregunta
+            for raza, info in razas.items():
+                if raza in pregunta_limpia:
+                    return (f"{info['nombre_completo']}: {info['descripcion']} "
+                    f"Características: Peligro: {info['caracteristicas']['peligro']}, "
+                    f"Docilidad: {info['caracteristicas']['docilidad']}, "
+                    f"Amabilidad: {info['caracteristicas']['amabilidad']}")
 
-# Función para actualizar el contexto
-def actualizar_contexto(pregunta, conocimientos):
-    conocimientos["contexto"]["ultimaPregunta"] = pregunta
-    guardar_datos(conocimientos, 'conocimientos.json')  # Guarda los cambios en el archivo JSON
+            return f"No tengo información sobre esa raza de {subcategoria}. Intenta reformular la pregunta."
 
-# Función para manejar el contexto
-def manejar_contexto(pregunta, conocimientos):
-    ultima_pregunta = conocimientos["contexto"]["ultimaPregunta"]
-    if ultima_pregunta and "fuego" in ultima_pregunta.lower() and "como" in pregunta.lower():
-        return "¿Te refieres a cómo apagar el fuego o cómo mantenerlo encendido?"
-    return None
+        return "No comprendo a qué animal te refieres. Intenta especificar 'perro', 'gato', 'ave', etc."
 
-# Función para manejar preguntas vagas o amplias
-def manejar_preguntas_ampias(categoria):
-    if categoria and "respuestaIncompleta" in conocimientos["categorias"][categoria]:
-        return conocimientos["categorias"][categoria]["respuestaIncompleta"]
-    return None
+    # Verificar si la pregunta es sobre música
+    elif "musica" in pregunta_limpia or "cantante" in pregunta_limpia or "canciones" in pregunta_limpia:
+        # Procesar la pregunta como una consulta sobre música
+        musica = conocimientos.get("musica", {})
+        palabras_pregunta = pregunta_limpia.split()
 
-# Función para manejar el fuego con más precisión
-def manejar_fuego(pregunta_limpia):
-    if "apagar" in pregunta_limpia or "extinguir" in pregunta_limpia:
-        return "Si el fuego es pequeño, puedes apagarlo con una manta o cubriéndolo."
+        # Lista de palabras clave a buscar
+        palabras_cantante = ["musica", "cantante", "informacion"]
+        palabras_canciones = ["canciones", "temas", "exitos"]
 
-    elif "mantener encendido" in pregunta_limpia or "no se apague" in pregunta_limpia:
-        return "Para mantener el fuego encendido, asegúrate de que tenga suficiente combustible y oxígeno."
+        nombre_detectado = None
+        nombres_cantantes_json = [eliminar_acentos(nombre.lower()) for genero in musica.values() for nombre in genero.keys()]
 
-    elif "necesita el fuego" in pregunta_limpia:
-        return "El fuego necesita tres elementos principales para mantenerse: combustible, oxígeno y calor."
+        # Verificar si algún nombre de cantante en el JSON aparece en la pregunta
+        for palabra in palabras_pregunta:
+            if palabra in nombres_cantantes_json:
+                nombre_detectado = palabra
+                break
 
-    return None  # Si no encuentra coincidencia, devolver None
+        # Buscar por palabras clave relacionadas con el cantante y su información
+        for genero, artistas in musica.items():
+            for nombre_cantante, detalles in artistas.items():
+                nombre_cantante_limpio = eliminar_acentos(nombre_cantante.lower())
+
+                if nombre_cantante_limpio in palabras_pregunta:
+                    if any(palabra in palabras_pregunta for palabra in palabras_cantante):
+                        respuesta = (f"{nombre_cantante}: {detalles['nombre_completo']} es un cantante de {genero}. "
+                                     f"Nació el {detalles['fecha_nacimiento']}. {detalles['descripcion']}")
+                        return respuesta
+
+                    elif any(palabra in palabras_pregunta for palabra in palabras_canciones):
+                        if detalles.get("canciones"):
+                            canciones = ', '.join(detalles["canciones"])
+                            return f"Las canciones más exitosas de {nombre_cantante} son: {canciones}."
+                        else:
+                            return f"No tengo información sobre las canciones de {nombre_cantante}."
+
+        if nombre_detectado:
+            return f"No tengo información sobre {nombre_detectado}. Intenta con otro nombre o verifica la ortografía."
+
+        return "No tengo suficiente información sobre ese artista o género musical. Intenta reformular la pregunta."
+
+    # Si la pregunta no está relacionada con música ni con animales
+    return "No tengo suficiente información para responder esta pregunta."
 
 
 # Solicitar el nombre del usuario al inicio de la conversación
@@ -500,6 +504,7 @@ nombre_usuario = solicitar_nombre_usuario()
 print(f"¡Hola, {nombre_usuario}! Puedes preguntarme algo, agregar una categoría/subcategoría o borrar conocimiento.")
 
 
+# TODO Agregar categoria
 # Función para pedir un formato de fecha al usuario
 def pedir_formato_fecha():
     print("IA: ¿En qué formato te gustaría agregar la fecha?")
@@ -669,7 +674,7 @@ def borrar_subcategoria():
 
 
 
-# Función principal de preguntas
+# TODO Función principal de preguntar
 def preguntar(pregunta, conocimientos, animales_data):
     # Verificar si "contexto" está en "conocimientos"
     if "contexto" not in conocimientos:
@@ -682,9 +687,9 @@ def preguntar(pregunta, conocimientos, animales_data):
         return "¡Adiós! Espero verte pronto."
 
     # Revisar si la pregunta anterior puede ayudar con el contexto
-    respuesta_contexto = manejar_contexto(pregunta, conocimientos)
-    if respuesta_contexto:
-        return respuesta_contexto
+    #respuesta_contexto = manejar_contexto(pregunta, conocimientos)
+    #if respuesta_contexto:
+    #    return respuesta_contexto
 
     # Verificar si es un saludo
     respuesta_saludo = buscar_saludo(pregunta_limpia, conocimientos)
@@ -702,26 +707,30 @@ def preguntar(pregunta, conocimientos, animales_data):
     if respuesta_signo:
         return respuesta_signo
 
-    # Verificar si se pregunta por musica o cantante
-    respuesta_musica = buscar_musica_por_claves(pregunta_limpia, conocimientos)
-    if respuesta_musica:
-        return respuesta_musica
+     # Verificar si la pregunta es sobre música o animales usando la nueva función
+    respuesta_musica_animal = verificar_musica_animal(pregunta, conocimientos, animales_data)
+    if respuesta_musica_animal != "No tengo suficiente información para responder esta pregunta.":
+        return respuesta_musica_animal
+
+    # Verificar si se pregunta por música o cantante
+    #respuesta_musica = buscar_musica_por_claves(pregunta_limpia, conocimientos)
+
+    # Solo retornamos si la respuesta NO es None
+    #if respuesta_musica is not None:
+    #    return respuesta_musica
 
 
     # Primero verificamos si es una pregunta sobre animales
-    respuesta_animal = animales(pregunta_limpia, animales_data)
-    if respuesta_animal:
-        return respuesta_animal
+    #respuesta_animal = animales(pregunta_limpia, animales_data)
+    #if respuesta_animal:
+    #    return respuesta_animal
 
     # Aquí puedes seguir revisando otras preguntas o información
 
-    return "No tengo suficiente información para responder."
+    return "No tengo suficiente información para responder...intenta reformular o usar otros terminos."
 
 
-
-
-
-
+# TODO Funcion MAIN principal
 def main():
     conocimientos = cargar_datos('conocimientos.json')  # Cargar conocimientos
     animales_data = cargar_animales('animales.json')  # Cargar datos de animales
@@ -763,6 +772,6 @@ def main():
 
 
 
-# Ejecutar el programa
+# TODO Ejecutar el programa
 if __name__ == "__main__":
     main()

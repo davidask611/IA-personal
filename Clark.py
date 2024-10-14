@@ -418,7 +418,7 @@ def verificar_musica_animal(pregunta, conocimientos, animales):
     pregunta_limpia = eliminar_acentos(pregunta.lower())
 
     # Verificar si la pregunta es sobre animales
-    if "perro" in pregunta_limpia or "gato" in pregunta_limpia or "ave" in pregunta_limpia or "animal" in pregunta_limpia:
+    if "perro" in pregunta_limpia or "gato" in pregunta_limpia or "felino" in pregunta_limpia or "ave" in pregunta_limpia or "pajaro" in pregunta_limpia or "animal" in pregunta_limpia:
         # Procesar la pregunta como una consulta sobre animales
         subcategoria = None
         if "perro" in pregunta_limpia:

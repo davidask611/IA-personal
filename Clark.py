@@ -1,5 +1,5 @@
 import json
-#from difflib import SequenceMatcher
+from difflib import SequenceMatcher
 from datetime import datetime
 import unicodedata
 import random
@@ -68,14 +68,22 @@ def eliminar_acentos(texto):
     texto_final = texto_sin_acentos.replace('~', 'ñ')
     return texto_final
 
-def guardar_datos(conocimientos, nombre_archivo='conocimientos.json'):
+import json
+
+def guardar_datos(datos, nombre_archivo='conocimientos.json'):
     try:
         with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
-            json.dump(conocimientos, archivo, ensure_ascii=False, indent=4)
+            json.dump(datos, archivo, ensure_ascii=False, indent=4)
         print(f"Datos guardados exitosamente en '{nombre_archivo}'.")
     except IOError as e:
-        print(f"Error al guardar los datos en el archivo: {e}")
-    return None
+        print(f"Error al guardar los datos en el archivo '{nombre_archivo}': {e}")
+
+# Guardar conocimientos en 'conocimientos.json'
+guardar_datos(conocimientos, 'conocimientos.json')
+
+# Guardar datos de animales en 'animales.json'
+guardar_datos(animales_data, 'animales.json')
+
 
 # Recordar el historial de la charla
 def recordar_historial():
@@ -278,7 +286,7 @@ def verificar_musica_animal(pregunta, conocimientos, animales):
         return "No comprendo a qué animal te refieres. Intenta especificar 'perro', 'gato', 'ave', etc."
 
     # Verificar si la pregunta es sobre música
-    elif "musica" in pregunta_limpia or "cantante" in pregunta_limpia or "informacion" in pregunta_limpia or "canciones" in pregunta_limpia or "temas" in pregunta_limpia or "exitos" in pregunta_limpia:
+    elif "musica" in pregunta_limpia or "cantante" in pregunta_limpia or "informacion" in pregunta_limpia or "canciones" in pregunta_limpia or "temas" in pregunta_limpia or "exitos" in pregunta_limpia or "premios" in pregunta_limpia or "influencias" in pregunta_limpia:
         # Procesar la pregunta como una consulta sobre música
         musica = conocimientos.get("musica", {})
         palabras_pregunta = pregunta_limpia.split()
@@ -286,6 +294,8 @@ def verificar_musica_animal(pregunta, conocimientos, animales):
         # Lista de palabras clave a buscar
         palabras_cantante = ["musica", "cantante", "informacion"]
         palabras_canciones = ["canciones", "temas", "exitos"]
+        palabras_premios = ["premios", "grammy", "golden globe", "mtv"]
+        palabras_influencias = ["influencias"]
 
         nombre_detectado = None
         nombres_cantantes_json = [eliminar_acentos(nombre.lower()) for genero in musica.values() for nombre in genero.keys()]
@@ -301,10 +311,11 @@ def verificar_musica_animal(pregunta, conocimientos, animales):
             for nombre_cantante, detalles in artistas.items():
                 nombre_cantante_limpio = eliminar_acentos(nombre_cantante.lower())
 
-                if nombre_cantante_limpio in palabras_pregunta:
+                # Verificar si la pregunta menciona explícitamente el nombre del cantante
+                if nombre_cantante_limpio in pregunta_limpia:
                     if any(palabra in palabras_pregunta for palabra in palabras_cantante):
                         respuesta = (f"{nombre_cantante}: {detalles['nombre_completo']} es un cantante de {genero}. "
-                                     f"Nació el {detalles['fecha_nacimiento']}. {detalles['descripcion']}")
+                                     f"Nació el {detalles['fecha_nacimiento']} en {detalles['nacionalidad']}. {detalles['descripcion']}")
                         return respuesta
 
                     elif any(palabra in palabras_pregunta for palabra in palabras_canciones):
@@ -314,6 +325,15 @@ def verificar_musica_animal(pregunta, conocimientos, animales):
                         else:
                             return f"No tengo información sobre las canciones de {nombre_cantante}."
 
+                    elif any(palabra in palabras_pregunta for palabra in palabras_premios):
+                        premios = detalles.get("premios", {})
+                        premios_str = ', '.join([f"{key.capitalize()}: {value}" for key, value in premios.items()])
+                        return f"{nombre_cantante} ha ganado los siguientes premios: {premios_str}."
+
+                    elif any(palabra in palabras_pregunta for palabra in palabras_influencias):
+                        influencias = ', '.join(detalles.get("influencias", []))
+                        return f"{nombre_cantante} ha sido influenciado por: {influencias}."
+
         if nombre_detectado:
             return f"No tengo información sobre {nombre_detectado}. Intenta con otro nombre o verifica la ortografía."
 
@@ -321,6 +341,8 @@ def verificar_musica_animal(pregunta, conocimientos, animales):
 
     # Si la pregunta no está relacionada con música ni con animales
     return "No tengo suficiente información para responder esta pregunta."
+
+
 
 
 # Solicitar el nombre del usuario al inicio de la conversación
@@ -425,23 +447,7 @@ def responder_con_contexto(pregunta_limpia):
     return None
 
 
-# TODO Agregar categoria
-# Función para pedir un formato de fecha al usuario
-def pedir_formato_fecha():
-    print("IA: ¿En qué formato te gustaría agregar la fecha?")
-    print("1. Día-Mes-Año")
-    print("2. Solo año")
-
-    eleccion = input("Elige una opción (1 o 2): ")
-
-    if eleccion == "1":
-        return "%d-%m-%Y"
-    elif eleccion == "2":
-        return "%Y"
-    else:
-        print("Opción inválida. Se usará el formato 'Día-Mes-Año'.")
-        return "%d-%m-%Y"
-
+# TODO Agregar clave/subclave
 # Controlar respuestas de sí/no
 def obtener_respuesta_si_no(mensaje):
     respuesta = input(f"{mensaje} (si/no): ").lower()
@@ -449,153 +455,218 @@ def obtener_respuesta_si_no(mensaje):
         respuesta = input(f"Respuesta inválida. {mensaje} (si/no): ").lower()
     return respuesta == "si"
 
-# Función para pedir un detalle opcional al usuario
-def pedir_detalle_opcional(campo, tipo="texto"):
-    if obtener_respuesta_si_no(f"¿Deseas agregar {campo}?"):
-        if tipo == "fecha":
-            while True:
-                valor = input(f"Introduce {campo} (DD-MM-YYYY): ")
-                if validar_fecha(valor, "%d-%m-%Y"):
-                    return valor
-                else:
-                    print("Formato de fecha inválido. Intenta de nuevo.")
-        elif tipo == "periodo":
-            return input(f"Introduce el {campo} (ejemplo: 2020-2024): ")
-        elif tipo == "texto":
-            return input(f"Introduce {campo}: ")
-    return None  # Si no se desea agregar, no devuelve nada
-
 # Función para agregar detalles opcionales al conocimiento
 def agregar_detalles(diccionario):
-    campos = ["nombre_completo", "fecha", "periodo", "descripcion", "logros", "pais", "provincia", "cargo", "raza", "genero_musical"]
-    for campo in campos:
-        diccionario[campo] = pedir_detalle_opcional(campo)
+    print("Ahora puedes agregar o actualizar los detalles.")
+    for detalle, valor in diccionario.items():
+        print(f"{detalle}: {valor}")
 
-# Función para agregar categoría
-def agregar_categoria():
-    nueva_categoria = input("Nombre de la nueva categoría: ")
-    nueva_categoria = validar_campo_obligatorio(nueva_categoria, "Nombre de la nueva categoría")
+    while True:
+        print("\n¿Qué deseas hacer?")
+        print("1. Agregar o modificar un detalle.")
+        print("2. Agregar una nueva subclave.")
+        print("3. Agregar una lista (array).")
+        print("4. Salir.")
+        eleccion = input("Selecciona una opción (1, 2, 3, 4): ")
 
-    if nueva_categoria not in conocimientos:
-        conocimientos[nueva_categoria] = {}
+        if eleccion == "4":
+            print("Saliendo de la edición de detalles.")
+            break
 
-    # Preguntar si se va a crear una subcategoría
-    if obtener_respuesta_si_no("¿Deseas agregar una subcategoría?"):
-        nueva_subcategoria = input("Nombre de la subcategoría: ")
-        nueva_subcategoria = validar_campo_obligatorio(nueva_subcategoria, "Nombre de la subcategoría")
-        conocimientos[nueva_categoria][nueva_subcategoria] = {}
+        nueva_clave = input("Introduce el nombre del detalle o subclave: ")
 
-        # Llamar a la función para agregar detalles
-        agregar_detalles(conocimientos[nueva_categoria][nueva_subcategoria])
-
-    # Guardar los conocimientos
-    guardar_datos(conocimientos, 'conocimientos.json')
-
-
-# Función para borrar una categoría o subcategoría
-def borrar_categoria():
-    if not conocimientos:
-        print("No hay categorías para borrar.")
-        return
-
-    # Mostrar lista de categorías con números
-    print("Categorías disponibles:")
-    categorias = list(conocimientos.keys())
-    for idx, categoria in enumerate(categorias, start=1):
-        print(f"{idx}. {categoria}")
-
-    # Solicitar selección
-    seleccion = input("Escribe el número o el nombre de la categoría que deseas borrar: ")
-
-    # Verificar si la selección es un número
-    if seleccion.isdigit():
-        indice = int(seleccion) - 1
-        if 0 <= indice < len(categorias):
-            categoria_a_borrar = categorias[indice]
-        else:
-            print("Número inválido. Por favor intenta de nuevo.")
-            return
-    else:
-        categoria_a_borrar = seleccion
-
-    # Confirmar si existe la categoría
-    if categoria_a_borrar in conocimientos:
-        del conocimientos[categoria_a_borrar]
-        print(f"La categoría '{categoria_a_borrar}' ha sido borrada.")
-        # Guardar los conocimientos
-        guardar_datos(conocimientos, 'conocimientos.json')
-    else:
-        print("Categoría no encontrada. Por favor intenta de nuevo.")
-
-
-
-# Función para borrar una subcategoría dentro de una categoría
-def borrar_subcategoria():
-    if not conocimientos:
-        print("No hay categorías disponibles.")
-        return
-
-    # Mostrar lista de categorías con números
-    print("Categorías disponibles:")
-    categorias = list(conocimientos.keys())
-    for idx, categoria in enumerate(categorias, start=1):
-        print(f"{idx}. {categoria}")
-
-    # Solicitar selección de categoría
-    seleccion_categoria = input("Escribe el número o el nombre de la categoría que contiene la subcategoría que deseas borrar: ")
-
-    # Verificar si la selección de categoría es un número
-    if seleccion_categoria.isdigit():
-        indice_categoria = int(seleccion_categoria) - 1
-        if 0 <= indice_categoria < len(categorias):
-            categoria_seleccionada = categorias[indice_categoria]
-        else:
-            print("Número de categoría inválido. Por favor intenta de nuevo.")
-            return
-    else:
-        categoria_seleccionada = seleccion_categoria
-
-    # Confirmar si existe la categoría seleccionada
-    if categoria_seleccionada in conocimientos:
-        subcategorias = conocimientos[categoria_seleccionada]
-        if not isinstance(subcategorias, dict):
-            print(f"La categoría '{categoria_seleccionada}' no tiene subcategorías.")
-            return
-
-        # Mostrar lista de subcategorías con números
-        print(f"Subcategorías disponibles en '{categoria_seleccionada}':")
-        subcategorias_lista = list(subcategorias.keys())
-        for idx, subcategoria in enumerate(subcategorias_lista, start=1):
-            print(f"{idx}. {subcategoria}")
-
-        # Solicitar selección de subcategoría
-        seleccion_subcategoria = input("Escribe el número o el nombre de la subcategoría que deseas borrar: ")
-
-        # Verificar si la selección de subcategoría es un número
-        if seleccion_subcategoria.isdigit():
-            indice_subcategoria = int(seleccion_subcategoria) - 1
-            if 0 <= indice_subcategoria < len(subcategorias_lista):
-                subcategoria_a_borrar = subcategorias_lista[indice_subcategoria]
+        # Opción 1: Agregar o modificar un detalle.
+        if eleccion == "1":
+            if nueva_clave in diccionario:
+                reemplazar = obtener_respuesta_si_no(f"El detalle '{nueva_clave}' ya existe con el valor '{diccionario[nueva_clave]}'. ¿Deseas reemplazarlo?")
+                if reemplazar:
+                    nuevo_valor = input(f"Introduce el nuevo valor para '{nueva_clave}': ")
+                    diccionario[nueva_clave] = nuevo_valor
             else:
-                print("Número de subcategoría inválido. Por favor intenta de nuevo.")
-                return
-        else:
-            subcategoria_a_borrar = seleccion_subcategoria
+                nuevo_valor = input(f"Introduce el valor para '{nueva_clave}': ")
+                diccionario[nueva_clave] = nuevo_valor
+            print(f"Detalle '{nueva_clave}' actualizado.")
 
-        # Confirmar si existe la subcategoría
-        if subcategoria_a_borrar in subcategorias:
-            del conocimientos[categoria_seleccionada][subcategoria_a_borrar]
-            print(f"La subcategoría '{subcategoria_a_borrar}' ha sido borrada de la categoría '{categoria_seleccionada}'.")
-            # Guardar los conocimientos
-            guardar_datos(conocimientos, 'conocimientos.json')
+        # Opción 2: Agregar una nueva subclave.
+        elif eleccion == "2":
+            if nueva_clave not in diccionario:
+                diccionario[nueva_clave] = {}
+                print(f"Subclave '{nueva_clave}' creada.")
+                agregar_detalles(diccionario[nueva_clave])
+            else:
+                print(f"La subclave '{nueva_clave}' ya existe. No se puede volver a crear.")
+
+        # Opción 3: Agregar una lista (array).
+        elif eleccion == "3":
+            lista = []
+            print(f"Vamos a crear una lista de valores para '{nueva_clave}'.")
+            while True:
+                valor = input(f"Introduce un valor para '{nueva_clave}' o 'salir' para terminar: ")
+                if valor.lower() == 'salir':
+                    break
+                lista.append(valor)
+            diccionario[nueva_clave] = lista
+            print(f"Lista '{nueva_clave}' actualizada con {len(lista)} valores.")
+
         else:
-            print("Subcategoría no encontrada. Por favor intenta de nuevo.")
+            print("Opción inválida, por favor selecciona 1, 2, 3 o 4.")
+
+    print("Detalles actualizados.")
+
+
+# Función para agregar clave/subclave/pregunta-respuesta
+def agregar_clave(conocimientos, animales_data):
+    print("Claves disponibles en conocimientos:")
+    for idx, clave in enumerate(conocimientos.keys()):
+        print(f"{idx + 1}. {clave}")
+
+    print("Claves disponibles en animales:")
+    for idx, clave in enumerate(animales_data.keys()):
+        print(f"{idx + 1 + len(conocimientos)}. {clave}")
+
+    # Agregar opción para nueva clave al final de la lista
+    print(f"{len(conocimientos) + len(animales_data) + 1}. Agregar nueva clave")
+
+    eleccion = input("Selecciona una clave (número) o escribe una nueva: ")
+
+    # Opción para agregar una nueva clave
+    if eleccion.isdigit() and int(eleccion) == len(conocimientos) + len(animales_data) + 1:
+        nueva_clave = input("Introduce el nombre de la nueva clave: ")
+        tipo_clave = input("¿Esta clave es de tipo 'texto' (S/N)? ").lower()
+
+        if nueva_clave not in conocimientos and nueva_clave not in animales_data:
+            if tipo_clave == 's':
+                conocimientos[nueva_clave] = {}
+                print(f"Nueva clave de texto '{nueva_clave}' agregada a conocimientos.")
+            else:
+                conocimientos[nueva_clave] = {}
+                print(f"Nueva clave con subclaves '{nueva_clave}' agregada a conocimientos.")
+
+            # Preguntar si desea agregar detalles
+            if obtener_respuesta_si_no("¿Deseas agregar detalles para esta clave?"):
+                agregar_detalles(conocimientos[nueva_clave])
+
+    # Lógica para seleccionar una clave de conocimientos
+    elif eleccion.isdigit() and 1 <= int(eleccion) <= len(conocimientos):
+        clave_seleccionada = list(conocimientos.keys())[int(eleccion) - 1]
+        print(f"Has seleccionado la clave de conocimientos: {clave_seleccionada}")
+
+        # Ofrecer opciones para crear subclave o agregar pregunta y respuesta
+        print("¿Qué deseas hacer con esta clave?")
+        print("1. Agregar pregunta y respuesta.")
+        print("2. Crear una nueva subclave.")
+        eleccion_tipo = input("Selecciona una opción (1 o 2): ")
+
+        if eleccion_tipo == "1":
+            pregunta_usuario = input("Indica la pregunta: ")
+            respuesta_ia = input("Indica la respuesta: ")
+            conocimientos[clave_seleccionada][pregunta_usuario] = respuesta_ia
+            print(f"Pregunta y respuesta agregadas a la clave '{clave_seleccionada}'.")
+        elif eleccion_tipo == "2":
+            subclave = input("Introduce el nombre de la nueva subclave: ")
+            conocimientos[clave_seleccionada][subclave] = {}
+            print(f"Nueva subclave '{subclave}' agregada a '{clave_seleccionada}'.")
+            agregar_detalles(conocimientos[clave_seleccionada][subclave])
+
+    # Lógica para seleccionar una clave de animales (similar a conocimientos)
+    elif eleccion.isdigit() and len(conocimientos) < int(eleccion) <= len(conocimientos) + len(animales_data):
+        clave_seleccionada = list(animales_data.keys())[int(eleccion) - len(conocimientos) - 1]
+        print(f"Has seleccionado la clave de animales: {clave_seleccionada}")
+
+        print("¿Qué deseas hacer con esta clave?")
+        print("1. Agregar pregunta y respuesta.")
+        print("2. Crear una nueva subclave.")
+        eleccion_tipo = input("Selecciona una opción (1 o 2): ")
+
+        if eleccion_tipo == "1":
+            pregunta_usuario = input("Indica la pregunta: ")
+            respuesta_ia = input("Indica la respuesta: ")
+            animales_data[clave_seleccionada][pregunta_usuario] = respuesta_ia
+            print(f"Pregunta y respuesta agregadas a la clave '{clave_seleccionada}'.")
+        elif eleccion_tipo == "2":
+            subclave = input("Introduce el nombre de la nueva subclave: ")
+            animales_data[clave_seleccionada][subclave] = {}
+            print(f"Nueva subclave '{subclave}' agregada a '{clave_seleccionada}'.")
+            agregar_detalles(animales_data[clave_seleccionada][subclave])
+
     else:
-        print("Categoría no encontrada. Por favor intenta de nuevo.")
+        print("Selección inválida. Por favor intenta de nuevo.")
+
+    # Guardar los datos después de cualquier cambio
+    guardar_datos(conocimientos, 'conocimientos.json')
+    guardar_datos(animales_data, 'animales.json')
 
 
 
-# TODO Función principal de preguntar(logica de preguntas)
+
+
+
+# TODO Borrar categoria/subcategoria
+def borrar_clave(conocimientos, animales_data):
+    # Función para mostrar y borrar claves y subclaves de un JSON
+    def mostrar_y_borrar(diccionario, nombre_json):
+        claves = list(diccionario.keys())
+        if not claves:
+            print(f"No hay claves disponibles en '{nombre_json}' para borrar.")
+            return
+
+        print(f"\nSelecciona una clave para borrar en '{nombre_json}':")
+        for i, clave in enumerate(claves, 1):
+            print(f"{i}. {clave}")
+
+        seleccion = input("Ingresa el número de la clave que deseas borrar: ")
+        try:
+            seleccion = int(seleccion)
+            if seleccion < 1 or seleccion > len(claves):
+                print("Selección no válida. Debes elegir un número en la lista.")
+                return False
+        except ValueError:
+            print("Entrada no válida. Debes ingresar un número.")
+            return False
+
+        clave_a_borrar = claves[seleccion - 1]
+
+        # Verificar si la clave tiene subclaves
+        if isinstance(diccionario[clave_a_borrar], dict):
+            subclaves = list(diccionario[clave_a_borrar].keys())
+            if subclaves:
+                print("Subclaves disponibles:")
+                for j, subclave in enumerate(subclaves, 1):
+                    print(f"{j}. {subclave}")
+
+                seleccion_subclave = input("¿Quieres borrar una subclave? (s/n): ")
+                if seleccion_subclave.lower() == 's':
+                    sub_seleccion = input("Ingresa el número de la subclave que deseas borrar: ")
+                    try:
+                        sub_seleccion = int(sub_seleccion)
+                        if sub_seleccion < 1 or sub_seleccion > len(subclaves):
+                            print("Selección no válida. Debes elegir un número en la lista.")
+                            return False
+                    except ValueError:
+                        print("Entrada no válida. Debes ingresar un número.")
+                        return False
+
+                    subclave_a_borrar = subclaves[sub_seleccion - 1]
+                    del diccionario[clave_a_borrar][subclave_a_borrar]
+                    print(f"Subclave '{subclave_a_borrar}' borrada de '{clave_a_borrar}' en '{nombre_json}'.")
+                    return True
+
+        # Borrar la clave si no tiene subclaves o si se optó por no borrar subclave
+        del diccionario[clave_a_borrar]
+        print(f"Clave '{clave_a_borrar}' borrada en '{nombre_json}'.")
+        return True
+
+    # Llamar a la función para cada JSON
+    if mostrar_y_borrar(conocimientos, "conocimientos"):
+        guardar_datos(conocimientos, 'conocimientos.json')
+
+    if mostrar_y_borrar(animales_data, "animales_data"):
+        guardar_datos(animales_data, 'animales.json')
+
+
+
+
+# TODO Función principal de preguntar (lógica de preguntas)
 def preguntar(pregunta, conocimientos, animales_data):
     # Verificar si "contexto" está en "conocimientos"
     if "contexto" not in conocimientos:
@@ -607,38 +678,67 @@ def preguntar(pregunta, conocimientos, animales_data):
     if pregunta_limpia in ["salir", "terminar", "me voy"]:
         return "¡Adiós! Espero verte pronto."
 
-
     # Verificar si es un saludo
     respuesta_saludo = buscar_saludo(pregunta_limpia, conocimientos)
     if respuesta_saludo:
         actualizar_historial(pregunta, respuesta_saludo)
+        conocimientos["contexto"]["ultimaPregunta"] = pregunta_limpia
+        guardar_datos(conocimientos, 'conocimientos.json')
         return respuesta_saludo
 
     # Verificar si se pregunta por el presidente
-    respuesta_presidente = presidente(pregunta_limpia, conocimientos)  # Pasa los conocimientos aquí
+    respuesta_presidente = presidente(pregunta_limpia, conocimientos)
     if respuesta_presidente != "Lo siento, no tengo información sobre ese presidente.":
+        conocimientos["contexto"]["ultimaPregunta"] = pregunta_limpia
+        guardar_datos(conocimientos, 'conocimientos.json')
         return respuesta_presidente
 
     # Verificar si se pregunta por signos zodiacales
     respuesta_signo = detectar_signo(pregunta_limpia)
     if respuesta_signo:
+        conocimientos["contexto"]["ultimaPregunta"] = pregunta_limpia
+        guardar_datos(conocimientos, 'conocimientos.json')
         return respuesta_signo
 
-     # Verificar si la pregunta es sobre música o animales usando la nueva función
+    # Verificar si la pregunta es sobre música o animales usando la nueva función
     respuesta_musica_animal = verificar_musica_animal(pregunta, conocimientos, animales_data)
     if respuesta_musica_animal != "No tengo suficiente información para responder esta pregunta.":
+        conocimientos["contexto"]["ultimaPregunta"] = pregunta_limpia
+        guardar_datos(conocimientos, 'conocimientos.json')
         return respuesta_musica_animal
 
     # Verificar si la pregunta es sobre chistes
     respuesta_chiste = verificar_chiste(pregunta, conocimientos)
     if respuesta_chiste:
+        conocimientos["contexto"]["ultimaPregunta"] = pregunta_limpia
+        guardar_datos(conocimientos, 'conocimientos.json')
         return respuesta_chiste
 
+    # Verificar si el usuario desea agregar una clave o subclave
+    if "agregar" in pregunta_limpia and "clave" in pregunta_limpia:
+        exito = agregar_clave(conocimientos)  # Llama a la función que creamos para agregar
+        if exito:
+            guardar_datos(conocimientos, 'conocimientos.json')
+            return "La clave o subclave ha sido agregada exitosamente."
+        else:
+            return "Hubo un problema al agregar la clave o subclave. Por favor, inténtalo de nuevo."
 
-    return "No tengo suficiente información para responder...intenta reformular o usar otros terminos."
+    # Verificar si el usuario desea borrar una clave o subclave
+    if "borrar" in pregunta_limpia and "clave" in pregunta_limpia:
+        exito = borrar_clave(conocimientos)  # Llama a la función que crearemos para borrar
+        if exito:
+            guardar_datos(conocimientos, 'conocimientos.json')
+            return "La clave o subclave ha sido eliminada exitosamente."
+        else:
+            return "Hubo un problema al eliminar la clave o subclave. Por favor, inténtalo de nuevo."
+
+    # Respuesta predeterminada si no se encuentra una coincidencia
+    return "No tengo suficiente información para responder... intenta reformular o usar otros términos."
 
 
-# TODO Funcion MAIN principal
+
+
+# TODO Función MAIN principal
 def main():
     conocimientos = cargar_datos('conocimientos.json')  # Cargar conocimientos
     animales_data = cargar_animales('animales.json')  # Cargar datos de animales
@@ -650,8 +750,19 @@ def main():
         if pregunta_limpia in ["salir", "adios", "adiós"]:
             # Guardar los conocimientos
             guardar_datos(conocimientos, 'conocimientos.json')
+            guardar_datos(animales_data, 'animales.json')  # Asegurarse de guardar animales también
             print("IA: ¡Adiós!")
             break
+
+        # Opción para borrar clave
+        if pregunta_limpia == "borrar clave":
+            borrar_clave(conocimientos, animales_data)
+            continue
+
+        # Opción para agregar clave
+        if pregunta_limpia == "agregar clave":
+            agregar_clave(conocimientos, animales_data)  # Pasamos ambos datos
+            continue
 
         # Aquí buscamos si la pregunta es sobre la IA
         respuesta_sobre_ia = responder_sobre_ia(pregunta_limpia, conocimientos)
@@ -684,6 +795,7 @@ def main():
         respuesta = preguntar(pregunta, conocimientos, animales_data)  # Aquí llamas a preguntar
         print(f"IA: {respuesta}")
         actualizar_historial(pregunta, respuesta)  # Actualizar el historial con la nueva interacción
+
 
 
 

@@ -10,7 +10,8 @@
         "bien": "que bueno que estes bien",
         "lindo nombre": "gracias",
         "como estas?": "estoy bien, gracias por preguntar",
-        "gracias": "de nada"
+        "gracias": "de nada",
+        "mañana tengo un examen": "exitos seguro saldra genial"
     },
     "datosdelaIA": {
         "como te llamas?": "Mi nombre es Clark",
@@ -70,6 +71,11 @@
             "periodo": "2023 - 2024",
             "nombre_completo": "Javier Gerardo Milei",
             "descripcion": "Javier Milei es un economista y politico argentino que asumio la presidencia en 2024. Es conocido por su postura libertaria y por proponer reformas economicas radicales en un contexto de crisis economica y alta inflacion. Su enfoque se centra en reducir drasticamente el gasto publico, eliminar regulaciones y promover la libertad de mercado. Milei ha ganado notoriedad por su estilo provocador y su discurso anti-establishment, apelando a votantes que buscan un cambio en el sistema politico tradicional. Es un firme defensor de la propiedad privada y ha manifestado su intencion de cerrar el Banco Central."
+        },
+        "jose": {
+            "periodo": "2024 - 2025",
+            "nombre_completo": "jose guimenes",
+            "descripcion": "fue presidente en alemaña.fue un genio en matematica"
         }
     },
     "signos_zodiacales": {
@@ -196,16 +202,26 @@
     },
     "musica": {
         "pop": {
-            "Madonna": {
+            "madonna": {
                 "nombre_completo": "Madonna Louise Ciccone",
+                "descripcion": "Madonna es una de las figuras más influyentes de la música pop, conocida como la 'Reina del Pop'. Ha tenido una extensa carrera desde los años 80, caracterizada por su habilidad para reinventarse y su influencia en la cultura musical.",
                 "fecha_nacimiento": "16-08-1958",
-                "descripcion": "Conocida como la Reina del Pop, es una de las artistas más influyentes y exitosas en la historia de la música. Nacida el 16 de agosto de 1958 en Bay City, Míchigan, se trasladó a Nueva York para perseguir sus sueños artísticos. A lo largo de su carrera, ha redefinido el pop y ha sido pionera en fusionar géneros musicales y romper barreras culturales. Su capacidad para reinventarse constantemente la ha mantenido en la cima durante décadas. Madonna es reconocida no solo por sus éxitos musicales, sino también por su impacto en la moda, el arte y la cultura popular. Además, es una defensora de los derechos humanos, utilizando su fama para promover causas como la igualdad de género y los derechos LGBTQ+. Su impacto trasciende la música, consolidándola como un ícono cultural mundial.",
+                "nacionalidad": "Estadounidense",
                 "canciones": [
                     "Like a Virgin",
-                    "Vogue",
-                    "Like a Prayer",
-                    "Hung Up",
-                    "Material Girl"
+                    "True Blue",
+                    "Ray of Light",
+                    "Confessions on a Dance Floor"
+                ],
+                "premios": {
+                    "grammy": 7,
+                    "golden_globe": 2,
+                    "mtv_awards": 20
+                },
+                "influencias": [
+                    "David Bowie",
+                    "Michael Jackson",
+                    "Prince"
                 ]
             }
         }
@@ -312,5 +328,8 @@
         "contexto": {
             "ultimaPregunta": ""
         }
+    },
+    "contexto": {
+        "ultimaPregunta": "que sabes de la cantante madonna"
     }
 }

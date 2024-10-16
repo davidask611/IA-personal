@@ -70,19 +70,21 @@ def eliminar_acentos(texto):
 
 import json
 
-def guardar_datos(datos, nombre_archivo='conocimientos.json'):
+def guardar_datos(datos, nombre_archivo='conocimientos.json', mostrar_mensaje=False):
     try:
         with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
             json.dump(datos, archivo, ensure_ascii=False, indent=4)
-        print(f"Datos guardados exitosamente en '{nombre_archivo}'.")
+        if mostrar_mensaje:  # Solo muestra el mensaje si mostrar_mensaje es True
+            print(f"Datos guardados exitosamente en '{nombre_archivo}'.")
     except IOError as e:
         print(f"Error al guardar los datos en el archivo '{nombre_archivo}': {e}")
 
-# Guardar conocimientos en 'conocimientos.json'
+# Guardar conocimientos en 'conocimientos.json' sin mostrar el mensaje
 guardar_datos(conocimientos, 'conocimientos.json')
 
-# Guardar datos de animales en 'animales.json'
+# Guardar datos de animales en 'animales.json' sin mostrar el mensaje
 guardar_datos(animales_data, 'animales.json')
+
 
 
 # Recordar el historial de la charla
@@ -593,8 +595,8 @@ def agregar_clave(conocimientos, animales_data):
         print("Selección inválida. Por favor intenta de nuevo.")
 
     # Guardar los datos después de cualquier cambio
-    guardar_datos(conocimientos, 'conocimientos.json')
-    guardar_datos(animales_data, 'animales.json')
+    guardar_datos(conocimientos, 'conocimientos.json', mostrar_mensaje=True)  # Esto mostrará el mensaje.
+    guardar_datos(animales_data, 'animales.json', mostrar_mensaje=True) # Esto mostrará el mensaje.
 
 
 

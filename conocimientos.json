@@ -315,47 +315,47 @@
         }
     },
     "contexto": {
-        "ultimaPregunta": "presidente macri",
+        "ultimaPregunta": "20 * 20 + raiz cuadrada de 16",
         "historialConversacion": [
             {
-                "pregunta": "presidente macri",
-                "respuesta": "Mauricio Macri fue presidente entre 2015 - 2019. Descripción: Mauricio Macri asumio la presidencia con la promesa de implementar reformas economicas que trajeran crecimiento y estabilidad. Su gobierno busco reducir el deficit fiscal y abrir la economia al mundo. Sin embargo, su mandato se vio afectado por una alta inflacion y una deuda creciente, lo que llevo a descontento social. Macri intento atraer inversiones extranjeras y fomentar el desarrollo, pero las dificultades economicas y la falta de apoyo politico limitaron su capacidad de implementar cambios significativos, resultando en una administracion con resultados mixtos."
+                "pregunta": "raiz cuadrada de 10 + 20",
+                "respuesta": "El resultado de raiz cuadrada de 10 + 20 es 23.162."
             },
             {
-                "pregunta": "hola",
-                "respuesta": "hola, como estas??"
+                "pregunta": "cuanto es 50 * raiz cuadrada de 25",
+                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
             },
             {
-                "pregunta": "bien",
-                "respuesta": "que bueno que estes bien"
+                "pregunta": "50 * raiz cuadrada de 25",
+                "respuesta": "El resultado de 50 * raiz cuadrada de 25 es 250."
             },
             {
-                "pregunta": "como te llamas?",
-                "respuesta": "Mi nombre es Clark"
+                "pregunta": "raiz cudrada de 20+ 100*raiz cuadrada de 25",
+                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
             },
             {
-                "pregunta": "me llamo david",
-                "respuesta": "que lindo nombre"
+                "pregunta": "raiz cudrada de 20 + 100 * raiz cuadrada de 25",
+                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
             },
             {
-                "pregunta": "como te llamas?",
-                "respuesta": "Mi nombre es Clark"
+                "pregunta": "raiz cuadrada de 20 + 100 * raiz cuadrada de 25",
+                "respuesta": "El resultado de raiz cuadrada de 20 + 100 * raiz cuadrada de 25 es 504.472."
             },
             {
-                "pregunta": "hola",
-                "respuesta": "hola, como estas??"
+                "pregunta": "8 mas 4",
+                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
             },
             {
-                "pregunta": "me llamo david",
-                "respuesta": "que lindo nombre"
+                "pregunta": "8 mas 10",
+                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
             },
             {
-                "pregunta": "hola",
-                "respuesta": "hola, como estas??"
+                "pregunta": "8 + 10",
+                "respuesta": "El resultado de 8 + 10 es 18."
             },
             {
-                "pregunta": "bien",
-                "respuesta": "que bueno que estes bien"
+                "pregunta": "20 * 20 + raiz cuadrada de 16",
+                "respuesta": "El resultado de 20 * 20 + raiz cuadrada de 16 es 404"
             }
         ]
     }

@@ -1,10 +1,11 @@
 import json
 from difflib import SequenceMatcher
 from datetime import datetime
-import unicodedata
+import unicodedata # Acento  normalizar
 import random
-import re
-import os
+import os # interactuar con archivos del SO
+import re # Matematicas
+import math # Matematicas
 
 dias_semana = {
     "Monday": "lunes",
@@ -70,7 +71,7 @@ def eliminar_acentos(texto):
     return texto_final
 
 
-def guardar_datos(datos, nombre_archivo='conocimientos.json', mostrar_mensaje=False, verificar_existencia=False):
+def guardar_datos(datos, nombre_archivo='conocimientos.json', mostrar_mensaje=False, verificar_existencia=True):
     if verificar_existencia and not os.path.exists(nombre_archivo):
         print(f"Advertencia: El archivo '{nombre_archivo}' no existe, se creará uno nuevo.")
     try:
@@ -459,6 +460,45 @@ def responder_con_contexto(pregunta_limpia):
     return None
 
 
+# TODO Funcion matematica
+def matematica(pregunta):
+    # Reemplazar 'pi' por su valor aproximado (3.14)
+    pregunta = pregunta.replace("pi", "3.14")
+
+    # Buscar y calcular todas las raíces cuadradas en la expresión
+    def calcular_raiz_cuadrada(expresion):
+        # Encuentra todas las ocurrencias de "raiz cuadrada de <número>"
+        matches = re.findall(r'raiz cuadrada de (\d+)', expresion.lower())
+        for match in matches:
+            numero = int(match)
+            raiz_cuadrada = round(math.sqrt(numero), 3)
+            # Reemplaza "raiz cuadrada de <número>" con el resultado de la raíz cuadrada
+            expresion = expresion.replace(f"raiz cuadrada de {match}", str(raiz_cuadrada))
+        return expresion
+
+    # Detectar si hay una solicitud de raíz cuadrada
+    pregunta_limpia = calcular_raiz_cuadrada(pregunta.lower())
+
+    # Validar operaciones usando eval
+    try:
+        # Validar que solo contenga caracteres permitidos antes de usar eval
+        if re.match(r'^[\d\.\+\-\*/\(\) ]+$', pregunta_limpia):
+            resultado = eval(pregunta_limpia)
+
+            # Formatear el resultado: sin decimales si es un número entero, o con tres decimales si tiene decimales.
+            if isinstance(resultado, float) and resultado.is_integer():
+                resultado = int(resultado)
+            else:
+                resultado = round(resultado, 3)
+
+            return f"El resultado de {pregunta} es {resultado}"
+        else:
+            return "No pude entender la operación, intenta de nuevo con una operación simple."
+    except (SyntaxError, ZeroDivisionError) as e:
+        return f"Error en la operación: {e}. Por favor, revisa la sintaxis."
+
+
+
 # TODO Agregar clave/subclave
 # Controlar respuestas de sí/no
 def obtener_respuesta_si_no(mensaje):
@@ -775,9 +815,16 @@ def preguntar(pregunta, conocimientos, animales_data):
         else:
             return "Hubo un problema al eliminar la clave o subclave. Por favor, inténtalo de nuevo."
 
+    # Verificar si la pregunta es una operación matemática
+    respuesta_matematica = matematica(pregunta)
+    if respuesta_matematica and "No pude entender la operación" not in respuesta_matematica:
+        conocimientos["contexto"]["ultimaPregunta"] = pregunta_limpia
+        guardar_datos(conocimientos, 'conocimientos.json')
+        return respuesta_matematica
 
     # Respuesta predeterminada si no se encuentra una coincidencia
     return "No tengo suficiente información para responder... intenta reformular o usar otros términos."
+
 
 
 def main():

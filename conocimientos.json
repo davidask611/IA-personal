@@ -315,47 +315,47 @@
         }
     },
     "contexto": {
-        "ultimaPregunta": "20 * 20 + raiz cuadrada de 16",
+        "ultimaPregunta": "10%20",
         "historialConversacion": [
             {
-                "pregunta": "raiz cuadrada de 10 + 20",
-                "respuesta": "El resultado de raiz cuadrada de 10 + 20 es 23.162."
+                "pregunta": "raiz cubica de 20",
+                "respuesta": "El resultado de raiz cubica de 20 es 2.714."
             },
             {
-                "pregunta": "cuanto es 50 * raiz cuadrada de 25",
+                "pregunta": "raiz cubica de 8",
+                "respuesta": "El resultado de raiz cubica de 8 es 2."
+            },
+            {
+                "pregunta": "raiz cubica de 8 + raiz cuadrada de 25",
+                "respuesta": "El resultado de raiz cubica de 8 + raiz cuadrada de 25 es 7."
+            },
+            {
+                "pregunta": "log(50)",
                 "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
             },
             {
-                "pregunta": "50 * raiz cuadrada de 25",
-                "respuesta": "El resultado de 50 * raiz cuadrada de 25 es 250."
+                "pregunta": "log(50, 200)",
+                "respuesta": "El resultado de log(50, 200) es 1.354."
             },
             {
-                "pregunta": "raiz cudrada de 20+ 100*raiz cuadrada de 25",
-                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
+                "pregunta": "25% de 60",
+                "respuesta": "El resultado de 25% de 60 es 15."
             },
             {
-                "pregunta": "raiz cudrada de 20 + 100 * raiz cuadrada de 25",
-                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
+                "pregunta": "75% de 60",
+                "respuesta": "El resultado de 75% de 60 es 45."
             },
             {
-                "pregunta": "raiz cuadrada de 20 + 100 * raiz cuadrada de 25",
-                "respuesta": "El resultado de raiz cuadrada de 20 + 100 * raiz cuadrada de 25 es 504.472."
+                "pregunta": "45+15",
+                "respuesta": "El resultado de 45+15 es 60."
             },
             {
-                "pregunta": "8 mas 4",
-                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
+                "pregunta": "10%5",
+                "respuesta": "El resultado de 10%5 es 0."
             },
             {
-                "pregunta": "8 mas 10",
-                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
-            },
-            {
-                "pregunta": "8 + 10",
-                "respuesta": "El resultado de 8 + 10 es 18."
-            },
-            {
-                "pregunta": "20 * 20 + raiz cuadrada de 16",
-                "respuesta": "El resultado de 20 * 20 + raiz cuadrada de 16 es 404"
+                "pregunta": "10%20",
+                "respuesta": "El resultado de 10%20 es 10."
             }
         ]
     }

@@ -4,6 +4,7 @@ from datetime import datetime
 import unicodedata
 import random
 import re
+import os
 
 dias_semana = {
     "Monday": "lunes",
@@ -68,9 +69,14 @@ def eliminar_acentos(texto):
     texto_final = texto_sin_acentos.replace('~', 'ñ')
     return texto_final
 
-import json
 
-def guardar_datos(datos, nombre_archivo='conocimientos.json', mostrar_mensaje=False):
+
+
+def guardar_datos(datos, nombre_archivo='conocimientos.json', mostrar_mensaje=False, verificar_existencia=False):
+    # Verificar si el archivo existe antes de guardarlo
+    if verificar_existencia and not os.path.exists(nombre_archivo):
+        print(f"Advertencia: El archivo '{nombre_archivo}' no existe, se creará uno nuevo.")
+
     try:
         with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
             json.dump(datos, archivo, ensure_ascii=False, indent=4)
@@ -78,6 +84,7 @@ def guardar_datos(datos, nombre_archivo='conocimientos.json', mostrar_mensaje=Fa
             print(f"Datos guardados exitosamente en '{nombre_archivo}'.")
     except IOError as e:
         print(f"Error al guardar los datos en el archivo '{nombre_archivo}': {e}")
+
 
 # Guardar conocimientos en 'conocimientos.json' sin mostrar el mensaje
 guardar_datos(conocimientos, 'conocimientos.json')
@@ -516,7 +523,7 @@ def agregar_detalles(diccionario):
     print("Detalles actualizados.")
 
 
-# Función para agregar clave/subclave/pregunta-respuesta
+# TODO Función para agregar clave/subclave/pregunta-respuesta
 def agregar_clave(conocimientos, animales_data):
     print("Claves disponibles en conocimientos:")
     for idx, clave in enumerate(conocimientos.keys()):
@@ -599,71 +606,102 @@ def agregar_clave(conocimientos, animales_data):
     guardar_datos(animales_data, 'animales.json', mostrar_mensaje=True) # Esto mostrará el mensaje.
 
 
-
-
-
-
-# TODO Borrar categoria/subcategoria
+# Función para borrar clave/subclave/subclave
 def borrar_clave(conocimientos, animales_data):
-    # Función para mostrar y borrar claves y subclaves de un JSON
-    def mostrar_y_borrar(diccionario, nombre_json):
-        claves = list(diccionario.keys())
-        if not claves:
-            print(f"No hay claves disponibles en '{nombre_json}' para borrar.")
-            return
+    # Función para mostrar y borrar claves y subclaves de ambos JSON
+    def mostrar_y_borrar_combinado(conocimientos, animales_data):
+        claves_conocimientos = list(conocimientos.keys())
+        claves_animales = list(animales_data.keys())
+        claves_combinadas = [(clave, 'conocimientos') for clave in claves_conocimientos] + \
+                            [(clave, 'animales_data') for clave in claves_animales]
 
-        print(f"\nSelecciona una clave para borrar en '{nombre_json}':")
-        for i, clave in enumerate(claves, 1):
-            print(f"{i}. {clave}")
+        if not claves_combinadas:
+            print("No hay claves disponibles para borrar en ninguno de los archivos.")
+            return False
+
+        # Mostrar la lista combinada de claves
+        print("\nSelecciona una clave para borrar (de ambos archivos):")
+        for i, (clave, origen) in enumerate(claves_combinadas, 1):
+            print(f"{i}. {clave} ({origen})")
 
         seleccion = input("Ingresa el número de la clave que deseas borrar: ")
         try:
             seleccion = int(seleccion)
-            if seleccion < 1 or seleccion > len(claves):
+            if seleccion < 1 or seleccion > len(claves_combinadas):
                 print("Selección no válida. Debes elegir un número en la lista.")
                 return False
         except ValueError:
             print("Entrada no válida. Debes ingresar un número.")
             return False
 
-        clave_a_borrar = claves[seleccion - 1]
+        # Obtener la clave y su origen (conocimientos o animales_data)
+        clave_a_borrar, origen = claves_combinadas[seleccion - 1]
+        diccionario = conocimientos if origen == 'conocimientos' else animales_data
 
         # Verificar si la clave tiene subclaves
         if isinstance(diccionario[clave_a_borrar], dict):
             subclaves = list(diccionario[clave_a_borrar].keys())
             if subclaves:
-                print("Subclaves disponibles:")
-                for j, subclave in enumerate(subclaves, 1):
-                    print(f"{j}. {subclave}")
+                while True:
+                    print(f"\nSubclaves disponibles en '{clave_a_borrar}':")
+                    for j, subclave in enumerate(subclaves, 1):
+                        print(f"{j}. {subclave}")
 
-                seleccion_subclave = input("¿Quieres borrar una subclave? (s/n): ")
-                if seleccion_subclave.lower() == 's':
-                    sub_seleccion = input("Ingresa el número de la subclave que deseas borrar: ")
+                    seleccion_subclave = input("¿Quieres borrar una subclave, detalle o elemento de lista? (s/n): ")
+                    if seleccion_subclave.lower() != 's':
+                        break
+
+                    sub_seleccion = input("Ingresa el número de la subclave que deseas borrar o modificar: ")
                     try:
                         sub_seleccion = int(sub_seleccion)
                         if sub_seleccion < 1 or sub_seleccion > len(subclaves):
                             print("Selección no válida. Debes elegir un número en la lista.")
-                            return False
+                            continue
                     except ValueError:
                         print("Entrada no válida. Debes ingresar un número.")
-                        return False
+                        continue
 
                     subclave_a_borrar = subclaves[sub_seleccion - 1]
-                    del diccionario[clave_a_borrar][subclave_a_borrar]
-                    print(f"Subclave '{subclave_a_borrar}' borrada de '{clave_a_borrar}' en '{nombre_json}'.")
-                    return True
 
-        # Borrar la clave si no tiene subclaves o si se optó por no borrar subclave
-        del diccionario[clave_a_borrar]
-        print(f"Clave '{clave_a_borrar}' borrada en '{nombre_json}'.")
-        return True
+                    # Confirmar antes de borrar una subclave completa
+                    confirmacion = input(f"¿Estás seguro de que deseas borrar la subclave '{subclave_a_borrar}'? (s/n): ")
+                    if confirmacion.lower() == 's':
+                        del diccionario[clave_a_borrar][subclave_a_borrar]
+                        print(f"Subclave '{subclave_a_borrar}' borrada de '{clave_a_borrar}' en '{origen}'.")
 
-    # Llamar a la función para cada JSON
-    if mostrar_y_borrar(conocimientos, "conocimientos"):
-        guardar_datos(conocimientos, 'conocimientos.json')
+                        # Guardar inmediatamente después de la eliminación
+                        if origen == 'conocimientos':
+                            guardar_datos(conocimientos, 'conocimientos.json')
+                        else:
+                            guardar_datos(animales_data, 'animales.json')
 
-    if mostrar_y_borrar(animales_data, "animales_data"):
-        guardar_datos(animales_data, 'animales.json')
+                        subclaves = list(diccionario[clave_a_borrar].keys())  # Actualizar lista de subclaves
+                        if not subclaves:
+                            print(f"No quedan más subclaves en '{clave_a_borrar}'.")
+                            break
+                    else:
+                        print("Operación cancelada.")
+                        return False
+            else:
+                print(f"La clave '{clave_a_borrar}' no tiene subclaves.")
+        else:
+            # Confirmar antes de borrar la clave completa
+            confirmacion = input(f"¿Estás seguro de que deseas borrar la clave '{clave_a_borrar}' completa? (s/n): ")
+            if confirmacion.lower() == 's':
+                del diccionario[clave_a_borrar]
+                print(f"Clave '{clave_a_borrar}' borrada en '{origen}'.")
+
+                # Guardar inmediatamente después de la eliminación
+                if origen == 'conocimientos':
+                    guardar_datos(conocimientos, 'conocimientos.json')
+                else:
+                    guardar_datos(animales_data, 'animales.json')
+                return True
+            else:
+                print("Operación cancelada.")
+                return False
+
+    return mostrar_y_borrar_combinado(conocimientos, animales_data)
 
 
 
@@ -727,12 +765,14 @@ def preguntar(pregunta, conocimientos, animales_data):
 
     # Verificar si el usuario desea borrar una clave o subclave
     if "borrar" in pregunta_limpia and "clave" in pregunta_limpia:
-        exito = borrar_clave(conocimientos)  # Llama a la función que crearemos para borrar
+        exito = borrar_clave(conocimientos, animales_data)  # Pasa ambos diccionarios
         if exito:
-            guardar_datos(conocimientos, 'conocimientos.json')
+            guardar_datos(conocimientos, 'conocimientos.json', mostrar_mensaje=True)
+            guardar_datos(animales_data, 'animales.json', mostrar_mensaje=True)  # También guardar animales_data si fue afectado
             return "La clave o subclave ha sido eliminada exitosamente."
         else:
             return "Hubo un problema al eliminar la clave o subclave. Por favor, inténtalo de nuevo."
+
 
     # Respuesta predeterminada si no se encuentra una coincidencia
     return "No tengo suficiente información para responder... intenta reformular o usar otros términos."
@@ -750,20 +790,28 @@ def main():
         pregunta_limpia = eliminar_acentos(pregunta.lower())
 
         if pregunta_limpia in ["salir", "adios", "adiós"]:
-            # Guardar los conocimientos
+            # Guardar los conocimientos y animales
             guardar_datos(conocimientos, 'conocimientos.json')
-            guardar_datos(animales_data, 'animales.json')  # Asegurarse de guardar animales también
+            guardar_datos(animales_data, 'animales.json')
             print("IA: ¡Adiós!")
             break
 
         # Opción para borrar clave
         if pregunta_limpia == "borrar clave":
-            borrar_clave(conocimientos, animales_data)
+            exito_borrado = borrar_clave(conocimientos, animales_data)
+            if exito_borrado:
+                guardar_datos(conocimientos, 'conocimientos.json')
+                guardar_datos(animales_data, 'animales.json')
+                print("IA: La clave o subclave ha sido eliminada exitosamente.")
             continue
 
         # Opción para agregar clave
         if pregunta_limpia == "agregar clave":
-            agregar_clave(conocimientos, animales_data)  # Pasamos ambos datos
+            exito_agregar = agregar_clave(conocimientos, animales_data)
+            if exito_agregar:
+                guardar_datos(conocimientos, 'conocimientos.json')
+                guardar_datos(animales_data, 'animales.json')
+                print("IA: La clave o subclave ha sido agregada exitosamente.")
             continue
 
         # Aquí buscamos si la pregunta es sobre la IA
@@ -783,7 +831,7 @@ def main():
         respuesta_saludo = buscar_saludo(pregunta_limpia, conocimientos)
         if respuesta_saludo:
             print(f"IA: {respuesta_saludo}")
-            actualizar_historial(pregunta, respuesta_saludo)  # Actualizar el historial con la respuesta de saludo
+            actualizar_historial(pregunta, respuesta_saludo)
             continue
 
         # Verificar si es una pregunta sobre chistes
@@ -794,10 +842,9 @@ def main():
             continue
 
         # Llamar a la función preguntar para manejar todas las preguntas
-        respuesta = preguntar(pregunta, conocimientos, animales_data)  # Aquí llamas a preguntar
+        respuesta = preguntar(pregunta, conocimientos, animales_data)
         print(f"IA: {respuesta}")
-        actualizar_historial(pregunta, respuesta)  # Actualizar el historial con la nueva interacción
-
+        actualizar_historial(pregunta, respuesta)
 
 
 

@@ -16,15 +16,8 @@
     "datosdelaIA": {
         "como te llamas?": "Mi nombre es Clark",
         "que edad tenes?": "soy una IA, no tengo edad. tengo fecha de creacion.",
-        "eres hombre o mujer?": "Mi creador David no me definio un sexo, Me llamo Clark, espero que eso responda tu pregunta."
-    },
-    "charla": {
-        "tienes un hobby?": "¡Sí! Me gusta aprender sobre diferentes temas y ayudar a las personas.",
-        "cual es tu comida favorita?": "No como, pero me encanta saber sobre diferentes platillos del mundo.",
-        "que opinas de la musica?": "La música es una forma maravillosa de expresión. Hay tantos géneros y estilos que siempre hay algo nuevo por descubrir.",
-        "que harias si fueras humano por un dia?": "¡Exploraría el mundo y probaría todas las cosas que he leído sobre ser humano!",
-        "crees en los extraterrestres?": "Es un tema fascinante. Hay tantas teorías y evidencias, ¡quién sabe qué hay allá afuera!",
-        "te gustan los animales?": "Si, los animales me gustan, me parecen seres increibles"
+        "eres hombre o mujer?": "Mi creador David no me definio un sexo, Me llamo Clark, espero que eso responda tu pregunta.",
+        "te gusta el calor o el frio": "diria que el frio, ya que con el calor uno esta transpirado y pegote, en cambio con calor uno se abriga y puede tomar una rica chocolatada o cafecito"
     },
     "presidente": {
         "Alfonsin": {
@@ -71,11 +64,6 @@
             "periodo": "2023 - 2024",
             "nombre_completo": "Javier Gerardo Milei",
             "descripcion": "Javier Milei es un economista y politico argentino que asumio la presidencia en 2024. Es conocido por su postura libertaria y por proponer reformas economicas radicales en un contexto de crisis economica y alta inflacion. Su enfoque se centra en reducir drasticamente el gasto publico, eliminar regulaciones y promover la libertad de mercado. Milei ha ganado notoriedad por su estilo provocador y su discurso anti-establishment, apelando a votantes que buscan un cambio en el sistema politico tradicional. Es un firme defensor de la propiedad privada y ha manifestado su intencion de cerrar el Banco Central."
-        },
-        "jose": {
-            "periodo": "2024 - 2025",
-            "nombre_completo": "jose guimenes",
-            "descripcion": "fue presidente en alemaña.fue un genio en matematica"
         }
     },
     "signos_zodiacales": {
@@ -204,7 +192,7 @@
         "pop": {
             "madonna": {
                 "nombre_completo": "Madonna Louise Ciccone",
-                "descripcion": "Madonna es una de las figuras más influyentes de la música pop, conocida como la 'Reina del Pop'. Ha tenido una extensa carrera desde los años 80, caracterizada por su habilidad para reinventarse y su influencia en la cultura musical.",
+                "descripcion": "Madonna es una de las figuras mas influyentes de la musica pop, conocida como la 'Reina del Pop'. Ha tenido una extensa carrera desde los anos 80, caracterizada por su habilidad para reinventarse y su influencia en la cultura musical.",
                 "fecha_nacimiento": "16-08-1958",
                 "nacionalidad": "Estadounidense",
                 "canciones": [
@@ -324,12 +312,9 @@
                 "fuego": "El agua se usa para apagar el fuego.",
                 "importancia": "El agua es esencial para la vida humana y para muchos procesos naturales."
             }
-        },
-        "contexto": {
-            "ultimaPregunta": ""
         }
     },
     "contexto": {
-        "ultimaPregunta": "que sabes de la cantante madonna"
+        "ultimaPregunta": ""
     }
 }

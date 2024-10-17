@@ -315,6 +315,48 @@
         }
     },
     "contexto": {
-        "ultimaPregunta": ""
+        "ultimaPregunta": "presidente macri",
+        "historialConversacion": [
+            {
+                "pregunta": "presidente macri",
+                "respuesta": "Mauricio Macri fue presidente entre 2015 - 2019. Descripción: Mauricio Macri asumio la presidencia con la promesa de implementar reformas economicas que trajeran crecimiento y estabilidad. Su gobierno busco reducir el deficit fiscal y abrir la economia al mundo. Sin embargo, su mandato se vio afectado por una alta inflacion y una deuda creciente, lo que llevo a descontento social. Macri intento atraer inversiones extranjeras y fomentar el desarrollo, pero las dificultades economicas y la falta de apoyo politico limitaron su capacidad de implementar cambios significativos, resultando en una administracion con resultados mixtos."
+            },
+            {
+                "pregunta": "hola",
+                "respuesta": "hola, como estas??"
+            },
+            {
+                "pregunta": "bien",
+                "respuesta": "que bueno que estes bien"
+            },
+            {
+                "pregunta": "como te llamas?",
+                "respuesta": "Mi nombre es Clark"
+            },
+            {
+                "pregunta": "me llamo david",
+                "respuesta": "que lindo nombre"
+            },
+            {
+                "pregunta": "como te llamas?",
+                "respuesta": "Mi nombre es Clark"
+            },
+            {
+                "pregunta": "hola",
+                "respuesta": "hola, como estas??"
+            },
+            {
+                "pregunta": "me llamo david",
+                "respuesta": "que lindo nombre"
+            },
+            {
+                "pregunta": "hola",
+                "respuesta": "hola, como estas??"
+            },
+            {
+                "pregunta": "bien",
+                "respuesta": "que bueno que estes bien"
+            }
+        ]
     }
 }

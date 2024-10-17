@@ -15,6 +15,11 @@ dias_semana = {
     "Saturday": "sábado",
     "Sunday": "domingo"
 }
+# TODO Iniciar listas vacías
+UMBRAL_SIMILITUD = 0.6
+historial_preguntas = [] # Contexto/ultima pregunta/categoria
+historial_conversacion = []
+MAX_HISTORIAL = 10  # Limitar el historial a los últimos 10 mensajes
 
 # TODO: Carga de datos
 # Definición de la función para cargar datos
@@ -47,40 +52,31 @@ animales_data = cargar_animales('animales.json')  # Cargar datos de animales
 # Cargar datos desde el JSON al inicio de tu script
 conocimientos = cargar_datos('conocimientos.json')
 
+# Recuperar el historial desde el JSON si existe
+if "historialConversacion" in conocimientos.get("contexto", {}):
+    historial_conversacion = conocimientos["contexto"]["historialConversacion"]
+else:
+    historial_conversacion = []
+
 # Asegurarse de que los signos están en el diccionario 'conocimientos'
 signos_zodiacales = conocimientos.get("signos_zodiacales", {})
 
-# TODO Iniciar listas vacías
-#respuestas_cache = {}
-UMBRAL_SIMILITUD = 0.6
-historial_preguntas = []
-historial_conversacion = []  # Lista para almacenar el historial de conversación
-MAX_HISTORIAL = 6  # Limitar el historial a los últimos 6 mensajes
 
-# TODO Funciones acentos, limpieza, historial, etc
 def eliminar_acentos(texto):
-    # Reemplazar la 'ñ' por un símbolo temporal (por ejemplo, ~)
     texto = texto.replace('ñ', '~').replace('Ñ', '~')  # Reemplazar tanto minúscula como mayúscula
-    # Normalizar el texto a una forma que separa los caracteres acentuados
     texto_normalizado = unicodedata.normalize('NFD', texto)
-    # Filtrar solo los caracteres que no son acentos
     texto_sin_acentos = ''.join(c for c in texto_normalizado if unicodedata.category(c) != 'Mn')
-    # Reemplazar el símbolo temporal por 'ñ'
     texto_final = texto_sin_acentos.replace('~', 'ñ')
     return texto_final
 
 
-
-
 def guardar_datos(datos, nombre_archivo='conocimientos.json', mostrar_mensaje=False, verificar_existencia=False):
-    # Verificar si el archivo existe antes de guardarlo
     if verificar_existencia and not os.path.exists(nombre_archivo):
         print(f"Advertencia: El archivo '{nombre_archivo}' no existe, se creará uno nuevo.")
-
     try:
         with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
             json.dump(datos, archivo, ensure_ascii=False, indent=4)
-        if mostrar_mensaje:  # Solo muestra el mensaje si mostrar_mensaje es True
+        if mostrar_mensaje:
             print(f"Datos guardados exitosamente en '{nombre_archivo}'.")
     except IOError as e:
         print(f"Error al guardar los datos en el archivo '{nombre_archivo}': {e}")
@@ -93,26 +89,32 @@ guardar_datos(conocimientos, 'conocimientos.json')
 guardar_datos(animales_data, 'animales.json')
 
 
-
 # Recordar el historial de la charla
 def recordar_historial():
     if historial_conversacion:
         print("IA: Recordando el historial reciente...")
-        # Limitar a los últimos MAX_HISTORIAL elementos
         for idx, item in enumerate(historial_conversacion[-MAX_HISTORIAL:], 1):
             print(f"{idx}. Tú dijiste: '{item['pregunta']}' -> IA respondió: '{item['respuesta']}'")
     else:
         print("IA: No hay historial de conversación disponible.")
 
 
-# Actualizar el historial de conversación
-def actualizar_historial(pregunta, respuesta):
+def actualizar_historial(pregunta, respuesta, conocimientos, animales_data):
     historial_conversacion.append({"pregunta": pregunta, "respuesta": respuesta})
 
-    # Limitar el historial a los últimos MAX_HISTORIAL mensajes
     if len(historial_conversacion) > MAX_HISTORIAL:
         historial_conversacion.pop(0)  # Eliminar el mensaje más antiguo
 
+    if "historialConversacion" not in conocimientos["contexto"]:
+        conocimientos["contexto"]["historialConversacion"] = []
+
+    conocimientos["contexto"]["historialConversacion"].append({"pregunta": pregunta, "respuesta": respuesta})
+
+    if len(conocimientos["contexto"]["historialConversacion"]) > MAX_HISTORIAL:
+        conocimientos["contexto"]["historialConversacion"].pop(0)
+
+    # Guardar en el archivo JSON
+    guardar_datos(conocimientos, 'conocimientos.json')
 
 
 
@@ -365,6 +367,7 @@ def solicitar_nombre_usuario():
 
 nombre_usuario = solicitar_nombre_usuario()
 print(f"¡Hola, {nombre_usuario}! Puedes preguntarme algo, agregar una categoría/subcategoría o borrar conocimiento.")
+
 
 
 # TODO funciones de categoria
@@ -705,7 +708,6 @@ def borrar_clave(conocimientos, animales_data):
 
 
 
-
 # TODO Función principal de preguntar (lógica de preguntas)
 def preguntar(pregunta, conocimientos, animales_data):
     # Verificar si "contexto" está en "conocimientos"
@@ -778,9 +780,6 @@ def preguntar(pregunta, conocimientos, animales_data):
     return "No tengo suficiente información para responder... intenta reformular o usar otros términos."
 
 
-
-
-# TODO Función MAIN principal
 def main():
     conocimientos = cargar_datos('conocimientos.json')  # Cargar conocimientos
     animales_data = cargar_animales('animales.json')  # Cargar datos de animales
@@ -818,33 +817,40 @@ def main():
         respuesta_sobre_ia = responder_sobre_ia(pregunta_limpia, conocimientos)
         if respuesta_sobre_ia:
             print(f"IA: {respuesta_sobre_ia}")
+            # Actualizar el historial de conversación
+            actualizar_historial(pregunta, respuesta_sobre_ia, conocimientos, animales_data)
             continue
 
         # Aquí buscamos si la pregunta está en charla cotidiana
         respuesta_charla = manejar_charla(pregunta_limpia, conocimientos)
         if respuesta_charla:
             print(f"IA: {respuesta_charla}")
-            actualizar_historial(pregunta, respuesta_charla)
+            # Actualizar el historial de conversación
+            actualizar_historial(pregunta, respuesta_charla, conocimientos, animales_data)
             continue
 
         # Aquí se revisa si hay un saludo
         respuesta_saludo = buscar_saludo(pregunta_limpia, conocimientos)
         if respuesta_saludo:
             print(f"IA: {respuesta_saludo}")
-            actualizar_historial(pregunta, respuesta_saludo)
+            # Actualizar el historial de conversación
+            actualizar_historial(pregunta, respuesta_saludo, conocimientos, animales_data)
             continue
 
         # Verificar si es una pregunta sobre chistes
         respuesta_chiste = verificar_chiste(pregunta_limpia, conocimientos)
         if respuesta_chiste:
             print(f"IA: {respuesta_chiste}")
-            actualizar_historial(pregunta, respuesta_chiste)
+            # Actualizar el historial de conversación
+            actualizar_historial(pregunta, respuesta_chiste, conocimientos, animales_data)
             continue
 
         # Llamar a la función preguntar para manejar todas las preguntas
         respuesta = preguntar(pregunta, conocimientos, animales_data)
         print(f"IA: {respuesta}")
-        actualizar_historial(pregunta, respuesta)
+        # Actualizar el historial de conversación
+        actualizar_historial(pregunta, respuesta, conocimientos, animales_data)
+
 
 
 

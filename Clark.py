@@ -23,6 +23,43 @@ historial_conversacion = []
 MAX_HISTORIAL = 10  # Limitar el historial a los últimos 10 mensajes
 
 # TODO: Carga de datos
+# Función para cargar sinónimos desde un archivo JSON
+def cargar_sinonimos():
+    try:
+        with open('sinonimos.json', 'r', encoding='utf-8') as archivo:
+            sinonimos = json.load(archivo)
+        print(f"Sinónimos cargados: {sinonimos}")  # Verificar si los sinónimos se están cargando
+        return sinonimos
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("Error al cargar el archivo de sinónimos.")  # Mensaje en caso de error
+        return {}
+
+
+# Cargar los sinónimos al inicio del programa
+sinonimos = cargar_sinonimos()
+
+def reemplazar_palabras(opinion):
+    palabras = opinion.split()
+    palabras_reemplazadas = []
+
+    for palabra in palabras:
+        # Verificar si la palabra tiene un sinónimo, usando minúsculas
+        palabra_reemplazada = sinonimos.get(palabra.lower(), palabra)
+
+        # Depuración para ver qué palabras se están reemplazando
+        print(f"Palabra original: {palabra}, Reemplazada por: {palabra_reemplazada}")
+
+        # Si la palabra original tenía mayúscula inicial, conservamos la capitalización
+        if palabra.istitle():
+            palabra_reemplazada = palabra_reemplazada.capitalize()
+
+        palabras_reemplazadas.append(palabra_reemplazada)
+
+    return " ".join(palabras_reemplazadas)
+
+
+
+
 def cargar_datos_retroalimentacion():
     try:
         with open('retroalimentación.json', 'r', encoding='utf-8') as archivo:
@@ -551,72 +588,40 @@ def matematica(pregunta):
     except (SyntaxError, ZeroDivisionError) as e:
         return f"Error en la operación: {e}. Por favor, revisa la sintaxis."
 
-# TODO Funcion retroalimentacion opinion
-# Función para recibir y guardar la retroalimentación
-"""def guardar_retroalimentacion():
-    # Solicitar el nombre de usuario (obligatorio)
-    usuario = input("Por favor, ingresa tu nombre de usuario: ").strip()
-    if not usuario:
-        print("El nombre de usuario es obligatorio. Intenta de nuevo.")
-        return
-
-    # Solicitar la edad (opcional)
-    edad = input("Ingresa tu edad (opcional, presiona Enter para omitir): ").strip()
-    if edad and not edad.isdigit():
-        print("Por favor, ingresa una edad válida o deja el campo vacío.")
-        return
-
-    # Solicitar la sugerencia u opinión
-    opinion = input("Escribe tu opinión o sugerencia (máximo 100 caracteres): ").strip()
-    if len(opinion) > 100:
-        print("Tu opinión excede los 100 caracteres. Por favor, sé breve.")
-        return
-
-    # Crear la estructura de la opinión
-    detalles = {
-        "edad": edad if edad else "No especificada",
-        "sugerencia": opinion
-    }
-
-    # Intentar cargar el archivo JSON existente o crear uno nuevo si no existe
-    try:
-        with open('retroalimentación.json', 'r', encoding='utf-8') as archivo:
-            datos = json.load(archivo)
-    except (FileNotFoundError, json.JSONDecodeError):
-        datos = {}  # Si no existe o está vacío, se inicia un diccionario vacío
-
-    # Agregar la nueva retroalimentación bajo la clave del usuario
-    datos[usuario] = detalles
-
-    # Guardar los datos actualizados en el archivo
-    with open('retroalimentación.json', 'w', encoding='utf-8') as archivo:
-        json.dump(datos, archivo, indent=4, ensure_ascii=False)
-
-    print("Gracias por tu opinión. ¡Ha sido guardada!")
-"""
-
-# Luego puedes definir la lógica en una función separada para manejar la recolección.
+# TODO: Función retroalimentación opinión
 def manejar_recoleccion_opinion(pregunta, conocimientos, retroalimentacion):
-    # Si el nombre del usuario no está aún registrado
+    # Limpiar la opinión y asegurar que no esté vacía
+    opinion = pregunta.strip()
+
+    # Reemplazar palabras clave en la opinión
+    opinion_reemplazada = reemplazar_palabras(opinion)
+
+    # Depuración: Verificar el reemplazo de sinónimos
+    print(f"Opinión original: {opinion}")
+    print(f"Opinión con sinónimos: {opinion_reemplazada}")
+
+    # Si el nombre del usuario no está registrado
     if not conocimientos["contexto"]["nombre_usuario"]:
-        conocimientos["contexto"]["nombre_usuario"] = pregunta.strip()
+        conocimientos["contexto"]["nombre_usuario"] = opinion_reemplazada
         guardar_datos(conocimientos, 'conocimientos.json')
         return f"Encantado de conocerte, {conocimientos['contexto']['nombre_usuario']}! ¿Cuántos años tienes?"
 
     # Si la edad del usuario no está registrada aún
     if not conocimientos["contexto"]["edad_usuario"]:
-        conocimientos["contexto"]["edad_usuario"] = pregunta.strip()
-        guardar_datos(conocimientos, 'conocimientos.json')
-        return "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres)."
+        if opinion.isdigit() and 0 < int(opinion) <= 120:  # Validar edad
+            conocimientos["contexto"]["edad_usuario"] = opinion
+            guardar_datos(conocimientos, 'conocimientos.json')
+            return "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres)."
+        else:
+            return "Por favor, ingresa una edad válida."
 
-    # Verificar si la opinión es válida y no contiene palabras clave que activen otras funciones
-    opinion = pregunta.strip()
-    if 0 < len(opinion) <= 100 and not any(kw in opinion.lower() for kw in ["presidente", "saludo", "matemática", "agregar", "borrar"]):
+    # Verificar si la opinión es válida
+    if 0 < len(opinion_reemplazada) <= 100 and not any(kw in opinion_reemplazada.lower() for kw in ["presidente", "saludo", "matemática", "agregar", "borrar"]):
         retroalimentacion["opiniones"] = retroalimentacion.get("opiniones", [])
         nueva_opinion = {
             "nombre": conocimientos["contexto"]["nombre_usuario"],
             "edad": conocimientos["contexto"]["edad_usuario"],
-            "opinion": opinion
+            "opinion": opinion_reemplazada  # Guardar la opinión con sinónimos
         }
         retroalimentacion["opiniones"].append(nueva_opinion)
         guardar_datos_retroalimentacion(retroalimentacion)

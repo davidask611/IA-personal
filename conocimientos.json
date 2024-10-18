@@ -4,7 +4,7 @@
         "hola": "hola, como estas??",
         "bien y tu ?": "bien, gracias por preguntar",
         "hasta mañana": "hasta mañana",
-        "me ire a dormir": "que descanses, hasta mañana",
+        "ire a dormir": "que descanses, hasta mañana",
         "bien y vos?": "bien, gracias por preguntar",
         "bien": "que bueno que estes bien",
         "lindo nombre": "gracias",
@@ -317,27 +317,11 @@
         "ultimaPregunta": "10%20",
         "historialConversacion": [
             {
-                "pregunta": "64",
+                "pregunta": "10",
                 "respuesta": "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres)."
             },
             {
-                "pregunta": "que recuerde como me llamo mientras charlamos",
-                "respuesta": "que descanses, hasta mañana"
-            },
-            {
-                "pregunta": "",
-                "respuesta": "Por favor, tu opinión o sugerencia debe tener entre 1 y 100 caracteres y no contener palabras clave especiales."
-            },
-            {
-                "pregunta": "que recuerde como me llamo mientras charlamos",
-                "respuesta": "que descanses, hasta mañana"
-            },
-            {
-                "pregunta": "que me llame por mi nombre",
-                "respuesta": "que descanses, hasta mañana"
-            },
-            {
-                "pregunta": "f",
+                "pregunta": "me",
                 "respuesta": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
             },
             {
@@ -345,20 +329,36 @@
                 "respuesta": "¡Gracias por querer compartir! ¿Cuál es tu nombre?"
             },
             {
-                "pregunta": "silvestre",
-                "respuesta": "Encantado de conocerte, silvestre! ¿Cuántos años tienes?"
+                "pregunta": "david",
+                "respuesta": "Encantado de conocerte, david! ¿Cuántos años tienes?"
             },
             {
-                "pregunta": "9",
+                "pregunta": "45",
                 "respuesta": "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres)."
             },
             {
-                "pregunta": "Sería genial si pudieras recordar algunos detalles de nuestras charlas anteriores.",
+                "pregunta": "me gustaria",
                 "respuesta": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
+            },
+            {
+                "pregunta": "te dejo una opinion",
+                "respuesta": "¡Gracias por querer compartir! ¿Cuál es tu nombre?"
+            },
+            {
+                "pregunta": "tatatata",
+                "respuesta": "Encantado de conocerte, tatatata! ¿Cuántos años tienes?"
+            },
+            {
+                "pregunta": "84",
+                "respuesta": "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres)."
+            },
+            {
+                "pregunta": "me gustaria",
+                "respuesta": "que descanses, hasta mañana"
             }
         ],
-        "recolectando_opinion": false,
-        "nombre_usuario": "",
-        "edad_usuario": ""
+        "recolectando_opinion": true,
+        "nombre_usuario": "tatatata",
+        "edad_usuario": "84"
     }
 }

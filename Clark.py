@@ -17,12 +17,24 @@ dias_semana = {
     "Sunday": "domingo"
 }
 # TODO Iniciar listas vacías
-UMBRAL_SIMILITUD = 0.6
+UMBRAL_SIMILITUD = 1
 historial_preguntas = [] # Contexto/ultima pregunta/categoria
 historial_conversacion = []
 MAX_HISTORIAL = 10  # Limitar el historial a los últimos 10 mensajes
 
 # TODO: Carga de datos
+def cargar_datos_retroalimentacion():
+    try:
+        with open('retroalimentación.json', 'r', encoding='utf-8') as archivo:
+            return json.load(archivo)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}  # Si el archivo no existe o está vacío, retornamos un diccionario vacío
+
+def guardar_datos_retroalimentacion(retroalimentacion):
+    with open('retroalimentación.json', 'w', encoding='utf-8') as archivo:
+        json.dump(retroalimentacion, archivo, indent=4, ensure_ascii=False)
+
+
 # Definición de la función para cargar datos
 def cargar_datos(nombre_archivo='conocimientos.json'):
     try:
@@ -116,7 +128,6 @@ def actualizar_historial(pregunta, respuesta, conocimientos, animales_data):
 
     # Guardar en el archivo JSON
     guardar_datos(conocimientos, 'conocimientos.json')
-
 
 
 # TODO Funciones complejas (saludo, datosdelaIA, charla, presidente, signoszodiacales, musica, chiste, animal)
@@ -540,6 +551,86 @@ def matematica(pregunta):
     except (SyntaxError, ZeroDivisionError) as e:
         return f"Error en la operación: {e}. Por favor, revisa la sintaxis."
 
+# TODO Funcion retroalimentacion opinion
+# Función para recibir y guardar la retroalimentación
+"""def guardar_retroalimentacion():
+    # Solicitar el nombre de usuario (obligatorio)
+    usuario = input("Por favor, ingresa tu nombre de usuario: ").strip()
+    if not usuario:
+        print("El nombre de usuario es obligatorio. Intenta de nuevo.")
+        return
+
+    # Solicitar la edad (opcional)
+    edad = input("Ingresa tu edad (opcional, presiona Enter para omitir): ").strip()
+    if edad and not edad.isdigit():
+        print("Por favor, ingresa una edad válida o deja el campo vacío.")
+        return
+
+    # Solicitar la sugerencia u opinión
+    opinion = input("Escribe tu opinión o sugerencia (máximo 100 caracteres): ").strip()
+    if len(opinion) > 100:
+        print("Tu opinión excede los 100 caracteres. Por favor, sé breve.")
+        return
+
+    # Crear la estructura de la opinión
+    detalles = {
+        "edad": edad if edad else "No especificada",
+        "sugerencia": opinion
+    }
+
+    # Intentar cargar el archivo JSON existente o crear uno nuevo si no existe
+    try:
+        with open('retroalimentación.json', 'r', encoding='utf-8') as archivo:
+            datos = json.load(archivo)
+    except (FileNotFoundError, json.JSONDecodeError):
+        datos = {}  # Si no existe o está vacío, se inicia un diccionario vacío
+
+    # Agregar la nueva retroalimentación bajo la clave del usuario
+    datos[usuario] = detalles
+
+    # Guardar los datos actualizados en el archivo
+    with open('retroalimentación.json', 'w', encoding='utf-8') as archivo:
+        json.dump(datos, archivo, indent=4, ensure_ascii=False)
+
+    print("Gracias por tu opinión. ¡Ha sido guardada!")
+"""
+
+# Luego puedes definir la lógica en una función separada para manejar la recolección.
+def manejar_recoleccion_opinion(pregunta, conocimientos, retroalimentacion):
+    # Si el nombre del usuario no está aún registrado
+    if not conocimientos["contexto"]["nombre_usuario"]:
+        conocimientos["contexto"]["nombre_usuario"] = pregunta.strip()
+        guardar_datos(conocimientos, 'conocimientos.json')
+        return f"Encantado de conocerte, {conocimientos['contexto']['nombre_usuario']}! ¿Cuántos años tienes?"
+
+    # Si la edad del usuario no está registrada aún
+    if not conocimientos["contexto"]["edad_usuario"]:
+        conocimientos["contexto"]["edad_usuario"] = pregunta.strip()
+        guardar_datos(conocimientos, 'conocimientos.json')
+        return "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres)."
+
+    # Verificar si la opinión es válida y no contiene palabras clave que activen otras funciones
+    opinion = pregunta.strip()
+    if 0 < len(opinion) <= 100 and not any(kw in opinion.lower() for kw in ["presidente", "saludo", "matemática", "agregar", "borrar"]):
+        retroalimentacion["opiniones"] = retroalimentacion.get("opiniones", [])
+        nueva_opinion = {
+            "nombre": conocimientos["contexto"]["nombre_usuario"],
+            "edad": conocimientos["contexto"]["edad_usuario"],
+            "opinion": opinion
+        }
+        retroalimentacion["opiniones"].append(nueva_opinion)
+        guardar_datos_retroalimentacion(retroalimentacion)
+
+        # Restablecer el contexto para futuras opiniones
+        conocimientos["contexto"]["recolectando_opinion"] = False
+        conocimientos["contexto"]["nombre_usuario"] = ""
+        conocimientos["contexto"]["edad_usuario"] = ""
+        guardar_datos(conocimientos, 'conocimientos.json')
+
+        return "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
+    else:
+        return "Por favor, tu opinión o sugerencia debe tener entre 1 y 100 caracteres y no contener palabras clave especiales."
+
 
 
 # TODO Agregar clave/subclave
@@ -791,17 +882,37 @@ def borrar_clave(conocimientos, animales_data):
 
 
 
-# TODO Función principal de preguntar (lógica de preguntas)
-def preguntar(pregunta, conocimientos, animales_data):
-    # Verificar si "contexto" está en "conocimientos"
-    if "contexto" not in conocimientos:
-        conocimientos["contexto"] = {"ultimaPregunta": ""}  # Inicializa el contexto
-
+# TODO: Función principal de preguntar (lógica de preguntas)
+def preguntar(pregunta, conocimientos, animales_data, retroalimentacion):
     pregunta_limpia = eliminar_acentos(pregunta.lower())
 
-    # Primero, salir si se pide
-    if pregunta_limpia in ["salir", "terminar", "me voy"]:
-        return "¡Adiós! Espero verte pronto."
+    # Verificar si "contexto" está en "conocimientos" y asegurarse de que las claves necesarias estén presentes
+    if "contexto" not in conocimientos:
+        conocimientos["contexto"] = {
+            "ultimaPregunta": "",
+            "recolectando_opinion": False,
+            "nombre_usuario": "",
+            "edad_usuario": ""
+        }
+    else:
+        # Asegurar que las claves necesarias estén en el contexto
+        conocimientos["contexto"].setdefault("recolectando_opinion", False)
+        conocimientos["contexto"].setdefault("nombre_usuario", "")
+        conocimientos["contexto"].setdefault("edad_usuario", "")
+
+    # Si está recolectando una opinión, manejarlo directamente sin analizar otras palabras clave.
+    if conocimientos["contexto"]["recolectando_opinion"]:
+        return manejar_recoleccion_opinion(pregunta, conocimientos, retroalimentacion)
+
+    # Verificar si el usuario quiere dejar una opinión o sugerencia y no está ya en proceso de recolección
+    if not conocimientos["contexto"]["recolectando_opinion"] and (
+        pregunta_limpia.startswith("te dejo una opinion") or pregunta_limpia.startswith("te dejo una sugerencia")
+    ):
+        conocimientos["contexto"]["recolectando_opinion"] = True
+        guardar_datos(conocimientos, 'conocimientos.json')
+        return "¡Gracias por querer compartir! ¿Cuál es tu nombre?"
+
+    # (El resto de la lógica de la función 'preguntar' sigue aquí)
 
     # Verificar si es un saludo
     respuesta_saludo = buscar_saludo(pregunta_limpia, conocimientos)
@@ -841,7 +952,7 @@ def preguntar(pregunta, conocimientos, animales_data):
 
     # Verificar si el usuario desea agregar una clave o subclave
     if "agregar" in pregunta_limpia and "clave" in pregunta_limpia:
-        exito = agregar_clave(conocimientos)  # Llama a la función que creamos para agregar
+        exito = agregar_clave(conocimientos)
         if exito:
             guardar_datos(conocimientos, 'conocimientos.json')
             return "La clave o subclave ha sido agregada exitosamente."
@@ -850,10 +961,10 @@ def preguntar(pregunta, conocimientos, animales_data):
 
     # Verificar si el usuario desea borrar una clave o subclave
     if "borrar" in pregunta_limpia and "clave" in pregunta_limpia:
-        exito = borrar_clave(conocimientos, animales_data)  # Pasa ambos diccionarios
+        exito = borrar_clave(conocimientos, animales_data)
         if exito:
             guardar_datos(conocimientos, 'conocimientos.json', mostrar_mensaje=True)
-            guardar_datos(animales_data, 'animales.json', mostrar_mensaje=True)  # También guardar animales_data si fue afectado
+            guardar_datos(animales_data, 'animales.json', mostrar_mensaje=True)
             return "La clave o subclave ha sido eliminada exitosamente."
         else:
             return "Hubo un problema al eliminar la clave o subclave. Por favor, inténtalo de nuevo."
@@ -873,6 +984,7 @@ def preguntar(pregunta, conocimientos, animales_data):
 def main():
     conocimientos = cargar_datos('conocimientos.json')  # Cargar conocimientos
     animales_data = cargar_animales('animales.json')  # Cargar datos de animales
+    retroalimentacion = cargar_datos_retroalimentacion()  # Cargar retroalimentación
 
     while True:
         pregunta = input("Tú: ")
@@ -882,6 +994,7 @@ def main():
             # Guardar los conocimientos y animales
             guardar_datos(conocimientos, 'conocimientos.json')
             guardar_datos(animales_data, 'animales.json')
+            guardar_datos_retroalimentacion(retroalimentacion)  # Guardar retroalimentación
             print("IA: ¡Adiós!")
             break
 
@@ -936,11 +1049,10 @@ def main():
             continue
 
         # Llamar a la función preguntar para manejar todas las preguntas
-        respuesta = preguntar(pregunta, conocimientos, animales_data)
+        respuesta = preguntar(pregunta, conocimientos, animales_data, retroalimentacion)
         print(f"IA: {respuesta}")
         # Actualizar el historial de conversación
         actualizar_historial(pregunta, respuesta, conocimientos, animales_data)
-
 
 
 

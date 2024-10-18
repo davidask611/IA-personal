@@ -1,0 +1,19 @@
+{
+    "opiniones": [
+        {
+            "nombre": "te dejo una opinion",
+            "edad": "33",
+            "opinion": "te dejo una opinion"
+        },
+        {
+            "nombre": "pablo",
+            "edad": "64",
+            "opinion": "f"
+        },
+        {
+            "nombre": "silvestre",
+            "edad": "9",
+            "opinion": "Sería genial si pudieras recordar algunos detalles de nuestras charlas anteriores."
+        }
+    ]
+}

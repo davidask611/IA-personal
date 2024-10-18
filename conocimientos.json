@@ -6,7 +6,6 @@
         "hasta mañana": "hasta mañana",
         "me ire a dormir": "que descanses, hasta mañana",
         "bien y vos?": "bien, gracias por preguntar",
-        "me llamo david": "que lindo nombre",
         "bien": "que bueno que estes bien",
         "lindo nombre": "gracias",
         "como estas?": "estoy bien, gracias por preguntar",
@@ -318,45 +317,48 @@
         "ultimaPregunta": "10%20",
         "historialConversacion": [
             {
-                "pregunta": "raiz cubica de 20",
-                "respuesta": "El resultado de raiz cubica de 20 es 2.714."
+                "pregunta": "64",
+                "respuesta": "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres)."
             },
             {
-                "pregunta": "raiz cubica de 8",
-                "respuesta": "El resultado de raiz cubica de 8 es 2."
+                "pregunta": "que recuerde como me llamo mientras charlamos",
+                "respuesta": "que descanses, hasta mañana"
             },
             {
-                "pregunta": "raiz cubica de 8 + raiz cuadrada de 25",
-                "respuesta": "El resultado de raiz cubica de 8 + raiz cuadrada de 25 es 7."
+                "pregunta": "",
+                "respuesta": "Por favor, tu opinión o sugerencia debe tener entre 1 y 100 caracteres y no contener palabras clave especiales."
             },
             {
-                "pregunta": "log(50)",
-                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
+                "pregunta": "que recuerde como me llamo mientras charlamos",
+                "respuesta": "que descanses, hasta mañana"
             },
             {
-                "pregunta": "log(50, 200)",
-                "respuesta": "El resultado de log(50, 200) es 1.354."
+                "pregunta": "que me llame por mi nombre",
+                "respuesta": "que descanses, hasta mañana"
             },
             {
-                "pregunta": "25% de 60",
-                "respuesta": "El resultado de 25% de 60 es 15."
+                "pregunta": "f",
+                "respuesta": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
             },
             {
-                "pregunta": "75% de 60",
-                "respuesta": "El resultado de 75% de 60 es 45."
+                "pregunta": "te dejo una opinion",
+                "respuesta": "¡Gracias por querer compartir! ¿Cuál es tu nombre?"
             },
             {
-                "pregunta": "45+15",
-                "respuesta": "El resultado de 45+15 es 60."
+                "pregunta": "silvestre",
+                "respuesta": "Encantado de conocerte, silvestre! ¿Cuántos años tienes?"
             },
             {
-                "pregunta": "10%5",
-                "respuesta": "El resultado de 10%5 es 0."
+                "pregunta": "9",
+                "respuesta": "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres)."
             },
             {
-                "pregunta": "10%20",
-                "respuesta": "El resultado de 10%20 es 10."
+                "pregunta": "Sería genial si pudieras recordar algunos detalles de nuestras charlas anteriores.",
+                "respuesta": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
             }
-        ]
+        ],
+        "recolectando_opinion": false,
+        "nombre_usuario": "",
+        "edad_usuario": ""
     }
 }

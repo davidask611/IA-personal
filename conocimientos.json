@@ -311,47 +311,47 @@
         }
     },
     "contexto": {
-        "ultimaPregunta": "10%20",
+        "ultimaPregunta": "20^3",
         "historialConversacion": [
             {
-                "pregunta": "5",
-                "respuesta": "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres)."
+                "pregunta": "raiz de 25",
+                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
             },
             {
-                "pregunta": "opiniones",
-                "respuesta": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
+                "pregunta": "20**5",
+                "respuesta": "El resultado de 20**5 es 3200000."
             },
             {
-                "pregunta": "te dejo una opinion",
-                "respuesta": "¡Gracias por querer compartir! ¿Cuál es tu nombre?"
+                "pregunta": "20**2",
+                "respuesta": "El resultado de 20**2 es 400."
             },
             {
-                "pregunta": "dfd",
-                "respuesta": "Encantado de conocerte, dfd! ¿Cuántos años tienes?"
-            },
-            {
-                "pregunta": "55",
-                "respuesta": "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres)."
-            },
-            {
-                "pregunta": "presidentes",
-                "respuesta": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
+                "pregunta": "20^3",
+                "respuesta": "El resultado de 20**3 es 8000."
             },
             {
                 "pregunta": "te dejo una opinion",
                 "respuesta": "¡Gracias por querer compartir! ¿Cuál es tu nombre?"
             },
             {
-                "pregunta": "dd",
-                "respuesta": "Encantado de conocerte, dd! ¿Cuántos años tienes?"
+                "pregunta": "jose",
+                "respuesta": "Encantado de conocerte, jose! ¿Cuántos años tienes?"
             },
             {
-                "pregunta": "55",
+                "pregunta": "22",
                 "respuesta": "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres)."
             },
             {
-                "pregunta": "presidentes corren en auto",
+                "pregunta": "que tenga juegos de adivinanza con multiple eleccion",
                 "respuesta": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
+            },
+            {
+                "pregunta": "clark iniciar autoanalisis",
+                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
+            },
+            {
+                "pregunta": "clark iniciar autoanalisis",
+                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
             }
         ],
         "recolectando_opinion": false,

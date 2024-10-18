@@ -1,0 +1,86 @@
+[
+    {
+        "descripcion": "Prueba de saludo - 'buenas'",
+        "resultado": "ERROR: buscar_saludo() missing 1 required positional argument: 'conocimientos'",
+        "esperado": "buenas como estas??",
+        "exitoso": false
+    },
+    {
+        "descripcion": "Prueba de saludo - 'ire a dormir'",
+        "resultado": "ERROR: buscar_saludo() missing 1 required positional argument: 'conocimientos'",
+        "esperado": "que descanses, hasta mañana",
+        "exitoso": false
+    },
+    {
+        "descripcion": "Prueba de saludo - 'bien'",
+        "resultado": "ERROR: buscar_saludo() missing 1 required positional argument: 'conocimientos'",
+        "esperado": "que bueno que estes bien",
+        "exitoso": false
+    },
+    {
+        "descripcion": "Prueba de chiste - 'sabes algun chiste'",
+        "resultado": "ERROR: verificar_chiste() missing 1 required positional argument: 'conocimientos'",
+        "esperado": "Respuesta variable",
+        "exitoso": false
+    },
+    {
+        "descripcion": "Prueba de chiste - 'otro chiste'",
+        "resultado": "ERROR: verificar_chiste() missing 1 required positional argument: 'conocimientos'",
+        "esperado": "Respuesta variable",
+        "exitoso": false
+    },
+    {
+        "descripcion": "Prueba de presidente - 'quien fue presidente en el año 2024'",
+        "resultado": "ERROR: presidente() missing 1 required positional argument: 'conocimientos'",
+        "esperado": "Javier Gerardo Milei fue presidente entre 2023 - 2024.",
+        "exitoso": false
+    },
+    {
+        "descripcion": "Prueba de presidente - 'quien fue presidente en el año 90'",
+        "resultado": "ERROR: presidente() missing 1 required positional argument: 'conocimientos'",
+        "esperado": "No tengo información sobre ese presidente o esa fecha.",
+        "exitoso": false
+    },
+    {
+        "descripcion": "Prueba de signo - 'aries'",
+        "resultado": "El signo Aries cubre desde 21-03-2024 a 19-04-2024. Su elemento es fuego. Aries, el primer signo del zodiaco, es conocido por su energía y determinación. Los arianos son aventureros y les gusta ser líderes en cualquier situación. Son audaces y no temen asumir riesgos. Su personalidad ardiente les impulsa a actuar con rapidez y a buscar nuevas experiencias. Es compatible con: leo, sagitario, geminis.",
+        "esperado": "El signo Aries cubre desde 21-03-2024 a 19-04-2024. Su elemento es fuego. Aries, el primer signo del zodiaco, es conocido por su energía y determinación. Los arianos son aventureros y les gusta ser líderes en cualquier situación. Son audaces y no temen asumir riesgos. Su personalidad ardiente les impulsa a actuar con rapidez y a buscar nuevas experiencias. Es compatible con: leo, sagitario, geminis.",
+        "exitoso": true
+    },
+    {
+        "descripcion": "Prueba de música - 'cantante madonna'",
+        "resultado": "madonna: Madonna Louise Ciccone es un cantante de pop. Nació el 16-08-1958 en Estadounidense. Madonna es una de las figuras mas influyentes de la musica pop, conocida como la 'Reina del Pop'. Ha tenido una extensa carrera desde los anos 80, caracterizada por su habilidad para reinventarse y su influencia en la cultura musical.",
+        "esperado": "madonna: Madonna Louise Ciccone es un cantante de pop. Nació el 16-08-1958 en Estadounidense. Madonna es una de las figuras mas influyentes de la musica pop, conocida como la 'Reina del Pop'. Ha tenido una extensa carrera desde los anos 80, caracterizada por su habilidad para reinventarse y su influencia en la cultura musical.",
+        "exitoso": true
+    },
+    {
+        "descripcion": "Prueba de perro - 'que sabes del perro labrador'",
+        "resultado": "Labrador Retriever: Es una raza de perro grande, muy popular por su carácter amigable y su habilidad para el trabajo. Características: Peligro: Bajo, Docilidad: Alta, Amabilidad: Muy alta",
+        "esperado": "Labrador Retriever: Es una raza de perro grande, muy popular por su carácter amigable y su habilidad para el trabajo. Características: Peligro: Bajo, Docilidad: Alta, Amabilidad: Muy alta",
+        "exitoso": true
+    },
+    {
+        "descripcion": "Prueba matemática - '20+20'",
+        "resultado": "El resultado de 20+20 es 40.",
+        "esperado": "El resultado de 20+20 es 40.",
+        "exitoso": true
+    },
+    {
+        "descripcion": "Prueba matemática - 'pi*2+20'",
+        "resultado": "El resultado de 3.14*2+20 es 26.28.",
+        "esperado": "El resultado de 3.14*2+20 es 26.28.",
+        "exitoso": true
+    },
+    {
+        "descripcion": "Prueba matemática - 'raiz cuadrada de 25'",
+        "resultado": "El resultado de raiz cuadrada de 25 es 5.",
+        "esperado": "El resultado de raiz cuadrada de 25 es 5.",
+        "exitoso": true
+    },
+    {
+        "descripcion": "Prueba de opinión - 'te dejo una opinion'",
+        "resultado": "Encantado de conocerte, Sería genial si pudieras mantener algunos detalles de nuestras charlas anteriores.! ¿Cuántos años tienes?",
+        "esperado": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos.",
+        "exitoso": false
+    }
+]

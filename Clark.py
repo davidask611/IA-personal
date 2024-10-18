@@ -28,7 +28,7 @@ def cargar_sinonimos():
     try:
         with open('sinonimos.json', 'r', encoding='utf-8') as archivo:
             sinonimos = json.load(archivo)
-        print(f"Sinónimos cargados: {sinonimos}")  # Verificar si los sinónimos se están cargando
+        #print(f"Sinónimos cargados: {sinonimos}")  # Verificar si los sinónimos se están cargando
         return sinonimos
     except (FileNotFoundError, json.JSONDecodeError):
         print("Error al cargar el archivo de sinónimos.")  # Mensaje en caso de error
@@ -47,7 +47,7 @@ def reemplazar_palabras(opinion):
         palabra_reemplazada = sinonimos.get(palabra.lower(), palabra)
 
         # Depuración para ver qué palabras se están reemplazando
-        print(f"Palabra original: {palabra}, Reemplazada por: {palabra_reemplazada}")
+        #print(f"Palabra original: {palabra}, Reemplazada por: {palabra_reemplazada}")
 
         # Si la palabra original tenía mayúscula inicial, conservamos la capitalización
         if palabra.istitle():
@@ -56,8 +56,6 @@ def reemplazar_palabras(opinion):
         palabras_reemplazadas.append(palabra_reemplazada)
 
     return " ".join(palabras_reemplazadas)
-
-
 
 
 def cargar_datos_retroalimentacion():
@@ -404,7 +402,6 @@ def verificar_musica_animal(pregunta, conocimientos, animales):
 
 
 
-
 # Solicitar el nombre del usuario al inicio de la conversación
 def solicitar_nombre_usuario():
     nombre = ""
@@ -416,7 +413,6 @@ def solicitar_nombre_usuario():
 
 nombre_usuario = solicitar_nombre_usuario()
 print(f"¡Un placer, {nombre_usuario}! Puedes preguntarme algo o dejarme una idea diciendo 'te dejo una opinion'o'te dejo una sugerencia'.")
-
 
 
 # TODO funciones de categoria
@@ -597,8 +593,8 @@ def manejar_recoleccion_opinion(pregunta, conocimientos, retroalimentacion):
     opinion_reemplazada = reemplazar_palabras(opinion)
 
     # Depuración: Verificar el reemplazo de sinónimos
-    print(f"Opinión original: {opinion}")
-    print(f"Opinión con sinónimos: {opinion_reemplazada}")
+    #print(f"Opinión original: {opinion}")
+    #print(f"Opinión con sinónimos: {opinion_reemplazada}")
 
     # Si el nombre del usuario no está registrado
     if not conocimientos["contexto"]["nombre_usuario"]:
@@ -885,6 +881,91 @@ def borrar_clave(conocimientos, animales_data):
 
     return mostrar_y_borrar_combinado(conocimientos, animales_data)
 
+# TODO Autoanalisis
+# Cargar datos de retroalimentación al inicio
+retroalimentacion = cargar_datos_retroalimentacion()
+
+# Asegúrate de que la función 'cargar_datos_retroalimentacion' esté definida correctamente:
+def cargar_datos_retroalimentacion():
+    try:
+        with open('retroalimentación.json', 'r', encoding='utf-8') as archivo:
+            return json.load(archivo)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}  # Retorna un diccionario vacío si el archivo no existe o está vacío
+
+# Función para verificar si el usuario es un administrador
+def verificar_administrador(nombre, contrasena):
+    ADMIN_NOMBRE = "davidask"  # Nombre de usuario del administrador
+    ADMIN_CONTRASENA = "611"  # Contraseña del administrador
+    return nombre == ADMIN_NOMBRE and contrasena == ADMIN_CONTRASENA
+
+# Función de auto-análisis con ejemplos específicos
+def auto_analisis(nombre, contrasena):
+    if not verificar_administrador(nombre, contrasena):
+        return "Acceso denegado. Solo un administrador puede iniciar el auto-análisis."
+
+    print("IA: Iniciando auto-análisis...")
+
+    # Lista de pruebas con descripciones y funciones de prueba
+    pruebas = [
+        {"descripcion": "Prueba de saludo - 'buenas'", "funcion": lambda: buscar_saludo("buenas"), "esperado": "buenas como estas??"},
+        {"descripcion": "Prueba de saludo - 'ire a dormir'", "funcion": lambda: buscar_saludo("ire a dormir"), "esperado": "que descanses, hasta mañana"},
+        {"descripcion": "Prueba de saludo - 'bien'", "funcion": lambda: buscar_saludo("bien"), "esperado": "que bueno que estes bien"},
+
+        # Pruebas de chistes
+        {"descripcion": "Prueba de chiste - 'sabes algun chiste'", "funcion": lambda: verificar_chiste("sabes algun chiste"), "esperado": "Respuesta variable"},
+        {"descripcion": "Prueba de chiste - 'otro chiste'", "funcion": lambda: verificar_chiste("otro chiste"), "esperado": "Respuesta variable"},
+
+        # Pruebas de presidente
+        {"descripcion": "Prueba de presidente - 'quien fue presidente en el año 2024'", "funcion": lambda: presidente("quien fue presidente en el año 2024"), "esperado": "Javier Gerardo Milei fue presidente entre 2023 - 2024."},
+        {"descripcion": "Prueba de presidente - 'quien fue presidente en el año 90'", "funcion": lambda: presidente("quien fue presidente en el año 90"), "esperado": "No tengo información sobre ese presidente o esa fecha."},
+
+        # Pruebas de signos zodiacales
+        {"descripcion": "Prueba de signo - 'aries'", "funcion": lambda: detectar_signo("aries"), "esperado": "El signo Aries cubre desde 21-03-2024 a 19-04-2024. Su elemento es fuego. Aries, el primer signo del zodiaco, es conocido por su energía y determinación. Los arianos son aventureros y les gusta ser líderes en cualquier situación. Son audaces y no temen asumir riesgos. Su personalidad ardiente les impulsa a actuar con rapidez y a buscar nuevas experiencias. Es compatible con: leo, sagitario, geminis."},
+
+        # Pruebas de música y animales
+        {"descripcion": "Prueba de música - 'cantante madonna'", "funcion": lambda: verificar_musica_animal("cantante madonna", conocimientos, animales_data), "esperado": "madonna: Madonna Louise Ciccone es un cantante de pop. Nació el 16-08-1958 en Estadounidense. Madonna es una de las figuras mas influyentes de la musica pop, conocida como la 'Reina del Pop'. Ha tenido una extensa carrera desde los anos 80, caracterizada por su habilidad para reinventarse y su influencia en la cultura musical."},
+        {"descripcion": "Prueba de perro - 'que sabes del perro labrador'", "funcion": lambda: verificar_musica_animal("que sabes del perro labrador", conocimientos, animales_data), "esperado": "Labrador Retriever: Es una raza de perro grande, muy popular por su carácter amigable y su habilidad para el trabajo. Características: Peligro: Bajo, Docilidad: Alta, Amabilidad: Muy alta"},
+
+        # Pruebas de matemáticas
+        {"descripcion": "Prueba matemática - '20+20'", "funcion": lambda: matematica("20+20"), "esperado": "El resultado de 20+20 es 40."},
+        {"descripcion": "Prueba matemática - 'pi*2+20'", "funcion": lambda: matematica("pi*2+20"), "esperado": "El resultado de 3.14*2+20 es 26.28."},
+        {"descripcion": "Prueba matemática - 'raiz cuadrada de 25'", "funcion": lambda: matematica("raiz cuadrada de 25"), "esperado": "El resultado de raiz cuadrada de 25 es 5."},
+
+        # Prueba de opiniones
+        {"descripcion": "Prueba de opinión - 'te dejo una opinion'", "funcion": lambda: manejar_recoleccion_opinion("Sería genial si pudieras recordar algunos detalles de nuestras charlas anteriores.", conocimientos, retroalimentacion), "esperado": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."}
+    ]
+
+    # Resultado final de las pruebas
+    resultados = []
+
+    # Ejecutar cada prueba y almacenar el resultado
+    for prueba in pruebas:
+        try:
+            resultado = prueba["funcion"]()
+            exitoso = resultado == prueba["esperado"] or prueba["descripcion"].startswith("Prueba de chiste")  # Acepta chistes variables
+            resultados.append({
+                "descripcion": prueba["descripcion"],
+                "resultado": resultado,
+                "esperado": prueba["esperado"],
+                "exitoso": exitoso
+            })
+            print(f"{prueba['descripcion']}: {'OK' if exitoso else 'FALLO'}")
+        except Exception as e:
+            resultados.append({
+                "descripcion": prueba["descripcion"],
+                "resultado": f"ERROR: {str(e)}",
+                "esperado": prueba["esperado"],
+                "exitoso": False
+            })
+            print(f"{prueba['descripcion']}: ERROR - {str(e)}")
+
+    # Guardar los resultados en un archivo JSON
+    with open('diagnostico.json', 'w', encoding='utf-8') as archivo:
+        json.dump(resultados, archivo, ensure_ascii=False, indent=4)
+
+    return "IA: Auto-análisis completado. Los resultados se han guardado en 'diagnostico.json'."
+
 
 
 # TODO: Función principal de preguntar (lógica de preguntas)
@@ -918,6 +999,11 @@ def preguntar(pregunta, conocimientos, animales_data, retroalimentacion):
         return "¡Gracias por querer compartir! ¿Cuál es tu nombre?"
 
     # (El resto de la lógica de la función 'preguntar' sigue aquí)
+    if pregunta_limpia == "clark iniciar autoanalisis":
+            nombre = input("Nombre de administrador: ")
+            contrasena = input("Contraseña: ")
+            resultado_analisis = auto_analisis(nombre, contrasena)
+            print(f"IA: {resultado_analisis}")
 
     # Verificar si es un saludo
     respuesta_saludo = buscar_saludo(pregunta_limpia, conocimientos)

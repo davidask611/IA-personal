@@ -7,14 +7,11 @@
         "ire a dormir": "que descanses, hasta mañana",
         "bien y vos?": "bien, gracias por preguntar",
         "bien": "que bueno que estes bien",
-        "lindo nombre": "gracias",
-        "como estas?": "estoy bien, gracias por preguntar",
-        "gracias": "de nada",
-        "mañana tengo un examen": "exitos seguro saldra genial"
+        "gracias": "de nada"
     },
     "datosdelaIA": {
         "como te llamas?": "Mi nombre es Clark",
-        "que edad tenes?": "soy una IA, no tengo edad. tengo fecha de creacion.",
+        "cuantos años tenes?": "soy una IA, no tengo edad. tengo fecha de creacion.",
         "eres hombre o mujer?": "Mi creador David no me definio un sexo, Me llamo Clark, espero que eso responda tu pregunta.",
         "te gusta el calor o el frio": "diria que el frio, ya que con el calor uno esta transpirado y pegote, en cambio con calor uno se abriga y puede tomar una rica chocolatada o cafecito"
     },
@@ -317,11 +314,11 @@
         "ultimaPregunta": "10%20",
         "historialConversacion": [
             {
-                "pregunta": "10",
+                "pregunta": "5",
                 "respuesta": "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres)."
             },
             {
-                "pregunta": "me",
+                "pregunta": "opiniones",
                 "respuesta": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
             },
             {
@@ -329,15 +326,15 @@
                 "respuesta": "¡Gracias por querer compartir! ¿Cuál es tu nombre?"
             },
             {
-                "pregunta": "david",
-                "respuesta": "Encantado de conocerte, david! ¿Cuántos años tienes?"
+                "pregunta": "dfd",
+                "respuesta": "Encantado de conocerte, dfd! ¿Cuántos años tienes?"
             },
             {
-                "pregunta": "45",
+                "pregunta": "55",
                 "respuesta": "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres)."
             },
             {
-                "pregunta": "me gustaria",
+                "pregunta": "presidentes",
                 "respuesta": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
             },
             {
@@ -345,20 +342,20 @@
                 "respuesta": "¡Gracias por querer compartir! ¿Cuál es tu nombre?"
             },
             {
-                "pregunta": "tatatata",
-                "respuesta": "Encantado de conocerte, tatatata! ¿Cuántos años tienes?"
+                "pregunta": "dd",
+                "respuesta": "Encantado de conocerte, dd! ¿Cuántos años tienes?"
             },
             {
-                "pregunta": "84",
+                "pregunta": "55",
                 "respuesta": "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres)."
             },
             {
-                "pregunta": "me gustaria",
-                "respuesta": "que descanses, hasta mañana"
+                "pregunta": "presidentes corren en auto",
+                "respuesta": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
             }
         ],
-        "recolectando_opinion": true,
-        "nombre_usuario": "tatatata",
-        "edad_usuario": "84"
+        "recolectando_opinion": false,
+        "nombre_usuario": "",
+        "edad_usuario": ""
     }
 }

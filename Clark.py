@@ -409,13 +409,13 @@ def verificar_musica_animal(pregunta, conocimientos, animales):
 def solicitar_nombre_usuario():
     nombre = ""
     while not nombre.strip():  # Mientras el nombre esté vacío o solo contenga espacios
-        nombre = input("¡Hola! Soy tu Asistente Personal. ¿Cuál es tu nombre? (No puedes dejarlo en blanco): ")
+        nombre = input("¡Hola! Me llamo Clark. ¿Cuál es tu nombre? (No puedes dejarlo en blanco): ")
         if not nombre.strip():
             print("Por favor, ingresa un nombre válido.")
     return nombre
 
 nombre_usuario = solicitar_nombre_usuario()
-print(f"¡Hola, {nombre_usuario}! Puedes preguntarme algo, agregar una categoría/subcategoría o borrar conocimiento.")
+print(f"¡Un placer, {nombre_usuario}! Puedes preguntarme algo o dejarme una idea diciendo 'te dejo una opinion'o'te dejo una sugerencia'.")
 
 
 

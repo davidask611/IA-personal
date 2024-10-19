@@ -19,13 +19,13 @@
     },
     {
         "descripcion": "Prueba de chiste - 'sabes algun chiste'",
-        "resultado": "Tengo un chiste sobre química, pero no sé si habrá una buena reacción.",
+        "resultado": "—¡Camarero! Este filete tiene muchos nervios. —Normal, es la primera vez que se lo comen.",
         "esperado": "Respuesta variable",
         "exitoso": true
     },
     {
         "descripcion": "Prueba de chiste - 'otro chiste'",
-        "resultado": "¿Qué hace una lámpara en el gimnasio? ¡Entrena su luz!",
+        "resultado": "¿Qué le dice una iguana a su hermana gemela? ¡Iguanita!",
         "esperado": "Respuesta variable",
         "exitoso": true
     },
@@ -78,17 +78,21 @@
         "exitoso": true
     },
     {
+        "descripcion": "Prueba matemática - '20^3'",
+        "resultado": "El resultado de 20**3 es 8000.",
+        "esperado": "El resultado de 20**3 es 8000.",
+        "exitoso": true
+    },
+    {
+        "descripcion": "Prueba matemática - 'sin(90)'",
+        "resultado": "El resultado de sin(90) es 1.",
+        "esperado": "El resultado de sin(90) es 1.",
+        "exitoso": true
+    },
+    {
         "descripcion": "Prueba de opinión - 'te dejo una opinion'",
-        "resultado": [
-            "Encantado de conocerte, josue! ¿Cuántos años tienes?",
-            "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres).",
-            "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
-        ],
-        "esperado": [
-            "Encantado de conocerte, josue! ¿Cuántos años tienes?",
-            "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres).",
-            "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
-        ],
-        "exitoso": false
+        "resultado": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos.",
+        "esperado": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos.",
+        "exitoso": true
     }
 ]

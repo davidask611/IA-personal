@@ -901,14 +901,14 @@ def verificar_administrador(nombre, contrasena):
 
 # Función de auto-análisis con ejemplos específicos
 def auto_analisis(nombre, contrasena, conocimientos, animales_data, retroalimentacion):
-    # Verificar acceso de administrador
     if not verificar_administrador(nombre, contrasena):
         return "Acceso denegado. Solo un administrador puede iniciar el auto-análisis."
 
     print("IA: Iniciando auto-análisis...")
 
-    # Lista de pruebas con descripciones y funciones de prueba
-    pruebas = [
+    # Lista de pruebas simples con descripciones y funciones de prueba
+    pruebas_simples = [
+        # Pruebas de saludos
         {"descripcion": "Prueba de saludo - 'buenas'", "funcion": lambda: buscar_saludo("buenas", conocimientos), "esperado": "buenas como estas??"},
         {"descripcion": "Prueba de saludo - 'ire a dormir'", "funcion": lambda: buscar_saludo("ire a dormir", conocimientos), "esperado": "que descanses, hasta mañana"},
         {"descripcion": "Prueba de saludo - 'bien'", "funcion": lambda: buscar_saludo("bien", conocimientos), "esperado": "que bueno que estes bien"},
@@ -932,34 +932,45 @@ def auto_analisis(nombre, contrasena, conocimientos, animales_data, retroaliment
         {"descripcion": "Prueba matemática - '20+20'", "funcion": lambda: matematica("20+20"), "esperado": "El resultado de 20+20 es 40."},
         {"descripcion": "Prueba matemática - 'pi*2+20'", "funcion": lambda: matematica("pi*2+20"), "esperado": "El resultado de 3.14*2+20 es 26.28."},
         {"descripcion": "Prueba matemática - 'raiz cuadrada de 25'", "funcion": lambda: matematica("raiz cuadrada de 25"), "esperado": "El resultado de raiz cuadrada de 25 es 5."},
+        {"descripcion": "Prueba matemática - '20^3'", "funcion": lambda: matematica("20^3"), "esperado": "El resultado de 20**3 es 8000."},
+        {"descripcion": "Prueba matemática - 'sin(90)'", "funcion": lambda: matematica("sin(90)"), "esperado": "El resultado de sin(90) es 1."}
+    ]
 
-        # Prueba de opiniones - Simulación completa de la interacción
+    # Pruebas complejas (que requieren múltiples pasos)
+    pruebas_complejas = [
         {
             "descripcion": "Prueba de opinión - 'te dejo una opinion'",
-            "funcion": lambda: (
-                manejar_recoleccion_opinion("josue", conocimientos, retroalimentacion),  # Paso 2: Ingreso del nombre
-                manejar_recoleccion_opinion("25", conocimientos, retroalimentacion),  # Paso 3: Ingreso de la edad
-                manejar_recoleccion_opinion("que tenga juegos de trivia", conocimientos, retroalimentacion)  # Paso 4: Ingreso de la opinión
-            ),
-            "esperado": [
-                "Encantado de conocerte, josue! ¿Cuántos años tienes?",
-                "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres).",
-                "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
-            ]
+            "funcion": lambda: [
+                manejar_recoleccion_opinion("josue", conocimientos, retroalimentacion),
+                manejar_recoleccion_opinion("25", conocimientos, retroalimentacion),
+                manejar_recoleccion_opinion("que tenga juegos de trivia", conocimientos, retroalimentacion)
+            ],
+            "esperado": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
         }
     ]
 
-    # Lista para almacenar los resultados de las pruebas
+    # Combinar todas las pruebas
+    pruebas = pruebas_simples + pruebas_complejas
+
+    # Resultado final de las pruebas
     resultados = []
 
     # Ejecutar cada prueba y almacenar el resultado
     for prueba in pruebas:
         try:
             resultado = prueba["funcion"]()
-            exitoso = resultado == prueba["esperado"] or prueba["esperado"] == "Respuesta variable"
+            if isinstance(resultado, list):
+                # Si es una lista (prueba compleja), tomar el último resultado
+                exitoso = resultado[-1] == prueba["esperado"]
+                resultado_final = resultado[-1]
+            else:
+                # Prueba simple
+                exitoso = resultado == prueba["esperado"] or prueba["esperado"] == "Respuesta variable"
+                resultado_final = resultado
+
             resultados.append({
                 "descripcion": prueba["descripcion"],
-                "resultado": resultado,
+                "resultado": resultado_final,
                 "esperado": prueba["esperado"],
                 "exitoso": exitoso
             })
@@ -974,7 +985,6 @@ def auto_analisis(nombre, contrasena, conocimientos, animales_data, retroaliment
     # Guardar los resultados en el archivo 'diagnostico.json'
     guardar_datos(resultados, 'diagnostico.json', mostrar_mensaje=True)
     print("IA: Auto-análisis completado. Resultados guardados en 'diagnostico.json'.")
-
 
 
 

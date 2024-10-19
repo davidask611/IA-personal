@@ -314,44 +314,44 @@
         "ultimaPregunta": "20^3",
         "historialConversacion": [
             {
-                "pregunta": "raiz de 25",
-                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
-            },
-            {
-                "pregunta": "20**5",
-                "respuesta": "El resultado de 20**5 es 3200000."
-            },
-            {
-                "pregunta": "20**2",
-                "respuesta": "El resultado de 20**2 es 400."
-            },
-            {
-                "pregunta": "20^3",
-                "respuesta": "El resultado de 20**3 es 8000."
-            },
-            {
-                "pregunta": "te dejo una opinion",
-                "respuesta": "¡Gracias por querer compartir! ¿Cuál es tu nombre?"
-            },
-            {
-                "pregunta": "jose",
-                "respuesta": "Encantado de conocerte, jose! ¿Cuántos años tienes?"
-            },
-            {
-                "pregunta": "22",
-                "respuesta": "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres)."
-            },
-            {
-                "pregunta": "que tenga juegos de adivinanza con multiple eleccion",
-                "respuesta": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
+                "pregunta": "clark iniciar autoanalisis",
+                "respuesta": null
             },
             {
                 "pregunta": "clark iniciar autoanalisis",
-                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
+                "respuesta": null
             },
             {
                 "pregunta": "clark iniciar autoanalisis",
-                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
+                "respuesta": null
+            },
+            {
+                "pregunta": "clark iniciar autoanalisis",
+                "respuesta": null
+            },
+            {
+                "pregunta": "clark iniciar autoanalisis",
+                "respuesta": null
+            },
+            {
+                "pregunta": "clark iniciar autoanalisis",
+                "respuesta": null
+            },
+            {
+                "pregunta": "clark iniciar autoanalisis",
+                "respuesta": null
+            },
+            {
+                "pregunta": "clark iniciar autoanalisis",
+                "respuesta": null
+            },
+            {
+                "pregunta": "clark iniciar autoanalisis",
+                "respuesta": null
+            },
+            {
+                "pregunta": "clark iniciar autoanalisis",
+                "respuesta": null
             }
         ],
         "recolectando_opinion": false,

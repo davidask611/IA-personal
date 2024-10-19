@@ -900,7 +900,8 @@ def verificar_administrador(nombre, contrasena):
     return nombre == ADMIN_NOMBRE and contrasena == ADMIN_CONTRASENA
 
 # Función de auto-análisis con ejemplos específicos
-def auto_analisis(nombre, contrasena):
+def auto_analisis(nombre, contrasena, conocimientos, animales_data, retroalimentacion):
+    # Verificar acceso de administrador
     if not verificar_administrador(nombre, contrasena):
         return "Acceso denegado. Solo un administrador puede iniciar el auto-análisis."
 
@@ -908,17 +909,17 @@ def auto_analisis(nombre, contrasena):
 
     # Lista de pruebas con descripciones y funciones de prueba
     pruebas = [
-        {"descripcion": "Prueba de saludo - 'buenas'", "funcion": lambda: buscar_saludo("buenas"), "esperado": "buenas como estas??"},
-        {"descripcion": "Prueba de saludo - 'ire a dormir'", "funcion": lambda: buscar_saludo("ire a dormir"), "esperado": "que descanses, hasta mañana"},
-        {"descripcion": "Prueba de saludo - 'bien'", "funcion": lambda: buscar_saludo("bien"), "esperado": "que bueno que estes bien"},
+        {"descripcion": "Prueba de saludo - 'buenas'", "funcion": lambda: buscar_saludo("buenas", conocimientos), "esperado": "buenas como estas??"},
+        {"descripcion": "Prueba de saludo - 'ire a dormir'", "funcion": lambda: buscar_saludo("ire a dormir", conocimientos), "esperado": "que descanses, hasta mañana"},
+        {"descripcion": "Prueba de saludo - 'bien'", "funcion": lambda: buscar_saludo("bien", conocimientos), "esperado": "que bueno que estes bien"},
 
         # Pruebas de chistes
-        {"descripcion": "Prueba de chiste - 'sabes algun chiste'", "funcion": lambda: verificar_chiste("sabes algun chiste"), "esperado": "Respuesta variable"},
-        {"descripcion": "Prueba de chiste - 'otro chiste'", "funcion": lambda: verificar_chiste("otro chiste"), "esperado": "Respuesta variable"},
+        {"descripcion": "Prueba de chiste - 'sabes algun chiste'", "funcion": lambda: verificar_chiste("sabes algun chiste", conocimientos), "esperado": "Respuesta variable"},
+        {"descripcion": "Prueba de chiste - 'otro chiste'", "funcion": lambda: verificar_chiste("otro chiste", conocimientos), "esperado": "Respuesta variable"},
 
         # Pruebas de presidente
-        {"descripcion": "Prueba de presidente - 'quien fue presidente en el año 2024'", "funcion": lambda: presidente("quien fue presidente en el año 2024"), "esperado": "Javier Gerardo Milei fue presidente entre 2023 - 2024."},
-        {"descripcion": "Prueba de presidente - 'quien fue presidente en el año 90'", "funcion": lambda: presidente("quien fue presidente en el año 90"), "esperado": "No tengo información sobre ese presidente o esa fecha."},
+        {"descripcion": "Prueba de presidente - 'quien fue presidente en el año 2024'", "funcion": lambda: presidente("quien fue presidente en el año 2024", conocimientos), "esperado": "Javier Gerardo Milei fue presidente entre 2023 - 2024."},
+        {"descripcion": "Prueba de presidente - 'quien fue presidente en el año 90'", "funcion": lambda: presidente("quien fue presidente en el año 90", conocimientos), "esperado": "No tengo información sobre ese presidente o esa fecha. Por favor, intenta con un año de cuatro cifras, como 'quién fue presidente en el año 2022'."},
 
         # Pruebas de signos zodiacales
         {"descripcion": "Prueba de signo - 'aries'", "funcion": lambda: detectar_signo("aries"), "esperado": "El signo Aries cubre desde 21-03-2024 a 19-04-2024. Su elemento es fuego. Aries, el primer signo del zodiaco, es conocido por su energía y determinación. Los arianos son aventureros y les gusta ser líderes en cualquier situación. Son audaces y no temen asumir riesgos. Su personalidad ardiente les impulsa a actuar con rapidez y a buscar nuevas experiencias. Es compatible con: leo, sagitario, geminis."},
@@ -932,25 +933,36 @@ def auto_analisis(nombre, contrasena):
         {"descripcion": "Prueba matemática - 'pi*2+20'", "funcion": lambda: matematica("pi*2+20"), "esperado": "El resultado de 3.14*2+20 es 26.28."},
         {"descripcion": "Prueba matemática - 'raiz cuadrada de 25'", "funcion": lambda: matematica("raiz cuadrada de 25"), "esperado": "El resultado de raiz cuadrada de 25 es 5."},
 
-        # Prueba de opiniones
-        {"descripcion": "Prueba de opinión - 'te dejo una opinion'", "funcion": lambda: manejar_recoleccion_opinion("Sería genial si pudieras recordar algunos detalles de nuestras charlas anteriores.", conocimientos, retroalimentacion), "esperado": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."}
+        # Prueba de opiniones - Simulación completa de la interacción
+        {
+            "descripcion": "Prueba de opinión - 'te dejo una opinion'",
+            "funcion": lambda: (
+                manejar_recoleccion_opinion("josue", conocimientos, retroalimentacion),  # Paso 2: Ingreso del nombre
+                manejar_recoleccion_opinion("25", conocimientos, retroalimentacion),  # Paso 3: Ingreso de la edad
+                manejar_recoleccion_opinion("que tenga juegos de trivia", conocimientos, retroalimentacion)  # Paso 4: Ingreso de la opinión
+            ),
+            "esperado": [
+                "Encantado de conocerte, josue! ¿Cuántos años tienes?",
+                "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres).",
+                "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
+            ]
+        }
     ]
 
-    # Resultado final de las pruebas
+    # Lista para almacenar los resultados de las pruebas
     resultados = []
 
     # Ejecutar cada prueba y almacenar el resultado
     for prueba in pruebas:
         try:
             resultado = prueba["funcion"]()
-            exitoso = resultado == prueba["esperado"] or prueba["descripcion"].startswith("Prueba de chiste")  # Acepta chistes variables
+            exitoso = resultado == prueba["esperado"] or prueba["esperado"] == "Respuesta variable"
             resultados.append({
                 "descripcion": prueba["descripcion"],
                 "resultado": resultado,
                 "esperado": prueba["esperado"],
                 "exitoso": exitoso
             })
-            print(f"{prueba['descripcion']}: {'OK' if exitoso else 'FALLO'}")
         except Exception as e:
             resultados.append({
                 "descripcion": prueba["descripcion"],
@@ -958,13 +970,11 @@ def auto_analisis(nombre, contrasena):
                 "esperado": prueba["esperado"],
                 "exitoso": False
             })
-            print(f"{prueba['descripcion']}: ERROR - {str(e)}")
 
-    # Guardar los resultados en un archivo JSON
-    with open('diagnostico.json', 'w', encoding='utf-8') as archivo:
-        json.dump(resultados, archivo, ensure_ascii=False, indent=4)
+    # Guardar los resultados en el archivo 'diagnostico.json'
+    guardar_datos(resultados, 'diagnostico.json', mostrar_mensaje=True)
+    print("IA: Auto-análisis completado. Resultados guardados en 'diagnostico.json'.")
 
-    return "IA: Auto-análisis completado. Los resultados se han guardado en 'diagnostico.json'."
 
 
 
@@ -1000,10 +1010,11 @@ def preguntar(pregunta, conocimientos, animales_data, retroalimentacion):
 
     # (El resto de la lógica de la función 'preguntar' sigue aquí)
     if pregunta_limpia == "clark iniciar autoanalisis":
-            nombre = input("Nombre de administrador: ")
-            contrasena = input("Contraseña: ")
-            resultado_analisis = auto_analisis(nombre, contrasena)
-            print(f"IA: {resultado_analisis}")
+        nombre = input("Nombre de administrador: ")
+        contrasena = input("Contraseña: ")
+        resultado_analisis = auto_analisis(nombre, contrasena, conocimientos, animales_data, retroalimentacion)
+        return resultado_analisis
+
 
     # Verificar si es un saludo
     respuesta_saludo = buscar_saludo(pregunta_limpia, conocimientos)

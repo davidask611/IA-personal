@@ -1,45 +1,45 @@
 [
     {
         "descripcion": "Prueba de saludo - 'buenas'",
-        "resultado": "ERROR: buscar_saludo() missing 1 required positional argument: 'conocimientos'",
+        "resultado": "buenas como estas??",
         "esperado": "buenas como estas??",
-        "exitoso": false
+        "exitoso": true
     },
     {
         "descripcion": "Prueba de saludo - 'ire a dormir'",
-        "resultado": "ERROR: buscar_saludo() missing 1 required positional argument: 'conocimientos'",
+        "resultado": "que descanses, hasta mañana",
         "esperado": "que descanses, hasta mañana",
-        "exitoso": false
+        "exitoso": true
     },
     {
         "descripcion": "Prueba de saludo - 'bien'",
-        "resultado": "ERROR: buscar_saludo() missing 1 required positional argument: 'conocimientos'",
+        "resultado": "que bueno que estes bien",
         "esperado": "que bueno que estes bien",
-        "exitoso": false
+        "exitoso": true
     },
     {
         "descripcion": "Prueba de chiste - 'sabes algun chiste'",
-        "resultado": "ERROR: verificar_chiste() missing 1 required positional argument: 'conocimientos'",
+        "resultado": "Tengo un chiste sobre química, pero no sé si habrá una buena reacción.",
         "esperado": "Respuesta variable",
-        "exitoso": false
+        "exitoso": true
     },
     {
         "descripcion": "Prueba de chiste - 'otro chiste'",
-        "resultado": "ERROR: verificar_chiste() missing 1 required positional argument: 'conocimientos'",
+        "resultado": "¿Qué hace una lámpara en el gimnasio? ¡Entrena su luz!",
         "esperado": "Respuesta variable",
-        "exitoso": false
+        "exitoso": true
     },
     {
         "descripcion": "Prueba de presidente - 'quien fue presidente en el año 2024'",
-        "resultado": "ERROR: presidente() missing 1 required positional argument: 'conocimientos'",
+        "resultado": "Javier Gerardo Milei fue presidente entre 2023 - 2024.",
         "esperado": "Javier Gerardo Milei fue presidente entre 2023 - 2024.",
-        "exitoso": false
+        "exitoso": true
     },
     {
         "descripcion": "Prueba de presidente - 'quien fue presidente en el año 90'",
-        "resultado": "ERROR: presidente() missing 1 required positional argument: 'conocimientos'",
-        "esperado": "No tengo información sobre ese presidente o esa fecha.",
-        "exitoso": false
+        "resultado": "No tengo información sobre ese presidente o esa fecha. Por favor, intenta con un año de cuatro cifras, como 'quién fue presidente en el año 2022'.",
+        "esperado": "No tengo información sobre ese presidente o esa fecha. Por favor, intenta con un año de cuatro cifras, como 'quién fue presidente en el año 2022'.",
+        "exitoso": true
     },
     {
         "descripcion": "Prueba de signo - 'aries'",
@@ -79,8 +79,16 @@
     },
     {
         "descripcion": "Prueba de opinión - 'te dejo una opinion'",
-        "resultado": "Encantado de conocerte, Sería genial si pudieras mantener algunos detalles de nuestras charlas anteriores.! ¿Cuántos años tienes?",
-        "esperado": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos.",
+        "resultado": [
+            "Encantado de conocerte, josue! ¿Cuántos años tienes?",
+            "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres).",
+            "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
+        ],
+        "esperado": [
+            "Encantado de conocerte, josue! ¿Cuántos años tienes?",
+            "Perfecto, ahora dime tu opinión o sugerencia (máximo 100 caracteres).",
+            "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
+        ],
         "exitoso": false
     }
 ]

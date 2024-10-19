@@ -882,34 +882,137 @@ def borrar_clave(conocimientos, animales_data):
     return mostrar_y_borrar_combinado(conocimientos, animales_data)
 
 # Funcion para recetas
-def comida(consulta, conocimientos):
+def comida(consulta, conocimientos, eleccion_automatica=None):
     # Detectar palabras clave para mostrar la lista de recetas
     if "recetas" in consulta.lower() or "receta" in consulta.lower():
         recetas = list(conocimientos["recetario"].keys())
         if recetas:
+            # Preparar la respuesta con la lista de recetas
             respuesta = "Recetas disponibles:\n"
             respuesta += "\n".join([f"{idx}. {receta}" for idx, receta in enumerate(recetas, start=1)])
             respuesta += "\nElige el número de la receta que quieres ver:"
-            print(respuesta)
 
-            # Pedir al usuario que elija un número de la lista
-            try:
-                eleccion = int(input())
-                if 1 <= eleccion <= len(recetas):
-                    nombre_comida = recetas[eleccion - 1]
-                    receta = conocimientos["recetario"][nombre_comida]
-                    detalles = f"\nReceta de {nombre_comida}:\n"
-                    detalles += f"Ingredientes: {', '.join(receta['ingredientes'])}\n"
-                    detalles += f"Paso a paso: {' -> '.join(receta['paso_a_paso'])}"
-                    return detalles
-                else:
-                    return "Número fuera de rango. Inténtalo nuevamente."
-            except ValueError:
-                return "Por favor, ingresa un número válido."
+            # Solo mostrar la lista de recetas cuando no es automático
+            if eleccion_automatica is None:
+                print(respuesta)
+
+            # Modo automático: se usa si eleccion_automatica tiene un valor
+            if eleccion_automatica is not None:
+                eleccion = eleccion_automatica
+            else:
+                # Modo manual: pedir al usuario que ingrese un número
+                try:
+                    eleccion = int(input())
+                except ValueError:
+                    return "Por favor, ingresa un número válido."
+
+            # Validar la elección y mostrar la receta
+            if isinstance(eleccion, int) and 1 <= eleccion <= len(recetas):
+                nombre_comida = recetas[eleccion - 1]
+                receta = conocimientos["recetario"][nombre_comida]
+                detalles = f"\nReceta de {nombre_comida}:\n"
+                detalles += f"Ingredientes: {', '.join(receta['ingredientes'])}\n"
+                detalles += f"Paso a paso: {' -> '.join(receta['paso_a_paso'])}"
+                return detalles
+            else:
+                return "Número fuera de rango. Inténtalo nuevamente."
         else:
             return "No hay recetas disponibles en el recetario."
     else:
         return "No entendí tu solicitud. Si quieres ver las recetas, usa una consulta que incluya 'receta' o 'recetas'."
+
+# Función para obtener información detallada de una opción seleccionada
+def obtener_detalle_planta(tipo, seleccion, conocimientos):
+    seleccion = seleccion.lower()
+
+    if tipo == 'suculentas':
+        suculentas = conocimientos.get('planta', {}).get('suculentas', {})
+        for clave, info in suculentas.items():
+            if seleccion == info['nombre'].lower():
+                return f"{info['nombre']}:\n{info['descripcion']}.\nSe debe regar cada {info['riego']}."
+        return "Lo siento, no tengo información sobre esa suculenta. Intenta elegir otra opción."
+
+    elif tipo == 'arboles':
+        arboles = conocimientos.get('planta', {}).get('arboles', {})
+        for clave, info in arboles.items():
+            if seleccion == info['nombre'].lower():
+                return (f"{info['nombre']}:\n"
+                        f"Fruta: {info['fruta']}.\n"
+                        f"Época de fruto: {info['epoca']}.\n"
+                        f"Altura máxima: {info['altura']} metros.")
+        return "Lo siento, no tengo información sobre ese árbol frutal. Intenta elegir otra opción."
+
+    elif tipo == 'huerta':
+        huerta = conocimientos.get('planta', {}).get('huerta', {})
+        for clave, info in huerta.items():
+            if seleccion == info['nombre'].lower():
+                return f"{info['nombre']}:\n{info['descripcion']}.\nSe debe regar cada {info['riego']}."
+        return "Lo siento, no tengo información sobre esa verdura. Intenta elegir otra opción."
+
+    return "No se encontró información sobre la selección."
+
+
+# Función para manejar las preguntas sobre plantas, ahora interactiva y automatizada
+def manejar_planta(pregunta, conocimientos, seleccion_automatica=None):
+    palabras_clave = ['epoca', 'plantas', 'suculenta', 'suculentas', 'temporada', 'arboles', 'arbustos', 'verdura', 'huerta', 'plantar']
+
+    # Normalizar la pregunta para evitar problemas con acentos
+    pregunta_normalizada = eliminar_acentos(pregunta.lower())
+
+    # Detectamos si alguna palabra clave está en la pregunta normalizada
+    if any(palabra in pregunta_normalizada for palabra in palabras_clave):
+        # (El resto de la función sigue igual)
+
+
+        # Preguntas sobre suculentas
+        if 'suculenta' in pregunta.lower() or 'suculentas' in pregunta.lower():
+            suculentas = conocimientos.get('planta', {}).get('suculentas', {})
+            if suculentas:
+                respuesta = "Las suculentas que conozco son:\n"
+                lista_suculentas = [f"{idx + 1}. {info['nombre']}" for idx, info in enumerate(suculentas.values())]
+                respuesta += "\n".join(lista_suculentas)
+                #respuesta += "\nElige el número de la suculenta para más información."
+
+                # Modo automático: usar la selección automática si está disponible
+                if seleccion_automatica:
+                    return obtener_detalle_planta('suculentas', seleccion_automatica, conocimientos), 'suculentas'
+
+                # Modo manual: mostrar la lista y esperar la selección del usuario
+                return respuesta, 'suculentas'
+
+        # Preguntas sobre árboles
+        elif 'arbol' in pregunta.lower() or 'arboles' in pregunta.lower() or 'arbustos' in pregunta.lower():
+            arboles = conocimientos.get('planta', {}).get('arboles', {})
+            if arboles:
+                respuesta = "Los árboles frutales que conozco son:\n"
+                lista_arboles = [f"{idx + 1}. {info['nombre']}" for idx, info in enumerate(arboles.values())]
+                respuesta += "\n".join(lista_arboles)
+                #respuesta += "\nElige el número del árbol para más información."
+
+                if seleccion_automatica:
+                    return obtener_detalle_planta('arboles', seleccion_automatica, conocimientos), 'arboles'
+
+                return respuesta, 'arboles'
+
+        # Preguntas sobre verduras o huerta
+        elif 'verdura' in pregunta.lower() or 'huerta' in pregunta.lower() or 'plantas' in pregunta.lower() or 'temporada' in pregunta.lower() or 'plantar' in pregunta.lower():
+            huerta = conocimientos.get('planta', {}).get('huerta', {})
+            if huerta:
+                respuesta = "Las verduras que conozco son:\n"
+                lista_huerta = [f"{idx + 1}. {info['nombre']}" for idx, info in enumerate(huerta.values())]
+                respuesta += "\n".join(lista_huerta)
+                #respuesta += "\nElige el número de la verdura para más información."
+
+                if seleccion_automatica:
+                    return obtener_detalle_planta('huerta', seleccion_automatica, conocimientos), 'huerta'
+
+                return respuesta, 'huerta'
+
+        return "Lo siento, no entendí tu pregunta. Prueba preguntando sobre suculentas, árboles o verduras.", None
+
+    return "No detecté ninguna palabra clave relacionada con plantas. Por favor, pregunta sobre suculentas, árboles o verduras.", None
+
+
 
 
 
@@ -970,15 +1073,18 @@ def auto_analisis(nombre, contrasena, conocimientos, animales_data, retroaliment
 
     # Pruebas complejas (que requieren múltiples pasos)
     pruebas_complejas = [
-        {
-            "descripcion": "Prueba de opinión - 'te dejo una opinion'",
+        {"descripcion": "Prueba de opinión - 'te dejo una opinion'",
             "funcion": lambda: [
                 manejar_recoleccion_opinion("josue", conocimientos, retroalimentacion),
                 manejar_recoleccion_opinion("25", conocimientos, retroalimentacion),
                 manejar_recoleccion_opinion("que tenga juegos de trivia", conocimientos, retroalimentacion)
             ],
             "esperado": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos."
-        }
+        },
+        # Pruebas de la función 'comida' en el autoanálisis
+        {"descripcion": "Prueba de recetas - 'dame una receta de postre'",
+         "funcion": lambda: comida("dame una receta de postre", conocimientos, eleccion_automatica=1),
+         "esperado": "\nReceta de churros:\nIngredientes: 1 taza de harina, 1 taza de agua, 1 cucharadita de sal, Aceite para freír, Azúcar para espolvorear\nPaso a paso: Hierve el agua con la sal. -> Agrega la harina de golpe y mezcla bien hasta formar una masa. -> Deja enfriar un poco y coloca la masa en una manga pastelera. -> Calienta el aceite y fríe los churros hasta que estén dorados. -> Espolvorea con azúcar y sirve."}
     ]
 
     # Combinar todas las pruebas
@@ -1015,12 +1121,14 @@ def auto_analisis(nombre, contrasena, conocimientos, animales_data, retroaliment
             })
 
     # Guardar los resultados en el archivo 'diagnostico.json'
-    guardar_datos(resultados, 'diagnostico.json', mostrar_mensaje=True)
+    guardar_datos(resultados, 'diagnostico.json', mostrar_mensaje=False)
     print("IA: Auto-análisis completado. Resultados guardados en 'diagnostico.json'.")
+    # return explícito para evitar que retorne 'None'
+    return "Análisis finalizado y resultados guardados correctamente."
 
 
 # TODO: Función principal de preguntar (lógica de preguntas)
-def preguntar(pregunta, conocimientos, animales_data, retroalimentacion):
+def preguntar(pregunta, conocimientos, animales_data, retroalimentacion, seleccion_automatica=None):
     pregunta_limpia = eliminar_acentos(pregunta.lower())
 
     # Verificar si "contexto" está en "conocimientos" y asegurarse de que las claves necesarias estén presentes
@@ -1055,7 +1163,6 @@ def preguntar(pregunta, conocimientos, animales_data, retroalimentacion):
         contrasena = input("Contraseña: ")
         resultado_analisis = auto_analisis(nombre, contrasena, conocimientos, animales_data, retroalimentacion)
         return resultado_analisis
-
 
     # Verificar si es un saludo
     respuesta_saludo = buscar_saludo(pregunta_limpia, conocimientos)
@@ -1126,6 +1233,39 @@ def preguntar(pregunta, conocimientos, animales_data, retroalimentacion):
         guardar_datos(conocimientos, 'conocimientos.json')
         return respuesta_receta
 
+    # Manejar preguntas sobre plantas
+    respuesta_planta, tipo_planta = manejar_planta(pregunta, conocimientos, seleccion_automatica)
+
+    if respuesta_planta:  # Si hay una respuesta de plantas
+        print(respuesta_planta)  # Muestra la lista de opciones al usuario (solo en modo manual)
+
+        # Si hay selección automática, usarla directamente
+        if seleccion_automatica:
+            detalle_planta = obtener_detalle_planta(tipo_planta, seleccion_automatica, conocimientos)
+            return detalle_planta  # Retornamos la información detallada en modo automático
+
+        # Modo manual, ahora pedimos el número de la planta seleccionada
+        try:
+            seleccion = int(input("Introduce el número de la planta que quieres conocer: ")) - 1  # Convertir la selección a índice
+            if seleccion < 0:
+                raise ValueError("Número fuera de rango.")
+
+            # Convertimos la selección numérica en el nombre de la planta
+            if tipo_planta == 'suculentas':
+                planta_seleccionada = list(conocimientos.get('planta', {}).get('suculentas', {}).values())[seleccion]['nombre']
+            elif tipo_planta == 'arboles':
+                planta_seleccionada = list(conocimientos.get('planta', {}).get('arboles', {}).values())[seleccion]['nombre']
+            elif tipo_planta == 'huerta':
+                planta_seleccionada = list(conocimientos.get('planta', {}).get('huerta', {}).values())[seleccion]['nombre']
+            else:
+                return "Error al seleccionar la planta."
+
+            # Obtener y devolver la información detallada de la planta seleccionada
+            detalle_planta = obtener_detalle_planta(tipo_planta, planta_seleccionada, conocimientos)
+            return detalle_planta
+
+        except (ValueError, IndexError):
+            return "Selección no válida. Por favor reintenta de nuevo"
 
     # Respuesta predeterminada si no se encuentra una coincidencia
     return "No tengo suficiente información para responder... intenta reformular o usar otros términos."

@@ -19,13 +19,13 @@
     },
     {
         "descripcion": "Prueba de chiste - 'sabes algun chiste'",
-        "resultado": "—¡Camarero! Este filete tiene muchos nervios. —Normal, es la primera vez que se lo comen.",
+        "resultado": "¿Cómo se llama el campeón de ciclismo ruso? Pedro Pedale.",
         "esperado": "Respuesta variable",
         "exitoso": true
     },
     {
         "descripcion": "Prueba de chiste - 'otro chiste'",
-        "resultado": "¿Qué le dice una iguana a su hermana gemela? ¡Iguanita!",
+        "resultado": "¿Por qué los libros de historia son siempre felices? Porque tienen muchos capítulos.",
         "esperado": "Respuesta variable",
         "exitoso": true
     },
@@ -93,6 +93,12 @@
         "descripcion": "Prueba de opinión - 'te dejo una opinion'",
         "resultado": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos.",
         "esperado": "¡Gracias por tu opinión/sugerencia! La he guardado con tus datos.",
+        "exitoso": true
+    },
+    {
+        "descripcion": "Prueba de recetas - 'dame una receta de postre'",
+        "resultado": "\nReceta de churros:\nIngredientes: 1 taza de harina, 1 taza de agua, 1 cucharadita de sal, Aceite para freír, Azúcar para espolvorear\nPaso a paso: Hierve el agua con la sal. -> Agrega la harina de golpe y mezcla bien hasta formar una masa. -> Deja enfriar un poco y coloca la masa en una manga pastelera. -> Calienta el aceite y fríe los churros hasta que estén dorados. -> Espolvorea con azúcar y sirve.",
+        "esperado": "\nReceta de churros:\nIngredientes: 1 taza de harina, 1 taza de agua, 1 cucharadita de sal, Aceite para freír, Azúcar para espolvorear\nPaso a paso: Hierve el agua con la sal. -> Agrega la harina de golpe y mezcla bien hasta formar una masa. -> Deja enfriar un poco y coloca la masa en una manga pastelera. -> Calienta el aceite y fríe los churros hasta que estén dorados. -> Espolvorea con azúcar y sirve.",
         "exitoso": true
     }
 ]

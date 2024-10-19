@@ -311,51 +311,87 @@
         }
     },
     "contexto": {
-        "ultimaPregunta": "20^3",
+        "ultimaPregunta": "dame la receta de algun postre",
         "historialConversacion": [
             {
-                "pregunta": "clark iniciar autoanalisis",
-                "respuesta": null
+                "pregunta": "me darias una receta de postre",
+                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
             },
             {
-                "pregunta": "clark iniciar autoanalisis",
-                "respuesta": null
+                "pregunta": "hola",
+                "respuesta": "hola, como estas??"
             },
             {
-                "pregunta": "clark iniciar autoanalisis",
-                "respuesta": null
+                "pregunta": "bien",
+                "respuesta": "que bueno que estes bien"
             },
             {
-                "pregunta": "clark iniciar autoanalisis",
-                "respuesta": null
+                "pregunta": "me darias una receta de un postre",
+                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
             },
             {
-                "pregunta": "clark iniciar autoanalisis",
-                "respuesta": null
+                "pregunta": "presidente macri",
+                "respuesta": "Mauricio Macri fue presidente entre 2015 - 2019. Descripción: Mauricio Macri asumio la presidencia con la promesa de implementar reformas economicas que trajeran crecimiento y estabilidad. Su gobierno busco reducir el deficit fiscal y abrir la economia al mundo. Sin embargo, su mandato se vio afectado por una alta inflacion y una deuda creciente, lo que llevo a descontento social. Macri intento atraer inversiones extranjeras y fomentar el desarrollo, pero las dificultades economicas y la falta de apoyo politico limitaron su capacidad de implementar cambios significativos, resultando en una administracion con resultados mixtos."
             },
             {
-                "pregunta": "clark iniciar autoanalisis",
-                "respuesta": null
+                "pregunta": "dame una receta de postre",
+                "respuesta": "No tengo suficiente información para responder... intenta reformular o usar otros términos."
             },
             {
-                "pregunta": "clark iniciar autoanalisis",
-                "respuesta": null
+                "pregunta": "dame una receta de postre",
+                "respuesta": "\nReceta de donas:\nIngredientes: 2 1/2 tazas de harina, 1 taza de leche, 2 huevos, 1/2 taza de azúcar, 1 cucharadita de sal, 1 cucharada de levadura, Aceite para freír\nPaso a paso: Mezcla la harina, azúcar, sal y levadura. -> Agrega la leche y los huevos, y amasa hasta obtener una masa suave. -> Deja reposar la masa hasta que doble su tamaño. -> Estira la masa y corta las donas. -> Fríe en aceite caliente y deja enfriar antes de glasear."
             },
             {
-                "pregunta": "clark iniciar autoanalisis",
-                "respuesta": null
+                "pregunta": "dame una receta de algun postre",
+                "respuesta": "\nReceta de churros:\nIngredientes: 1 taza de harina, 1 taza de agua, 1 cucharadita de sal, Aceite para freír, Azúcar para espolvorear\nPaso a paso: Hierve el agua con la sal. -> Agrega la harina de golpe y mezcla bien hasta formar una masa. -> Deja enfriar un poco y coloca la masa en una manga pastelera. -> Calienta el aceite y fríe los churros hasta que estén dorados. -> Espolvorea con azúcar y sirve."
             },
             {
-                "pregunta": "clark iniciar autoanalisis",
-                "respuesta": null
+                "pregunta": "dame la receta de algun postre",
+                "respuesta": "\nReceta de donas:\nIngredientes: 2 1/2 tazas de harina, 1 taza de leche, 2 huevos, 1/2 taza de azúcar, 1 cucharadita de sal, 1 cucharada de levadura, Aceite para freír\nPaso a paso: Mezcla la harina, azúcar, sal y levadura. -> Agrega la leche y los huevos, y amasa hasta obtener una masa suave. -> Deja reposar la masa hasta que doble su tamaño. -> Estira la masa y corta las donas. -> Fríe en aceite caliente y deja enfriar antes de glasear."
             },
             {
-                "pregunta": "clark iniciar autoanalisis",
-                "respuesta": null
+                "pregunta": "gracias",
+                "respuesta": "de nada"
             }
         ],
         "recolectando_opinion": false,
         "nombre_usuario": "",
         "edad_usuario": ""
+    },
+    "recetario": {
+        "churros": {
+            "ingredientes": [
+                "1 taza de harina",
+                "1 taza de agua",
+                "1 cucharadita de sal",
+                "Aceite para freír",
+                "Azúcar para espolvorear"
+            ],
+            "paso_a_paso": [
+                "Hierve el agua con la sal.",
+                "Agrega la harina de golpe y mezcla bien hasta formar una masa.",
+                "Deja enfriar un poco y coloca la masa en una manga pastelera.",
+                "Calienta el aceite y fríe los churros hasta que estén dorados.",
+                "Espolvorea con azúcar y sirve."
+            ]
+        },
+        "donas": {
+            "ingredientes": [
+                "2 1/2 tazas de harina",
+                "1 taza de leche",
+                "2 huevos",
+                "1/2 taza de azúcar",
+                "1 cucharadita de sal",
+                "1 cucharada de levadura",
+                "Aceite para freír"
+            ],
+            "paso_a_paso": [
+                "Mezcla la harina, azúcar, sal y levadura.",
+                "Agrega la leche y los huevos, y amasa hasta obtener una masa suave.",
+                "Deja reposar la masa hasta que doble su tamaño.",
+                "Estira la masa y corta las donas.",
+                "Fríe en aceite caliente y deja enfriar antes de glasear."
+            ]
+        }
     }
 }

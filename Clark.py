@@ -881,6 +881,38 @@ def borrar_clave(conocimientos, animales_data):
 
     return mostrar_y_borrar_combinado(conocimientos, animales_data)
 
+# Funcion para recetas
+def comida(consulta, conocimientos):
+    # Detectar palabras clave para mostrar la lista de recetas
+    if "recetas" in consulta.lower() or "receta" in consulta.lower():
+        recetas = list(conocimientos["recetario"].keys())
+        if recetas:
+            respuesta = "Recetas disponibles:\n"
+            respuesta += "\n".join([f"{idx}. {receta}" for idx, receta in enumerate(recetas, start=1)])
+            respuesta += "\nElige el número de la receta que quieres ver:"
+            print(respuesta)
+
+            # Pedir al usuario que elija un número de la lista
+            try:
+                eleccion = int(input())
+                if 1 <= eleccion <= len(recetas):
+                    nombre_comida = recetas[eleccion - 1]
+                    receta = conocimientos["recetario"][nombre_comida]
+                    detalles = f"\nReceta de {nombre_comida}:\n"
+                    detalles += f"Ingredientes: {', '.join(receta['ingredientes'])}\n"
+                    detalles += f"Paso a paso: {' -> '.join(receta['paso_a_paso'])}"
+                    return detalles
+                else:
+                    return "Número fuera de rango. Inténtalo nuevamente."
+            except ValueError:
+                return "Por favor, ingresa un número válido."
+        else:
+            return "No hay recetas disponibles en el recetario."
+    else:
+        return "No entendí tu solicitud. Si quieres ver las recetas, usa una consulta que incluya 'receta' o 'recetas'."
+
+
+
 # TODO Autoanalisis
 # Cargar datos de retroalimentación al inicio
 retroalimentacion = cargar_datos_retroalimentacion()
@@ -987,7 +1019,6 @@ def auto_analisis(nombre, contrasena, conocimientos, animales_data, retroaliment
     print("IA: Auto-análisis completado. Resultados guardados en 'diagnostico.json'.")
 
 
-
 # TODO: Función principal de preguntar (lógica de preguntas)
 def preguntar(pregunta, conocimientos, animales_data, retroalimentacion):
     pregunta_limpia = eliminar_acentos(pregunta.lower())
@@ -1087,6 +1118,14 @@ def preguntar(pregunta, conocimientos, animales_data, retroalimentacion):
         conocimientos["contexto"]["ultimaPregunta"] = pregunta_limpia
         guardar_datos(conocimientos, 'conocimientos.json')
         return respuesta_matematica
+
+    # Verificar si la pregunta es una consulta de recetas
+    respuesta_receta = comida(pregunta, conocimientos)
+    if respuesta_receta and "No entendí tu solicitud" not in respuesta_receta:
+        conocimientos["contexto"]["ultimaPregunta"] = pregunta_limpia
+        guardar_datos(conocimientos, 'conocimientos.json')
+        return respuesta_receta
+
 
     # Respuesta predeterminada si no se encuentra una coincidencia
     return "No tengo suficiente información para responder... intenta reformular o usar otros términos."

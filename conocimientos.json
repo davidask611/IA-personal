@@ -311,47 +311,47 @@
         }
     },
     "contexto": {
-        "ultimaPregunta": "2",
+        "ultimaPregunta": "presidente macri",
         "historialConversacion": [
             {
-                "pregunta": "temporada",
-                "respuesta": "Error al seleccionar la planta."
+                "pregunta": "que arboles da fruta",
+                "respuesta": "Limonero:\nFruta: Limón.\nEpoca: Primavera-Verano.\nAltura máxima: 3-5 metros."
             },
             {
-                "pregunta": "epoca",
-                "respuesta": "Error al seleccionar la planta."
+                "pregunta": "que verduras conoces",
+                "respuesta": "Lechuga:\nDescripción: La lechuga es una verdura de hoja verde que se cultiva en la huerta y es ideal para ensaladas frescas..\nEpoca: Primavera - Otoño.\nSe debe regar cada 2 días."
             },
             {
-                "pregunta": "suculenta",
-                "respuesta": "Echeveria:\nLa Echeveria es una suculenta popular por sus rosetas simétricas y hojas carnosas de colores que varían desde el verde al morado..\nSe debe regar cada 15 días."
+                "pregunta": "que tipo de arbol conoces",
+                "respuesta": "Naranjo:\nFruta: Naranja.\nEpoca: Invierno-Primavera.\nAltura máxima: 3-6 metros."
             },
             {
-                "pregunta": "temporada",
-                "respuesta": "Selección no válida. Por favor reintenta de nuevo"
+                "pregunta": "que tipo de arbl conoces",
+                "respuesta": "Selección no válida. Por favor reintenta de nuevo."
             },
             {
-                "pregunta": "arbustos",
-                "respuesta": "Selección no válida. Por favor reintenta de nuevo"
+                "pregunta": "que cosa conoces",
+                "respuesta": "Selección no válida. Por favor reintenta de nuevo."
             },
             {
-                "pregunta": "epoca",
-                "respuesta": "Error al seleccionar la planta."
+                "pregunta": "que animal conoces",
+                "respuesta": "No comprendo a qué animal te refieres. Intenta especificar 'perro', 'gato', 'ave', etc."
             },
             {
-                "pregunta": "arbustos",
-                "respuesta": "Manzano:\nFruta: Manzana.\nÉpoca de fruto: Primavera-Verano.\nAltura máxima: 4-10 metros."
+                "pregunta": "que presidente conoces",
+                "respuesta": "Selección no válida. Por favor reintenta de nuevo."
             },
             {
-                "pregunta": "plantas",
-                "respuesta": "Tomate:\nEl tomate es una planta de huerta que produce frutos carnosos y jugosos, muy utilizados en ensaladas y salsas..\nSe debe regar cada 3 días."
+                "pregunta": "presidente",
+                "respuesta": "Selección no válida. Por favor reintenta de nuevo."
             },
             {
-                "pregunta": "temporada",
-                "respuesta": "Lechuga:\nLa lechuga es una verdura de hoja verde que se cultiva en la huerta y es ideal para ensaladas frescas..\nSe debe regar cada 2 días."
+                "pregunta": "musica",
+                "respuesta": "No tengo suficiente información sobre ese artista o género musical. Intenta reformular la pregunta."
             },
             {
-                "pregunta": "plantar",
-                "respuesta": "Lechuga:\nLa lechuga es una verdura de hoja verde que se cultiva en la huerta y es ideal para ensaladas frescas..\nSe debe regar cada 2 días."
+                "pregunta": "presidente macri",
+                "respuesta": "Mauricio Macri fue presidente entre 2015 - 2019. Descripción: Mauricio Macri asumio la presidencia con la promesa de implementar reformas economicas que trajeran crecimiento y estabilidad. Su gobierno busco reducir el deficit fiscal y abrir la economia al mundo. Sin embargo, su mandato se vio afectado por una alta inflacion y una deuda creciente, lo que llevo a descontento social. Macri intento atraer inversiones extranjeras y fomentar el desarrollo, pero las dificultades economicas y la falta de apoyo politico limitaron su capacidad de implementar cambios significativos, resultando en una administracion con resultados mixtos."
             }
         ],
         "recolectando_opinion": false,
@@ -436,17 +436,20 @@
             "tomate": {
                 "nombre": "Tomate",
                 "descripcion": "El tomate es una planta de huerta que produce frutos carnosos y jugosos, muy utilizados en ensaladas y salsas.",
-                "riego": "3 días"
+                "riego": "3 días",
+                "epoca": "Primavera - Verano"
             },
             "lechuga": {
                 "nombre": "Lechuga",
                 "descripcion": "La lechuga es una verdura de hoja verde que se cultiva en la huerta y es ideal para ensaladas frescas.",
-                "riego": "2 días"
+                "riego": "2 días",
+                "epoca": "Primavera - Otoño"
             },
             "zanahoria": {
                 "nombre": "Zanahoria",
                 "descripcion": "La zanahoria es una raíz comestible rica en vitamina A, que se cultiva bajo tierra en la huerta.",
-                "riego": "4 días"
+                "riego": "4 días",
+                "epoca": "Todo el año"
             }
         }
     }

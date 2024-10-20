@@ -19,13 +19,13 @@
     },
     {
         "descripcion": "Prueba de chiste - 'sabes algun chiste'",
-        "resultado": "¿Cómo se llama el campeón de ciclismo ruso? Pedro Pedale.",
+        "resultado": "¿Por qué el mar está tan salado? Porque los peces hacen pipí.",
         "esperado": "Respuesta variable",
         "exitoso": true
     },
     {
         "descripcion": "Prueba de chiste - 'otro chiste'",
-        "resultado": "¿Por qué los libros de historia son siempre felices? Porque tienen muchos capítulos.",
+        "resultado": "¿Qué hace una taza en la escuela? ¡Toma té!",
         "esperado": "Respuesta variable",
         "exitoso": true
     },

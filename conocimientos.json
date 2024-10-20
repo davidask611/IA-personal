@@ -311,47 +311,47 @@
         }
     },
     "contexto": {
-        "ultimaPregunta": "presidente macri",
+        "ultimaPregunta": "dame informacion sobre las frutas",
         "historialConversacion": [
             {
-                "pregunta": "que arboles da fruta",
-                "respuesta": "Limonero:\nFruta: Limón.\nEpoca: Primavera-Verano.\nAltura máxima: 3-5 metros."
+                "pregunta": "que arbolito conoces",
+                "respuesta": "Selección no válida. Por favor reintenta de nuevo."
             },
             {
-                "pregunta": "que verduras conoces",
-                "respuesta": "Lechuga:\nDescripción: La lechuga es una verdura de hoja verde que se cultiva en la huerta y es ideal para ensaladas frescas..\nEpoca: Primavera - Otoño.\nSe debe regar cada 2 días."
+                "pregunta": "2",
+                "respuesta": "El resultado de 2 es 2."
             },
             {
-                "pregunta": "que tipo de arbol conoces",
+                "pregunta": "que arbol frutal conoces",
                 "respuesta": "Naranjo:\nFruta: Naranja.\nEpoca: Invierno-Primavera.\nAltura máxima: 3-6 metros."
             },
             {
-                "pregunta": "que tipo de arbl conoces",
-                "respuesta": "Selección no válida. Por favor reintenta de nuevo."
-            },
-            {
-                "pregunta": "que cosa conoces",
-                "respuesta": "Selección no válida. Por favor reintenta de nuevo."
-            },
-            {
-                "pregunta": "que animal conoces",
-                "respuesta": "No comprendo a qué animal te refieres. Intenta especificar 'perro', 'gato', 'ave', etc."
-            },
-            {
-                "pregunta": "que presidente conoces",
-                "respuesta": "Selección no válida. Por favor reintenta de nuevo."
-            },
-            {
-                "pregunta": "presidente",
-                "respuesta": "Selección no válida. Por favor reintenta de nuevo."
-            },
-            {
-                "pregunta": "musica",
+                "pregunta": "dame informacion sobre las frutas",
                 "respuesta": "No tengo suficiente información sobre ese artista o género musical. Intenta reformular la pregunta."
             },
             {
-                "pregunta": "presidente macri",
-                "respuesta": "Mauricio Macri fue presidente entre 2015 - 2019. Descripción: Mauricio Macri asumio la presidencia con la promesa de implementar reformas economicas que trajeran crecimiento y estabilidad. Su gobierno busco reducir el deficit fiscal y abrir la economia al mundo. Sin embargo, su mandato se vio afectado por una alta inflacion y una deuda creciente, lo que llevo a descontento social. Macri intento atraer inversiones extranjeras y fomentar el desarrollo, pero las dificultades economicas y la falta de apoyo politico limitaron su capacidad de implementar cambios significativos, resultando en una administracion con resultados mixtos."
+                "pregunta": "que frutas conoces",
+                "respuesta": "Naranjo:\nFruta: Naranja.\nEpoca: Invierno-Primavera.\nAltura máxima: 3-6 metros."
+            },
+            {
+                "pregunta": "arbolito",
+                "respuesta": "Manzano:\nFruta: Manzana.\nEpoca: Primavera-Verano.\nAltura máxima: 4-10 metros."
+            },
+            {
+                "pregunta": "manzana",
+                "respuesta": "No detecté ninguna palabra clave relacionada con plantas. Por favor, pregunta sobre suculentas, árboles o verduras."
+            },
+            {
+                "pregunta": "que puedo plantar en mi huerta",
+                "respuesta": "Lechuga:\nDescripción: La lechuga es una verdura de hoja verde que se cultiva en la huerta y es ideal para ensaladas frescas..\nEpoca: Primavera - Otoño.\nSe debe regar cada 2 días."
+            },
+            {
+                "pregunta": "que suculentas conoces",
+                "respuesta": "Echeveria:\nLa Echeveria es una suculenta popular por sus rosetas simétricas y hojas carnosas de colores que varían desde el verde al morado..\nSe debe regar cada 15 días."
+            },
+            {
+                "pregunta": "que arbol frutal conoces",
+                "respuesta": "Limonero:\nFruta: Limón.\nEpoca: Primavera-Verano.\nAltura máxima: 3-5 metros."
             }
         ],
         "recolectando_opinion": false,

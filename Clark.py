@@ -959,7 +959,7 @@ def obtener_detalle_planta(tipo, seleccion, conocimientos):
 
 # Función para manejar las preguntas sobre plantas, ahora interactiva y automatizada
 def manejar_planta(pregunta, conocimientos, seleccion_automatica=None):
-    palabras_clave = ['suculenta', 'suculentas','arbol', 'arboles', 'arbustos', 'verdura', 'verduras', 'huerta', 'plantas']
+    palabras_clave = ['suculenta', 'suculentas','arbol', 'arboles', 'arbustos', 'frutas', 'verdura', 'verduras', 'huerta', 'plantas']
 
     # Normalizar la pregunta para evitar problemas con acentos
     pregunta_normalizada = eliminar_acentos(pregunta.lower())
@@ -982,7 +982,7 @@ def manejar_planta(pregunta, conocimientos, seleccion_automatica=None):
                 return respuesta, 'suculentas'
 
         # Preguntas sobre árboles
-        elif 'arbol' in pregunta.lower() or 'arboles' in pregunta.lower() or 'arbustos' in pregunta.lower():
+        elif 'arbol' in pregunta.lower() or 'arboles' in pregunta.lower() or 'arbustos' in pregunta.lower() or 'frutas' in pregunta.lower():
             arboles = conocimientos.get('planta', {}).get('arboles', {})
             if arboles:
                 respuesta = "Los árboles frutales que conozco son:\n"
@@ -1234,15 +1234,15 @@ def preguntar(pregunta, conocimientos, animales_data, retroalimentacion, selecci
     respuesta_planta, tipo_planta = manejar_planta(pregunta, conocimientos, seleccion_automatica)
 
     if respuesta_planta:  # Si hay una respuesta de plantas
-        print(respuesta_planta)  # Muestra la lista de opciones al usuario (solo en modo manual)
-
-        # Si hay selección automática, usarla directamente
-        if seleccion_automatica:
-            detalle_planta = obtener_detalle_planta(tipo_planta, seleccion_automatica, conocimientos)
-            return detalle_planta  # Retornamos la información detallada en modo automático
-
         # Modo manual, ahora pedimos el número de la planta o temporada seleccionada
-        try:
+        if tipo_planta:  # Verifica que haya un tipo de planta válido
+            print(respuesta_planta)  # Muestra la lista de opciones al usuario (solo en modo manual)
+
+            # Si hay selección automática, usarla directamente
+            if seleccion_automatica:
+                detalle_planta = obtener_detalle_planta(tipo_planta, seleccion_automatica, conocimientos)
+                return detalle_planta  # Retornamos la información detallada en modo automático
+
             # Lógica para cuando se consulta sobre la huerta
             if tipo_planta == 'huerta':
                 seleccion = int(input("Introduce el número de la verdura que quieres conocer: ")) - 1
@@ -1272,11 +1272,9 @@ def preguntar(pregunta, conocimientos, animales_data, retroalimentacion, selecci
                 detalle_planta = obtener_detalle_planta(tipo_planta, planta_seleccionada, conocimientos)
                 return detalle_planta
 
-        except (ValueError, IndexError):
-            return "Selección no válida. Por favor reintenta de nuevo."
+        else:
+            return "No detecté ninguna palabra clave relacionada con plantas. Por favor, pregunta sobre suculentas, árboles o verduras."
 
-    # Respuesta predeterminada si no se encuentra una coincidencia
-    return "No tengo suficiente información para responder... intenta reformular o usar otros términos."
 
 
 

@@ -1278,8 +1278,6 @@ def preguntar(pregunta, conocimientos, animales_data, retroalimentacion, selecci
 
 
 
-
-
 def main():
     conocimientos = cargar_datos('conocimientos.json')  # Cargar conocimientos
     animales_data = cargar_animales('animales.json')  # Cargar datos de animales
@@ -1352,7 +1350,6 @@ def main():
         print(f"IA: {respuesta}")
         # Actualizar el historial de conversación
         actualizar_historial(pregunta, respuesta, conocimientos, animales_data)
-
 
 
 # TODO Ejecutar el programa
